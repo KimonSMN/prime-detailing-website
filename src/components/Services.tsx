@@ -1,37 +1,52 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Car, Palette, Sparkles } from "lucide-react";
+import { Car, Shield, Palette, Sparkles } from "lucide-react";
 
 const services = [
   {
     id: "full-detail",
     title: "Full Exterior & Interior Detail",
-    description: "Complete transformation of your vehicle inside and out. Includes wash, wax, interior deep clean, and protection.",
-    price: "From $299",
-    duration: "4-6 hours",
+    description: "Professional detailing service that transforms your vehicle inside and out with comprehensive cleaning and protection.",
+    price: "From $60",
+    duration: "3-4 hours",
     icon: Car,
     features: [
-      "Exterior hand wash & dry",
-      "Paint decontamination",
-      "Wheel & tire detailing", 
-      "Interior deep cleaning",
-      "Leather conditioning",
-      "Glass cleaning"
+      "Contactless pre-wash & hand wash",
+      "Paint surface decontamination (removes tar, sap, and bonded contaminants)",
+      "Wheel & tire detailing (deep clean + dressing)",
+      "Interior deep cleaning (vacuuming, carpets, seats, vents, trims)",
+      "Plastic trim conditioning & UV protection",
+      "Leather cleaning & conditioning",
+      "Streak-free glass cleaning (inside & out)"
+    ]
+  },
+  {
+    id: "ceramic-coating",
+    title: "Ceramic Coating Package",
+    description: "Includes Full Exterior & Interior Detail plus professional-grade ceramic coating for ultimate protection.",
+    price: "From $80",
+    duration: "4-5 hours",
+    icon: Shield,
+    features: [
+      "Professional-grade ceramic coating applied to all painted surfaces",
+      "Hydrophobic protection for easier washing and water beading",
+      "Enhanced gloss and depth of paint color",
+      "Long-lasting protection against UV rays, dirt, and contaminants"
     ]
   },
   {
     id: "paint-correction",
     title: "Paint Correction Package",
-    description: "Premium paint correction service that includes full exterior & interior detail plus advanced paint restoration.",
-    price: "From $599", 
-    duration: "8-12 hours",
+    description: "Complete paint restoration service with multi-stage correction, ceramic coating, and comprehensive detailing.",
+    price: "From $100",
+    duration: "6-8 hours",
     icon: Palette,
     features: [
-      "Everything in Full Detail",
-      "Paint defect analysis",
-      "Multi-stage paint correction",
-      "Swirl mark removal",
-      "Ceramic coating application",
+      "Complete Full Exterior & Interior Detail",
+      "Paint defect analysis & inspection",
+      "Multi-stage paint correction (machine polishing to restore clarity)",
+      "Swirl mark, oxidation & light scratch removal",
+      "Ceramic coating application for added protection and shine",
       "Paint protection guarantee"
     ]
   }

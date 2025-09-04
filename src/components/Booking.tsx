@@ -135,8 +135,9 @@ const Booking = () => {
                     <SelectValue placeholder="Choose your service" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
-                    <SelectItem value="full-detail">Full Exterior & Interior Detail - From $299</SelectItem>
-                    <SelectItem value="paint-correction">Paint Correction Package - From $599</SelectItem>
+                    <SelectItem value="full-detail">Full Exterior & Interior Detail - From $60</SelectItem>
+                    <SelectItem value="ceramic-coating">Ceramic Coating Package - From $80</SelectItem>
+                    <SelectItem value="paint-correction">Paint Correction Package - From $100</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

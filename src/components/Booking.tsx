@@ -1,60 +1,120 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Calendar, Clock, User, Phone, Mail, Car } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+type ServiceRow = {
+  id: string;
+  name: string;
+  base_price: string | number | null;
+};
 
 const Booking = () => {
   const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [services, setServices] = useState<ServiceRow[]>([]);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    service: "",
+    serviceId: "", // service UUID
     date: "",
     time: "",
     vehicleInfo: "",
-    notes: ""
+    notes: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Load services from DB
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("service")
+        .select("id,name,base_price")
+        .eq("active", true)
+        .order("name");
+      if (error) {
+        toast({
+          title: "Couldn’t load services",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setServices(data ?? []);
+      }
+    })();
+  }, [toast]);
+
+  const minDate = useMemo(() => new Date().toISOString().split("T")[0], []);
+  const handleInputChange = (field: string, value: string) =>
+    setFormData((p) => ({ ...p, [field]: value }));
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.phone || !formData.service || !formData.date || !formData.time) {
+    const { name, email, phone, serviceId, date, time } = formData;
+
+    if (!name || !email || !phone || !serviceId || !date || !time) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
-    // Simulate booking submission
-    toast({
-      title: "Appointment Booked!",
-      description: "We'll contact you within 24 hours to confirm your appointment.",
-    });
+    setLoading(true);
+    try {
+      const preferred_at = new Date(`${date}T${time}:00`);
 
-    // Reset form
-    setFormData({
-      name: "",
-      email: "",
-      phone: "",
-      service: "",
-      date: "",
-      time: "",
-      vehicleInfo: "",
-      notes: ""
-    });
-  };
+      // ONE CALL: use RPC to create customer + booking + booking_service
+      const { data: bookingId, error } = await supabase.rpc("create_booking", {
+        p_full_name: name,
+        p_email: email,
+        p_phone: phone,
+        p_vehicle_info: formData.vehicleInfo || null,
+        p_notes: formData.notes || null,
+        p_preferred_at: preferred_at.toISOString(),
+        p_service_ids: [serviceId], // can pass multiple ids later
+      });
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+      if (error) throw error;
+
+      toast({
+        title: "Appointment booked!",
+        description: "We’ll contact you within 24 hours to confirm.",
+      });
+
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        serviceId: "",
+        date: "",
+        time: "",
+        vehicleInfo: "",
+        notes: "",
+      });
+    } catch (err: any) {
+      toast({
+        title: "Booking failed",
+        description: err?.message ?? "Please try again.",
+        variant: "destructive",
+      });
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -62,7 +122,10 @@ const Booking = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Book Your <span className="bg-gold-gradient bg-clip-text text-transparent">Appointment</span>
+            Book Your{" "}
+            <span className="bg-gold-gradient bg-clip-text text-transparent">
+              Appointment
+            </span>
           </h2>
           <p className="text-xl text-muted-foreground">
             Schedule your professional car detailing service today
@@ -75,15 +138,14 @@ const Booking = () => {
               Schedule Your Service
             </CardTitle>
           </CardHeader>
-          
+
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Personal Information */}
+              {/* Personal Info */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-primary" />
-                    Full Name *
+                    <User className="w-4 h-4 text-primary" /> Full Name *
                   </Label>
                   <Input
                     id="name"
@@ -93,11 +155,9 @@ const Booking = () => {
                     className="bg-background border-border"
                   />
                 </div>
-                
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-primary" />
-                    Phone Number *
+                    <Phone className="w-4 h-4 text-primary" /> Phone Number *
                   </Label>
                   <Input
                     id="phone"
@@ -111,8 +171,7 @@ const Booking = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-primary" />
-                  Email Address *
+                  <Mail className="w-4 h-4 text-primary" /> Email Address *
                 </Label>
                 <Input
                   id="email"
@@ -124,30 +183,41 @@ const Booking = () => {
                 />
               </div>
 
-              {/* Service Selection */}
+              {/* Service */}
               <div className="space-y-2">
-                <Label htmlFor="service-select" className="flex items-center gap-2">
-                  <Car className="w-4 h-4 text-primary" />
-                  Select Service *
+                <Label
+                  htmlFor="service-select"
+                  className="flex items-center gap-2"
+                >
+                  <Car className="w-4 h-4 text-primary" /> Select Service *
                 </Label>
-                <Select value={formData.service} onValueChange={(value) => handleInputChange("service", value)}>
-                  <SelectTrigger id="service-select" className="bg-background border-border">
+                <Select
+                  value={formData.serviceId}
+                  onValueChange={(v) => handleInputChange("serviceId", v)}
+                >
+                  <SelectTrigger
+                    id="service-select"
+                    className="bg-background border-border"
+                  >
                     <SelectValue placeholder="Choose your service" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
-                    <SelectItem value="full-detail">Full Exterior & Interior Detail - From $60</SelectItem>
-                    <SelectItem value="ceramic-coating">Ceramic Coating Package - From $80</SelectItem>
-                    <SelectItem value="paint-correction">Paint Correction Package - From $100</SelectItem>
+                    {services.map((s) => (
+                      <SelectItem key={s.id} value={s.id}>
+                        {s.name}
+                        {s.base_price ? ` — from $${s.base_price}` : ""}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Date and Time */}
+              {/* Date & Time */}
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="date" className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-primary" />
-                    Preferred Date *
+                    <Calendar className="w-4 h-4 text-primary" /> Preferred Date
+                    *
                   </Label>
                   <Input
                     id="date"
@@ -155,47 +225,55 @@ const Booking = () => {
                     value={formData.date}
                     onChange={(e) => handleInputChange("date", e.target.value)}
                     className="bg-background border-border"
-                    min={new Date().toISOString().split('T')[0]}
+                    min={minDate}
                   />
                 </div>
-                
                 <div className="space-y-2">
                   <Label htmlFor="time" className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-primary" />
-                    Preferred Time *
+                    <Clock className="w-4 h-4 text-primary" /> Preferred Time *
                   </Label>
-                  <Select value={formData.time} onValueChange={(value) => handleInputChange("time", value)}>
+                  <Select
+                    value={formData.time}
+                    onValueChange={(v) => handleInputChange("time", v)}
+                  >
                     <SelectTrigger className="bg-background border-border">
                       <SelectValue placeholder="Select time" />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      <SelectItem value="8:00">8:00 AM</SelectItem>
-                      <SelectItem value="9:00">9:00 AM</SelectItem>
-                      <SelectItem value="10:00">10:00 AM</SelectItem>
-                      <SelectItem value="11:00">11:00 AM</SelectItem>
-                      <SelectItem value="12:00">12:00 PM</SelectItem>
-                      <SelectItem value="13:00">1:00 PM</SelectItem>
-                      <SelectItem value="14:00">2:00 PM</SelectItem>
-                      <SelectItem value="15:00">3:00 PM</SelectItem>
-                      <SelectItem value="16:00">4:00 PM</SelectItem>
+                      {[
+                        "08:00",
+                        "09:00",
+                        "10:00",
+                        "11:00",
+                        "12:00",
+                        "13:00",
+                        "14:00",
+                        "15:00",
+                        "16:00",
+                      ].map((t) => (
+                        <SelectItem key={t} value={t}>
+                          {t}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
               </div>
 
-              {/* Vehicle Information */}
+              {/* Vehicle / Notes */}
               <div className="space-y-2">
                 <Label htmlFor="vehicle">Vehicle Information</Label>
                 <Input
                   id="vehicle"
                   placeholder="e.g., 2020 BMW X5, Silver"
                   value={formData.vehicleInfo}
-                  onChange={(e) => handleInputChange("vehicleInfo", e.target.value)}
+                  onChange={(e) =>
+                    handleInputChange("vehicleInfo", e.target.value)
+                  }
                   className="bg-background border-border"
                 />
               </div>
 
-              {/* Additional Notes */}
               <div className="space-y-2">
                 <Label htmlFor="notes">Additional Notes</Label>
                 <Textarea
@@ -207,13 +285,14 @@ const Booking = () => {
                 />
               </div>
 
-              <Button 
-                type="submit" 
-                variant="hero" 
-                size="lg" 
+              <Button
+                type="submit"
+                variant="hero"
+                size="lg"
                 className="w-full text-lg py-6 h-auto"
+                disabled={loading}
               >
-                Book Appointment
+                {loading ? "Submitting..." : "Book Appointment"}
               </Button>
             </form>
           </CardContent>

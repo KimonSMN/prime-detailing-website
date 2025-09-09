@@ -161,7 +161,7 @@ const Booking = () => {
                   </Label>
                   <Input
                     id="phone"
-                    placeholder="(555) 123-4567"
+                    placeholder="(+30) 6939949788"
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     className="bg-background border-border"

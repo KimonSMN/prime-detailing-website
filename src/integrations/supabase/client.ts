@@ -13,17 +13,13 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
   },
   // IMPORTANT: keep existing headers from supabase-js (apikey, Authorization)
   global: {
-    fetch: (input: RequestInfo, init?: RequestInit) => {
-      const headers = new Headers(init?.headers as HeadersInit);
+    fetch: (input, init) => {
+      const headers = new Headers(init?.headers);
       headers.set("Cache-Control", "no-store");
       headers.set("Pragma", "no-cache");
       headers.set("Expires", "0");
-
-      return fetch(input, {
-        ...init,
-        cache: "no-store",
-        headers, // <- send the merged Headers object, not a spread
-      });
+      headers.set("x-ig-nocache", String(Date.now())); // harmless cache-buster
+      return fetch(input, { ...init, cache: "no-store", headers });
     },
   },
 });

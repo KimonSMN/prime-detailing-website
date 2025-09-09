@@ -32,10 +32,10 @@ import { supabase } from "@/integrations/supabase/client";
 /* ---------------- helpers ---------------- */
 
 // build a stable day window in UTC so every device queries the same range
-function dayRangeUTC(yyyyMmDd: string) {
-  const [y, m, d] = yyyyMmDd.split("-").map(Number);
-  const start = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
-  const end = new Date(Date.UTC(y, m - 1, d + 1, 0, 0, 0)); // next day 00:00 (exclusive)
+function dayRangeLocal(yyyyMmDd: string) {
+  // local midnight to local end-of-day
+  const start = new Date(`${yyyyMmDd}T00:00:00`);
+  const end = new Date(`${yyyyMmDd}T23:59:59.999`);
   return { start, end };
 }
 
@@ -121,7 +121,7 @@ const Booking = () => {
         return;
       }
 
-      const { start, end } = dayRangeUTC(formData.date);
+      const { start, end } = dayRangeLocal(formData.date);
 
       type BookedWindow = {
         preferred_at: string; // ISO

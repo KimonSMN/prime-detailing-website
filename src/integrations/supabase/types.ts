@@ -73,7 +73,8 @@ export type Database = {
         Row: {
           id: string;
           customer_id: string;
-          preferred_at: string;
+          preferred_at: string; // ISO
+          end_at: string | null; // <-- ADD THIS
           status: string;
           vehicle_info: string | null;
           notes: string | null;
@@ -82,7 +83,8 @@ export type Database = {
         Insert: {
           id?: string;
           customer_id: string;
-          preferred_at: string;
+          preferred_at: string; // ISO
+          end_at?: string | null; // <-- ADD THIS
           status?: string;
           vehicle_info?: string | null;
           notes?: string | null;
@@ -91,7 +93,8 @@ export type Database = {
         Update: {
           id?: string;
           customer_id?: string;
-          preferred_at?: string;
+          preferred_at?: string; // ISO
+          end_at?: string | null; // <-- ADD THIS
           status?: string;
           vehicle_info?: string | null;
           notes?: string | null;

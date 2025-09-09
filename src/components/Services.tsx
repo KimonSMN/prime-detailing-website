@@ -1,4 +1,10 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Car, Shield, Palette, Sparkles } from "lucide-react";
 
@@ -6,7 +12,8 @@ const services = [
   {
     id: "full-detail",
     title: "Full Exterior & Interior Detail",
-    description: "Professional detailing service that transforms your vehicle inside and out with comprehensive cleaning and protection.",
+    description:
+      "Professional detailing service that transforms your vehicle inside and out with comprehensive cleaning and protection.",
     price: "From $60",
     duration: "3-4 hours",
     icon: Car,
@@ -17,13 +24,14 @@ const services = [
       "Interior deep cleaning (vacuuming, carpets, seats, vents, trims)",
       "Plastic trim conditioning & UV protection",
       "Leather cleaning & conditioning",
-      "Streak-free glass cleaning (inside & out)"
-    ]
+      "Streak-free glass cleaning (inside & out)",
+    ],
   },
   {
     id: "ceramic-coating",
     title: "Ceramic Coating Package",
-    description: "Includes Full Exterior & Interior Detail plus professional-grade ceramic coating for ultimate protection.",
+    description:
+      "Includes Full Exterior & Interior Detail plus professional-grade ceramic coating for ultimate protection.",
     price: "From $80",
     duration: "4-5 hours",
     icon: Shield,
@@ -31,13 +39,14 @@ const services = [
       "Professional-grade ceramic coating applied to all painted surfaces",
       "Hydrophobic protection for easier washing and water beading",
       "Enhanced gloss and depth of paint color",
-      "Long-lasting protection against UV rays, dirt, and contaminants"
-    ]
+      "Long-lasting protection against UV rays, dirt, and contaminants",
+    ],
   },
   {
     id: "paint-correction",
     title: "Paint Correction Package",
-    description: "Complete paint restoration service with multi-stage correction, ceramic coating, and comprehensive detailing.",
+    description:
+      "Complete paint restoration service with multi-stage correction, ceramic coating, and comprehensive detailing.",
     price: "From $100",
     duration: "6-8 hours",
     icon: Palette,
@@ -47,9 +56,9 @@ const services = [
       "Multi-stage paint correction (machine polishing to restore clarity)",
       "Swirl mark, oxidation & light scratch removal",
       "Ceramic coating application for added protection and shine",
-      "Paint protection guarantee"
-    ]
-  }
+      "Paint protection guarantee",
+    ],
+  },
 ];
 
 const Services = () => {
@@ -58,20 +67,24 @@ const Services = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Our <span className="bg-gold-gradient bg-clip-text text-transparent">Services</span>
+            Our{" "}
+            <span className="bg-gold-gradient bg-clip-text text-transparent">
+              Services
+            </span>
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Professional car detailing services designed to restore and protect your vehicle's appearance
+            Professional car detailing services designed to restore and protect
+            your vehicle's appearance
           </p>
         </div>
-        
-        <div className="grid md:grid-cols-2 gap-8">
+
+        <div className="flex flex-col md:flex-row gap-8 items-stretch">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
-              <Card 
+              <Card
                 key={service.id}
-                className="bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up"
+                className="w-full md:w-1/3 flex flex-col bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up"
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
                 <CardHeader className="text-center pb-4">
@@ -85,14 +98,16 @@ const Services = () => {
                     {service.description}
                   </CardDescription>
                 </CardHeader>
-                
-                <CardContent className="space-y-6">
+
+                <CardContent className="flex flex-col gap-6 h-full">
                   <div className="flex justify-between items-center text-center">
                     <div>
                       <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
                         {service.price}
                       </p>
-                      <p className="text-sm text-muted-foreground">Starting price</p>
+                      <p className="text-sm text-muted-foreground">
+                        Starting price
+                      </p>
                     </div>
                     <div>
                       <p className="text-lg font-semibold text-foreground">
@@ -101,7 +116,7 @@ const Services = () => {
                       <p className="text-sm text-muted-foreground">Duration</p>
                     </div>
                   </div>
-                  
+
                   <div className="space-y-2">
                     <h4 className="font-semibold text-foreground flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-primary" />
@@ -109,23 +124,28 @@ const Services = () => {
                     </h4>
                     <ul className="space-y-1">
                       {service.features.map((feature, idx) => (
-                        <li key={idx} className="text-muted-foreground flex items-center gap-2">
+                        <li
+                          key={idx}
+                          className="text-muted-foreground flex items-center gap-2"
+                        >
                           <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
                           {feature}
                         </li>
                       ))}
                     </ul>
                   </div>
-                  
-                  <Button 
-                    variant="hero" 
-                    className="w-full"
+
+                  <Button
+                    variant="hero"
+                    className="w-full mt-auto"
                     onClick={() => {
-                      const bookingSection = document.getElementById('booking');
-                      const serviceSelect = document.getElementById('service-select') as HTMLSelectElement;
+                      const bookingSection = document.getElementById("booking");
+                      const serviceSelect = document.getElementById(
+                        "service-select"
+                      ) as HTMLSelectElement;
                       if (bookingSection && serviceSelect) {
                         serviceSelect.value = service.id;
-                        bookingSection.scrollIntoView({ behavior: 'smooth' });
+                        bookingSection.scrollIntoView({ behavior: "smooth" });
                       }
                     }}
                   >

@@ -444,7 +444,19 @@ const Booking = () => {
                   </Label>
                   <Select
                     value={formData.time}
-                    onValueChange={(v) => handleInputChange("time", v)}
+                    onValueChange={(v) => {
+                      if (unavailableTimes.has(v)) {
+                        // hard stop on mobile: don’t accept blocked times
+                        toast({
+                          title: "Time unavailable",
+                          description:
+                            "That slot is already booked. Please pick another.",
+                          variant: "destructive",
+                        });
+                        return; // <- do not set the value
+                      }
+                      handleInputChange("time", v);
+                    }}
                     disabled={!formData.date}
                   >
                     <SelectTrigger className="bg-background border-border">
@@ -454,11 +466,21 @@ const Booking = () => {
                         }
                       />
                     </SelectTrigger>
+
                     <SelectContent className="bg-popover border-border">
                       {TIMES.map((t) => {
                         const taken = unavailableTimes.has(t);
                         return (
-                          <SelectItem key={t} value={t} disabled={taken}>
+                          <SelectItem
+                            key={t}
+                            value={t}
+                            // still mark disabled for accessibility/desktop
+                            disabled={taken}
+                            // and visually dim on all devices
+                            className={
+                              taken ? "opacity-50 pointer-events-none" : ""
+                            }
+                          >
                             {t} {taken ? "— booked" : ""}
                           </SelectItem>
                         );

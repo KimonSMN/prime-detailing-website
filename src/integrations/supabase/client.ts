@@ -1,3 +1,4 @@
+// src/integrations/supabase/client.ts
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "./types";
 
@@ -10,18 +11,19 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     persistSession: true,
     autoRefreshToken: true,
   },
-  // 👇 Kill caching in IG/TikTok/Facebook in-app browsers
+  // IMPORTANT: keep existing headers from supabase-js (apikey, Authorization)
   global: {
-    fetch: (url, options) =>
-      fetch(url, {
-        ...options,
+    fetch: (input: RequestInfo, init?: RequestInit) => {
+      const headers = new Headers(init?.headers as HeadersInit);
+      headers.set("Cache-Control", "no-store");
+      headers.set("Pragma", "no-cache");
+      headers.set("Expires", "0");
+
+      return fetch(input, {
+        ...init,
         cache: "no-store",
-        headers: {
-          ...(options?.headers || {}),
-          "Cache-Control": "no-store",
-          Pragma: "no-cache",
-          Expires: "0",
-        },
-      }),
+        headers, // <- send the merged Headers object, not a spread
+      });
+    },
   },
 });

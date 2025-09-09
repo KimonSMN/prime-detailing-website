@@ -18,7 +18,6 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
       headers.set("Cache-Control", "no-store");
       headers.set("Pragma", "no-cache");
       headers.set("Expires", "0");
-      headers.set("x-ig-nocache", String(Date.now())); // harmless cache-buster
       return fetch(input, { ...init, cache: "no-store", headers });
     },
   },

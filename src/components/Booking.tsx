@@ -29,15 +29,22 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
-/* ---------------- helpers ---------------- */
+/* ---------------- helpers (Safari-safe local time) ---------------- */
 
-// build a stable day window in UTC so every device queries the same range
-function dayRangeLocal(yyyyMmDd: string) {
-  // local midnight to local end-of-day
-  const start = new Date(`${yyyyMmDd}T00:00:00`);
-  const end = new Date(`${yyyyMmDd}T23:59:59.999`);
+function localDayRange(yyyyMmDd: string) {
+  const [y, m, d] = yyyyMmDd.split("-").map(Number);
+  const start = new Date(y, m - 1, d, 0, 0, 0, 0); // local 00:00
+  const end = new Date(y, m - 1, d + 1, 0, 0, 0, 0); // next local 00:00 (exclusive)
   return { start, end };
 }
+
+function localDateTime(yyyyMmDd: string, hhmm: string) {
+  const [y, m, d] = yyyyMmDd.split("-").map(Number);
+  const [hh, mm] = hhmm.split(":").map(Number);
+  return new Date(y, m - 1, d, hh, mm, 0, 0); // local hh:mm
+}
+
+/* ---------------- types & constants ---------------- */
 
 type ServiceRow = {
   id: string;
@@ -63,7 +70,6 @@ const Booking = () => {
   const [services, setServices] = useState<ServiceRow[]>([]);
   const [isCalOpen, setIsCalOpen] = useState(false);
 
-  // form state
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -75,22 +81,19 @@ const Booking = () => {
     notes: "",
   });
 
-  // calendar state
   const [dateObj, setDateObj] = useState<Date | undefined>(undefined);
-
-  // taken times for the selected date
   const [unavailableTimes, setUnavailableTimes] = useState<Set<string>>(
     new Set()
   );
 
-  // today @ 00:00 local for datepicker min
+  // local today for disabling past days in the calendar
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
 
-  // Load services
+  /* ---------------- load services ---------------- */
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
@@ -113,7 +116,7 @@ const Booking = () => {
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
-  // Fetch & block windows using service.min_minutes (sum across booked services), TZ-safe
+  /* ---------------- availability (blocks by min_minutes) ---------------- */
   useEffect(() => {
     (async () => {
       if (!formData.date) {
@@ -121,7 +124,7 @@ const Booking = () => {
         return;
       }
 
-      const { start, end } = dayRangeLocal(formData.date);
+      const { start, end } = localDayRange(formData.date);
 
       type BookedWindow = {
         preferred_at: string; // ISO
@@ -160,16 +163,15 @@ const Booking = () => {
 
       const blocked = new Set<string>();
 
-      // Block each hour touched by [s, e)
+      // Block each hour touched by [start, start+minutes)
       function blockRange(startISO: string, minutes: number) {
         const s = new Date(startISO);
         const e = new Date(s.getTime() + minutes * 60000);
 
-        // start at the hour of s
-        const t = new Date(s);
+        const t = new Date(s); // iterate from the hour of s
         t.setMinutes(0, 0, 0);
-
         blocked.add(format(t, "HH:mm"));
+
         while (true) {
           t.setHours(t.getHours() + 1);
           if (t < e) blocked.add(format(t, "HH:mm"));
@@ -191,7 +193,7 @@ const Booking = () => {
 
       setUnavailableTimes(blocked);
 
-      // If user picked a time that is now blocked, clear it
+      // Clear chosen time if it became blocked
       if (formData.time && blocked.has(formData.time)) {
         setFormData((p) => ({ ...p, time: "" }));
       }
@@ -199,6 +201,7 @@ const Booking = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.date]);
 
+  /* ---------------- submit ---------------- */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const { name, email, phone, serviceId, date, time } = formData;
@@ -212,9 +215,8 @@ const Booking = () => {
       return;
     }
 
-    const preferred_at = new Date(`${date}T${time}:00`);
+    const preferred_at = localDateTime(date, time);
 
-    // no Sundays
     if (preferred_at.getDay() === 0) {
       toast({
         title: "Closed on Sundays",
@@ -223,7 +225,6 @@ const Booking = () => {
       });
       return;
     }
-    // future only
     if (preferred_at < new Date()) {
       toast({
         title: "Invalid date/time",
@@ -232,7 +233,6 @@ const Booking = () => {
       });
       return;
     }
-    // client-side guard (server still enforces)
     if (unavailableTimes.has(time)) {
       toast({
         title: "Time already booked",
@@ -244,7 +244,7 @@ const Booking = () => {
 
     setLoading(true);
     try {
-      const { data: bookingId, error } = await supabase.rpc("create_booking", {
+      const { error } = await supabase.rpc("create_booking", {
         p_full_name: name,
         p_email: email,
         p_phone: phone,
@@ -284,6 +284,7 @@ const Booking = () => {
     }
   };
 
+  /* ---------------- UI ---------------- */
   return (
     <section id="booking" className="py-20 px-4 bg-secondary/20">
       <div className="max-w-4xl mx-auto">
@@ -443,7 +444,7 @@ const Booking = () => {
                             "That slot is already booked. Please pick another.",
                           variant: "destructive",
                         });
-                        return; // hard-stop on mobile
+                        return; // hard stop on mobile webviews
                       }
                       handleInputChange("time", v);
                     }}
@@ -456,7 +457,6 @@ const Booking = () => {
                         }
                       />
                     </SelectTrigger>
-
                     <SelectContent className="bg-popover border-border">
                       {TIMES.map((t) => {
                         const taken = unavailableTimes.has(t);
@@ -464,7 +464,7 @@ const Booking = () => {
                           <SelectItem
                             key={t}
                             value={t}
-                            disabled={taken} // accessibility on desktop
+                            disabled={taken}
                             className={
                               taken ? "opacity-50 pointer-events-none" : ""
                             }

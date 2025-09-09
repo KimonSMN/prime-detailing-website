@@ -29,6 +29,16 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+/* ---------------- helpers ---------------- */
+
+// build a stable day window in UTC so every device queries the same range
+function dayRangeUTC(yyyyMmDd: string) {
+  const [y, m, d] = yyyyMmDd.split("-").map(Number);
+  const start = new Date(Date.UTC(y, m - 1, d, 0, 0, 0));
+  const end = new Date(Date.UTC(y, m - 1, d + 1, 0, 0, 0)); // next day 00:00 (exclusive)
+  return { start, end };
+}
+
 type ServiceRow = {
   id: string;
   name: string;
@@ -73,7 +83,7 @@ const Booking = () => {
     new Set()
   );
 
-  // today @ 00:00 for comparisons
+  // today @ 00:00 local for datepicker min
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -103,24 +113,19 @@ const Booking = () => {
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
-  // Block windows using service.min_minutes (sum across booked services)
+  // Fetch & block windows using service.min_minutes (sum across booked services), TZ-safe
   useEffect(() => {
     (async () => {
       if (!formData.date) {
         setUnavailableTimes(new Set());
         return;
       }
-      const start = new Date(`${formData.date}T00:00:00`);
-      const end = new Date(`${formData.date}T23:59:59.999`);
+
+      const { start, end } = dayRangeUTC(formData.date);
 
       type BookedWindow = {
         preferred_at: string; // ISO
-        status:
-          | "pending"
-          | "confirmed"
-          | "in_progress"
-          | "completed"
-          | "cancelled";
+        status: "pending" | "confirmed" | "completed" | "cancelled";
         booking_service: {
           quantity: number | null;
           service: { min_minutes: number | null } | null;
@@ -131,20 +136,25 @@ const Booking = () => {
         .from("booking")
         .select(
           `
-        preferred_at, status,
-        booking_service (
-          quantity,
-          service:service_id ( min_minutes )
-        )
-      `
+          preferred_at, status,
+          booking_service (
+            quantity,
+            service:service_id ( min_minutes )
+          )
+        `
         )
         .gte("preferred_at", start.toISOString())
         .lt("preferred_at", end.toISOString())
         .in("status", ["pending", "confirmed"])
-        .returns<BookedWindow[]>(); // <-- helps TS even if local types are behind
+        .returns<BookedWindow[]>();
 
       if (error) {
-        console.error(error);
+        toast({
+          title: "Couldn’t load availability",
+          description: error.message,
+          variant: "destructive",
+        });
+        setUnavailableTimes(new Set());
         return;
       }
 
@@ -153,16 +163,13 @@ const Booking = () => {
       // Block each hour touched by [s, e)
       function blockRange(startISO: string, minutes: number) {
         const s = new Date(startISO);
-        const e = new Date(s);
-        e.setMinutes(e.getMinutes() + minutes);
+        const e = new Date(s.getTime() + minutes * 60000);
 
-        // snap to the hour of the start and iterate by hours while < end
+        // start at the hour of s
         const t = new Date(s);
         t.setMinutes(0, 0, 0);
 
-        // Ensure the starting hour is blocked (handles non :00 starts too)
         blocked.add(format(t, "HH:mm"));
-
         while (true) {
           t.setHours(t.getHours() + 1);
           if (t < e) blocked.add(format(t, "HH:mm"));
@@ -171,7 +178,6 @@ const Booking = () => {
       }
 
       for (const b of data ?? []) {
-        // Sum min_minutes * quantity across services; fallback to 180 if somehow zero/NULL
         const totalMin = Math.max(
           1,
           (b.booking_service ?? []).reduce((sum, bs) => {
@@ -226,25 +232,10 @@ const Booking = () => {
       });
       return;
     }
-    // client-side conflict check (race-safe but keep DB constraint if possible)
+    // client-side guard (server still enforces)
     if (unavailableTimes.has(time)) {
       toast({
         title: "Time already booked",
-        description: "Please pick another time slot.",
-        variant: "destructive",
-      });
-      return;
-    }
-    const { data: conflict, error: conflictErr } = await supabase
-      .from("booking")
-      .select("id")
-      .eq("preferred_at", preferred_at.toISOString())
-      .in("status", ["pending", "confirmed"])
-      .maybeSingle();
-    if (conflictErr) console.warn(conflictErr);
-    if (conflict) {
-      toast({
-        title: "Time just got booked",
         description: "Please pick another time slot.",
         variant: "destructive",
       });
@@ -446,14 +437,13 @@ const Booking = () => {
                     value={formData.time}
                     onValueChange={(v) => {
                       if (unavailableTimes.has(v)) {
-                        // hard stop on mobile: don’t accept blocked times
                         toast({
                           title: "Time unavailable",
                           description:
                             "That slot is already booked. Please pick another.",
                           variant: "destructive",
                         });
-                        return; // <- do not set the value
+                        return; // hard-stop on mobile
                       }
                       handleInputChange("time", v);
                     }}
@@ -474,9 +464,7 @@ const Booking = () => {
                           <SelectItem
                             key={t}
                             value={t}
-                            // still mark disabled for accessibility/desktop
-                            disabled={taken}
-                            // and visually dim on all devices
+                            disabled={taken} // accessibility on desktop
                             className={
                               taken ? "opacity-50 pointer-events-none" : ""
                             }

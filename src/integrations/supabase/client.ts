@@ -10,15 +10,33 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true,
   },
-  // IMPORTANT: keep existing headers from supabase-js (apikey, Authorization)
   global: {
-    fetch: (input, init) => {
-      const headers = new Headers(init?.headers);
-      headers.set("Cache-Control", "no-store");
-      headers.set("Pragma", "no-cache");
-      headers.set("Expires", "0");
-      return fetch(input, { ...init, cache: "no-store", headers });
+    // IMPORTANT: truly keep existing headers from BOTH input + init
+    fetch: async (input, init) => {
+      // Normalize to a Request so we don't lose body/method/etc.
+      const baseReq =
+        input instanceof Request ? input : new Request(input, init);
+
+      // Merge headers from the base Request and init.headers (if present)
+      const merged = new Headers(baseReq.headers);
+      if (init?.headers) {
+        new Headers(init.headers).forEach((v, k) => merged.set(k, v));
+      }
+
+      // Add your no-cache headers WITHOUT nuking auth/apikey
+      merged.set("Cache-Control", "no-store");
+      merged.set("Pragma", "no-cache");
+      merged.set("Expires", "0");
+
+      // Rebuild the Request with merged headers
+      const finalReq = new Request(baseReq, {
+        headers: merged,
+        cache: "no-store",
+      });
+
+      return fetch(finalReq);
     },
   },
 });

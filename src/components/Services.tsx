@@ -78,13 +78,13 @@ const Services = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="flex flex-wrap justify-center gap-8">
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
               <Card
                 key={service.id}
-                className="bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up"
+                className="w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up"
                 style={{ animationDelay: `${index * 0.2}s` }}
               >
                 <CardHeader className="text-center pb-4">

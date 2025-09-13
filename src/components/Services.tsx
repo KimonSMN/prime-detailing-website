@@ -14,7 +14,11 @@ const services = [
     title: "Full Exterior & Interior Detail",
     description:
       "Professional detailing service that transforms your vehicle inside and out with comprehensive cleaning and protection.",
+<<<<<<< HEAD
     price: "From $60",
+=======
+    price: "From 40€",
+>>>>>>> c074ebe (changed prices)
     duration: "3-4 hours",
     icon: Car,
     features: [
@@ -32,7 +36,11 @@ const services = [
     title: "Ceramic Coating Package",
     description:
       "Includes Full Exterior & Interior Detail plus professional-grade ceramic coating for ultimate protection.",
+<<<<<<< HEAD
     price: "From $80",
+=======
+    price: "From 60€",
+>>>>>>> c074ebe (changed prices)
     duration: "4-5 hours",
     icon: Shield,
     features: [
@@ -47,7 +55,11 @@ const services = [
     title: "Paint Correction Package",
     description:
       "Complete paint restoration service with multi-stage correction, ceramic coating, and comprehensive detailing.",
+<<<<<<< HEAD
     price: "From $100",
+=======
+    price: "From 100€",
+>>>>>>> c074ebe (changed prices)
     duration: "6-8 hours",
     icon: Palette,
     features: [
@@ -78,7 +90,11 @@ const Services = () => {
           </p>
         </div>
 
+<<<<<<< HEAD
         <div className="flex flex-col md:flex-row gap-8 items-stretch">
+=======
+        <div className="grid md:grid-cols-2 gap-8">
+>>>>>>> c074ebe (changed prices)
           {services.map((service, index) => {
             const IconComponent = service.icon;
             return (
@@ -99,7 +115,11 @@ const Services = () => {
                   </CardDescription>
                 </CardHeader>
 
+<<<<<<< HEAD
                 <CardContent className="flex flex-col gap-6 h-full">
+=======
+                <CardContent className="space-y-6">
+>>>>>>> c074ebe (changed prices)
                   <div className="flex justify-between items-center text-center">
                     <div>
                       <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
@@ -137,7 +157,11 @@ const Services = () => {
 
                   <Button
                     variant="hero"
+<<<<<<< HEAD
                     className="w-full mt-auto"
+=======
+                    className="w-full"
+>>>>>>> c074ebe (changed prices)
                     onClick={() => {
                       const bookingSection = document.getElementById("booking");
                       const serviceSelect = document.getElementById(

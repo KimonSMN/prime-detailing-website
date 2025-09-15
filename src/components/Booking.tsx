@@ -356,7 +356,7 @@ const Booking = () => {
                     {services.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
                         {s.name}
-                        {s.base_price ? ` — from €${s.base_price}` : ""}
+                        {s.base_price ? ` — from ${s.base_price}€` : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>

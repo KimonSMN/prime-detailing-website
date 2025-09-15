@@ -52,6 +52,12 @@ type ServiceRow = {
   base_price: string | number | null;
 };
 
+type AvailabilityRow = {
+  preferred_at: string; // ISO
+  status: "pending" | "confirmed";
+  total_minutes: number | null; // aggregated duration from the view
+};
+
 const TIMES = [
   "08:00",
   "09:00",
@@ -101,6 +107,7 @@ const Booking = () => {
         .select("id,name,base_price")
         .eq("active", true)
         .order("name");
+
       if (error) {
         toast({
           title: "Couldn’t load services",
@@ -116,7 +123,7 @@ const Booking = () => {
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
-  /* ---------------- availability (blocks by min_minutes) ---------------- */
+  /* ---------------- availability (reads from booking_availability view) ---------------- */
   useEffect(() => {
     (async () => {
       if (!formData.date) {
@@ -126,32 +133,15 @@ const Booking = () => {
 
       const { start, end } = localDayRange(formData.date);
 
-      type BookedWindow = {
-        preferred_at: string; // ISO
-        status: "pending" | "confirmed" | "completed" | "cancelled";
-        booking_service: {
-          quantity: number | null;
-          service: { min_minutes: number | null } | null;
-        }[];
-      };
-
       const { data, error } = await supabase
-        .from("booking")
-        .select(
-          `
-          preferred_at, status,
-          booking_service (
-            quantity,
-            service:service_id ( min_minutes )
-          )
-        `
-        )
+        .from("booking_availability")
+        .select("preferred_at, status, total_minutes")
         .gte("preferred_at", start.toISOString())
         .lt("preferred_at", end.toISOString())
-        .in("status", ["pending", "confirmed"])
-        .returns<BookedWindow[]>();
+        .returns<AvailabilityRow[]>();
 
       if (error) {
+        console.error("availability error:", error);
         toast({
           title: "Couldn’t load availability",
           description: error.message,
@@ -180,15 +170,8 @@ const Booking = () => {
       }
 
       for (const b of data ?? []) {
-        const totalMin = Math.max(
-          1,
-          (b.booking_service ?? []).reduce((sum, bs) => {
-            const qty = Number(bs?.quantity ?? 1);
-            const mins = Number(bs?.service?.min_minutes ?? 0);
-            return sum + qty * mins;
-          }, 0)
-        );
-        blockRange(b.preferred_at, totalMin || 180);
+        const mins = Math.max(1, Number(b.total_minutes ?? 0)) || 180;
+        blockRange(b.preferred_at, mins);
       }
 
       setUnavailableTimes(blocked);

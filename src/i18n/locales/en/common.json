@@ -1,0 +1,110 @@
+{
+  "hero.title.prime": "Prime",
+  "hero.title.detailing": "Detailing",
+  "hero.tagline": "Transform your vehicle with our premium detailing services. Professional care that makes your car shine like new.",
+  "hero.btn.book": "Book Appointment",
+  "hero.btn.services": "View Services",
+
+  "booking.titlePrefix": "Book Your",
+  "booking.titleAccent": "Appointment",
+  "booking.subtitle": "Schedule your professional car detailing service today",
+  "booking.card.title": "Schedule Your Service",
+
+  "booking.fullName": "Full Name",
+  "booking.phone": "Phone Number",
+  "booking.email": "Email Address",
+  "booking.selectService": "Select Service",
+  "booking.preferredDate": "Preferred Date",
+  "booking.preferredTime": "Preferred Time",
+  "booking.vehicleInfo": "Vehicle Information",
+  "booking.notes": "Additional Notes",
+
+  "booking.ph.fullName": "Enter your full name",
+  "booking.ph.phone": "(+30) 6939949788",
+  "booking.ph.email": "your.email@example.com",
+  "booking.ph.chooseService": "Choose your service",
+  "booking.ph.pickDate": "Pick a date",
+  "booking.ph.selectTime": "Select time",
+  "booking.ph.pickDateFirst": "Pick a date first",
+  "booking.ph.vehicle": "e.g., 2015 Toyota Yaris, White",
+  "booking.ph.notes": "Any special requests or concerns...",
+
+  "booking.fromPrice": "from {{price}}€",
+  "booking.booked": "booked",
+
+  "booking.toast.missing.title": "Missing Information",
+  "booking.toast.missing.desc": "Please fill in all required fields.",
+  "booking.toast.sunday.title": "Closed on Sundays",
+  "booking.toast.sunday.desc": "Please choose a different date.",
+  "booking.toast.past.title": "Invalid date/time",
+  "booking.toast.past.desc": "Please choose a future time.",
+  "booking.toast.unavailable.title": "Time unavailable",
+  "booking.toast.unavailable.desc": "That slot is already booked. Please pick another.",
+  "booking.toast.ok.title": "Appointment booked!",
+  "booking.toast.ok.desc": "We’ll contact you within 24 hours to confirm.",
+  "booking.toast.fail.title": "Booking failed",
+  "booking.toast.fail.desc": "Please try again.",
+
+  "booking.btn.submitting": "Submitting...",
+  "booking.btn.submit": "Book Appointment",
+
+  "footer.title.prime": "Prime",
+  "footer.title.detailing": "Detailing",
+  "footer.tagline": "Professional car detailing services that restore and protect your vehicle's appearance with premium care and attention to detail.",
+  "footer.contact": "Contact Us",
+  "footer.phoneAria": "Phone number",
+  "footer.emailAria": "Email address",
+  "footer.phone": "(+30) 6939949788",
+  "footer.email": "kimonsmirlianos@gmail.com",
+  "footer.address": "Kleious 39, Cholargos 15561",
+  "footer.copyright": "© {{year}} Prime Detailing. All rights reserved.",
+
+  "services.title.prefix": "Our",
+  "services.title.accent": "Services",
+  "services.subtitle": "Professional car detailing services designed to restore and protect your vehicle's appearance",
+  "services.fromPrice": "From {{price}}",
+  "services.durationHours": "{{hours}} hours",
+  "services.labels.startingPrice": "Starting price",
+  "services.labels.duration": "Duration",
+  "services.whatsIncluded": "What's Included:",
+  "services.bookThis": "Book This Service",
+  "services.items": {
+    "fullDetail": {
+      "title": "Full Exterior & Interior Detail",
+      "description": "Professional detailing service that transforms your vehicle inside and out with comprehensive cleaning and protection.",
+      "features": [
+        "Contactless pre-wash & hand wash",
+        "Paint surface decontamination (removes tar, sap, and bonded contaminants)",
+        "Wheel & tire detailing (deep clean + dressing)",
+        "Interior deep cleaning (vacuuming, carpets, seats, vents, trims)",
+        "Plastic trim conditioning & UV protection",
+        "Leather cleaning & conditioning",
+        "Streak-free glass cleaning (inside & out)"
+      ]
+    },
+    "ceramicCoating": {
+      "title": "Ceramic Coating Package",
+      "description": "Includes Full Exterior & Interior Detail plus professional-grade ceramic coating for ultimate protection.",
+      "features": [
+        "Complete Full Exterior & Interior Detail",
+        "Professional-grade ceramic coating applied to all painted surfaces",
+        "Hydrophobic protection for easier washing and water beading",
+        "Enhanced gloss and depth of paint color",
+        "Long-lasting protection against UV rays, dirt, and contaminants"
+      ]
+    },
+    "paintCorrection": {
+      "title": "Paint Correction Package",
+      "description": "Complete paint restoration service with multi-stage correction, ceramic coating, and comprehensive detailing.",
+      "features": [
+        "Complete Full Exterior & Interior Detail",
+        "Professional-grade ceramic coating applied to all painted surfaces",
+        "Paint defect analysis & inspection",
+        "Multi-stage paint correction (machine polishing to restore clarity)",
+        "Swirl mark, oxidation & light scratch removal",
+        "Ceramic coating application for added protection and shine",
+        "Paint protection guarantee"
+      ]
+    }
+  }
+}

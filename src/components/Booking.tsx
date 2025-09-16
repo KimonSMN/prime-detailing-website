@@ -28,6 +28,7 @@ import {
   Car,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 /* ---------------- helpers (Safari-safe local time) ---------------- */
 
@@ -71,6 +72,7 @@ const TIMES = [
 ];
 
 const Booking = () => {
+  const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [services, setServices] = useState<ServiceRow[]>([]);
@@ -92,6 +94,17 @@ const Booking = () => {
     new Set()
   );
 
+  // localized date label for the button
+  const fmtDate = (d?: Date) =>
+    d
+      ? new Intl.DateTimeFormat(i18n.language, {
+          weekday: "short",
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }).format(d)
+      : "";
+
   // local today for disabling past days in the calendar
   const today = useMemo(() => {
     const d = new Date();
@@ -110,7 +123,7 @@ const Booking = () => {
 
       if (error) {
         toast({
-          title: "Couldn’t load services",
+          title: t("booking.toast.servicesFailTitle", "Couldn’t load services"),
           description: error.message,
           variant: "destructive",
         });
@@ -118,7 +131,7 @@ const Booking = () => {
         setServices(data ?? []);
       }
     })();
-  }, [toast]);
+  }, [toast, t]);
 
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
@@ -143,7 +156,10 @@ const Booking = () => {
       if (error) {
         console.error("availability error:", error);
         toast({
-          title: "Couldn’t load availability",
+          title: t(
+            "booking.toast.availabilityFailTitle",
+            "Couldn’t load availability"
+          ),
           description: error.message,
           variant: "destructive",
         });
@@ -158,13 +174,13 @@ const Booking = () => {
         const s = new Date(startISO);
         const e = new Date(s.getTime() + minutes * 60000);
 
-        const t = new Date(s); // iterate from the hour of s
-        t.setMinutes(0, 0, 0);
-        blocked.add(format(t, "HH:mm"));
+        const iter = new Date(s);
+        iter.setMinutes(0, 0, 0);
+        blocked.add(format(iter, "HH:mm"));
 
         while (true) {
-          t.setHours(t.getHours() + 1);
-          if (t < e) blocked.add(format(t, "HH:mm"));
+          iter.setHours(iter.getHours() + 1);
+          if (iter < e) blocked.add(format(iter, "HH:mm"));
           else break;
         }
       }
@@ -191,8 +207,8 @@ const Booking = () => {
 
     if (!name || !email || !phone || !serviceId || !date || !time) {
       toast({
-        title: "Missing Information",
-        description: "Please fill in all required fields.",
+        title: t("booking.toast.missing.title"),
+        description: t("booking.toast.missing.desc"),
         variant: "destructive",
       });
       return;
@@ -202,24 +218,24 @@ const Booking = () => {
 
     if (preferred_at.getDay() === 0) {
       toast({
-        title: "Closed on Sundays",
-        description: "Please choose a different date.",
+        title: t("booking.toast.sunday.title"),
+        description: t("booking.toast.sunday.desc"),
         variant: "destructive",
       });
       return;
     }
     if (preferred_at < new Date()) {
       toast({
-        title: "Invalid date/time",
-        description: "Please choose a future time.",
+        title: t("booking.toast.past.title"),
+        description: t("booking.toast.past.desc"),
         variant: "destructive",
       });
       return;
     }
     if (unavailableTimes.has(time)) {
       toast({
-        title: "Time already booked",
-        description: "Please pick another time slot.",
+        title: t("booking.toast.unavailable.title"),
+        description: t("booking.toast.unavailable.desc"),
         variant: "destructive",
       });
       return;
@@ -239,8 +255,8 @@ const Booking = () => {
       if (error) throw error;
 
       toast({
-        title: "Appointment booked!",
-        description: "We’ll contact you within 24 hours to confirm.",
+        title: t("booking.toast.ok.title"),
+        description: t("booking.toast.ok.desc"),
       });
 
       setFormData({
@@ -257,8 +273,8 @@ const Booking = () => {
       setUnavailableTimes(new Set());
     } catch (err: any) {
       toast({
-        title: "Booking failed",
-        description: err?.message ?? "Please try again.",
+        title: t("booking.toast.fail.title"),
+        description: err?.message ?? t("booking.toast.fail.desc"),
         variant: "destructive",
       });
       console.error(err);
@@ -273,20 +289,20 @@ const Booking = () => {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            Book Your{" "}
+            {t("booking.titlePrefix")}{" "}
             <span className="bg-gold-gradient bg-clip-text text-transparent">
-              Appointment
+              {t("booking.titleAccent")}
             </span>
           </h2>
           <p className="text-xl text-muted-foreground">
-            Schedule your professional car detailing service today
+            {t("booking.subtitle")}
           </p>
         </div>
 
         <Card className="bg-card border-border shadow-elegant animate-slide-up">
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold text-foreground">
-              Schedule Your Service
+              {t("booking.card.title")}
             </CardTitle>
           </CardHeader>
 
@@ -296,11 +312,12 @@ const Booking = () => {
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-primary" /> Full Name *
+                    <User className="w-4 h-4 text-primary" />{" "}
+                    {t("booking.fullName")} *
                   </Label>
                   <Input
                     id="name"
-                    placeholder="Enter your full name"
+                    placeholder={t("booking.ph.fullName")}
                     value={formData.name}
                     onChange={(e) => handleInputChange("name", e.target.value)}
                     className="bg-background border-border"
@@ -308,11 +325,12 @@ const Booking = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-primary" /> Phone Number *
+                    <Phone className="w-4 h-4 text-primary" />{" "}
+                    {t("booking.phone")} *
                   </Label>
                   <Input
                     id="phone"
-                    placeholder="(+30) 6939949788"
+                    placeholder={t("booking.ph.phone")}
                     value={formData.phone}
                     onChange={(e) => handleInputChange("phone", e.target.value)}
                     className="bg-background border-border"
@@ -322,12 +340,13 @@ const Booking = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-primary" /> Email Address *
+                  <Mail className="w-4 h-4 text-primary" /> {t("booking.email")}{" "}
+                  *
                 </Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your.email@example.com"
+                  placeholder={t("booking.ph.email")}
                   value={formData.email}
                   onChange={(e) => handleInputChange("email", e.target.value)}
                   className="bg-background border-border"
@@ -340,7 +359,8 @@ const Booking = () => {
                   htmlFor="service-select"
                   className="flex items-center gap-2"
                 >
-                  <Car className="w-4 h-4 text-primary" /> Select Service *
+                  <Car className="w-4 h-4 text-primary" />{" "}
+                  {t("booking.selectService")} *
                 </Label>
                 <Select
                   value={formData.serviceId}
@@ -350,13 +370,17 @@ const Booking = () => {
                     id="service-select"
                     className="bg-background border-border"
                   >
-                    <SelectValue placeholder="Choose your service" />
+                    <SelectValue placeholder={t("booking.ph.chooseService")} />
                   </SelectTrigger>
                   <SelectContent className="bg-popover border-border">
                     {services.map((s) => (
                       <SelectItem key={s.id} value={s.id}>
                         {s.name}
-                        {s.base_price ? ` — from ${s.base_price}€` : ""}
+                        {s.base_price
+                          ? ` — ${t("booking.fromPrice", {
+                              price: s.base_price,
+                            })}`
+                          : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -368,8 +392,8 @@ const Booking = () => {
                 {/* Date */}
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
-                    <CalendarIcon className="w-4 h-4 text-primary" /> Preferred
-                    Date *
+                    <CalendarIcon className="w-4 h-4 text-primary" />{" "}
+                    {t("booking.preferredDate")} *
                   </Label>
                   <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
                     <PopoverTrigger asChild>
@@ -380,9 +404,9 @@ const Booking = () => {
                       >
                         <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
                         {dateObj ? (
-                          format(dateObj, "EEE, dd MMM yyyy")
+                          fmtDate(dateObj)
                         ) : (
-                          <span>Pick a date</span>
+                          <span>{t("booking.ph.pickDate")}</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -415,16 +439,16 @@ const Booking = () => {
                 {/* Time */}
                 <div className="space-y-2">
                   <Label htmlFor="time" className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-primary" /> Preferred Time *
+                    <Clock className="w-4 h-4 text-primary" />{" "}
+                    {t("booking.preferredTime")} *
                   </Label>
                   <Select
                     value={formData.time}
                     onValueChange={(v) => {
                       if (unavailableTimes.has(v)) {
                         toast({
-                          title: "Time unavailable",
-                          description:
-                            "That slot is already booked. Please pick another.",
+                          title: t("booking.toast.unavailable.title"),
+                          description: t("booking.toast.unavailable.desc"),
                           variant: "destructive",
                         });
                         return; // hard stop on mobile webviews
@@ -436,23 +460,25 @@ const Booking = () => {
                     <SelectTrigger className="bg-background border-border">
                       <SelectValue
                         placeholder={
-                          formData.date ? "Select time" : "Pick a date first"
+                          formData.date
+                            ? t("booking.ph.selectTime")
+                            : t("booking.ph.pickDateFirst")
                         }
                       />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      {TIMES.map((t) => {
-                        const taken = unavailableTimes.has(t);
+                      {TIMES.map((tm) => {
+                        const taken = unavailableTimes.has(tm);
                         return (
                           <SelectItem
-                            key={t}
-                            value={t}
+                            key={tm}
+                            value={tm}
                             disabled={taken}
                             className={
                               taken ? "opacity-50 pointer-events-none" : ""
                             }
                           >
-                            {t} {taken ? "— booked" : ""}
+                            {tm} {taken ? `— ${t("booking.booked")}` : ""}
                           </SelectItem>
                         );
                       })}
@@ -463,10 +489,10 @@ const Booking = () => {
 
               {/* Vehicle / Notes */}
               <div className="space-y-2">
-                <Label htmlFor="vehicle">Vehicle Information</Label>
+                <Label htmlFor="vehicle">{t("booking.vehicleInfo")}</Label>
                 <Input
                   id="vehicle"
-                  placeholder="e.g., 2015 Toyota Yaris, White"
+                  placeholder={t("booking.ph.vehicle")}
                   value={formData.vehicleInfo}
                   onChange={(e) =>
                     handleInputChange("vehicleInfo", e.target.value)
@@ -476,10 +502,10 @@ const Booking = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="notes">Additional Notes</Label>
+                <Label htmlFor="notes">{t("booking.notes")}</Label>
                 <Textarea
                   id="notes"
-                  placeholder="Any special requests or concerns..."
+                  placeholder={t("booking.ph.notes")}
                   value={formData.notes}
                   onChange={(e) => handleInputChange("notes", e.target.value)}
                   className="bg-background border-border min-h-[100px]"
@@ -493,7 +519,9 @@ const Booking = () => {
                 className="w-full text-lg py-6 h-auto"
                 disabled={loading}
               >
-                {loading ? "Submitting..." : "Book Appointment"}
+                {loading
+                  ? t("booking.btn.submitting")
+                  : t("booking.btn.submit")}
               </Button>
             </form>
           </CardContent>

@@ -1,0 +1,110 @@
+{
+  "hero.title.prime": "Prime",
+  "hero.title.detailing": "Detailing",
+  "hero.tagline": "Μεταμορφώστε το όχημά σας με τις premium υπηρεσίες detailing μας. Επαγγελματική φροντίδα που κάνει το αυτοκίνητό σας να λάμπει σαν καινούριο.",
+  "hero.btn.book": "Κλείστε Ραντεβού",
+  "hero.btn.services": "Δείτε Υπηρεσίες",
+
+  "booking.titlePrefix": "Κλείστε",
+  "booking.titleAccent": "Ραντεβού",
+  "booking.subtitle": "Κλείστε σήμερα το επαγγελματικό σας car detailing",
+  "booking.card.title": "Κλείστε Υπηρεσία",
+
+  "booking.fullName": "Ονοματεπώνυμο",
+  "booking.phone": "Τηλέφωνο",
+  "booking.email": "Email",
+  "booking.selectService": "Επιλέξτε Υπηρεσία",
+  "booking.preferredDate": "Ημερομηνία",
+  "booking.preferredTime": "Ώρα",
+  "booking.vehicleInfo": "Πληροφορίες Οχήματος",
+  "booking.notes": "Σημειώσεις",
+
+  "booking.ph.fullName": "Πληκτρολογήστε το ονοματεπώνυμο",
+  "booking.ph.phone": "(+30) 6939949788",
+  "booking.ph.email": "your.email@example.com",
+  "booking.ph.chooseService": "Επιλέξτε υπηρεσία",
+  "booking.ph.pickDate": "Επιλέξτε ημερομηνία",
+  "booking.ph.selectTime": "Επιλέξτε ώρα",
+  "booking.ph.pickDateFirst": "Πρώτα επιλέξτε ημερομηνία",
+  "booking.ph.vehicle": "π.χ. 2015 Toyota Yaris, Λευκό",
+  "booking.ph.notes": "Ειδικά αιτήματα ή παρατηρήσεις...",
+
+  "booking.fromPrice": "από {{price}}€",
+  "booking.booked": "κλεισμένο",
+
+  "booking.toast.missing.title": "Ελλιπή στοιχεία",
+  "booking.toast.missing.desc": "Συμπληρώστε όλα τα υποχρεωτικά πεδία.",
+  "booking.toast.sunday.title": "Κλειστά τις Κυριακές",
+  "booking.toast.sunday.desc": "Επιλέξτε άλλη ημερομηνία.",
+  "booking.toast.past.title": "Μη έγκυρη ημερομηνία/ώρα",
+  "booking.toast.past.desc": "Επιλέξτε μελλοντική ώρα.",
+  "booking.toast.unavailable.title": "Μη διαθέσιμη ώρα",
+  "booking.toast.unavailable.desc": "Η ώρα είναι ήδη κλεισμένη. Επιλέξτε άλλη.",
+  "booking.toast.ok.title": "Το ραντεβού κλείστηκε!",
+  "booking.toast.ok.desc": "Θα επικοινωνήσουμε εντός 24 ωρών για επιβεβαίωση.",
+  "booking.toast.fail.title": "Αποτυχία",
+  "booking.toast.fail.desc": "Δοκιμάστε ξανά.",
+
+  "booking.btn.submitting": "Γίνεται υποβολή...",
+  "booking.btn.submit": "Κλείστε Ραντεβού",
+
+  "footer.title.prime": "Prime",
+  "footer.title.detailing": "Detailing",
+  "footer.tagline": "Επαγγελματικές υπηρεσίες car detailing που ανανεώνουν και προστατεύουν την εμφάνιση του οχήματός σας με κορυφαία φροντίδα και προσοχή στη λεπτομέρεια.",
+  "footer.contact": "Επικοινωνία",
+  "footer.phoneAria": "Τηλέφωνο",
+  "footer.emailAria": "Ηλεκτρονική διεύθυνση",
+  "footer.phone": "(+30) 6939949788",
+  "footer.email": "kimonsmirlianos@gmail.com",
+  "footer.address": "Κλειούς 39, Χολαργός 15561",
+  "footer.copyright": "© {{year}} Prime Detailing. All rights reserved.",
+
+  "services.title.prefix": "Οι",
+  "services.title.accent": "Υπηρεσίες",
+  "services.subtitle": "Επαγγελματικές υπηρεσίες car detailing που ανανεώνουν και προστατεύουν την εμφάνιση του οχήματός σας",
+  "services.fromPrice": "Από {{price}}",
+  "services.durationHours": "{{hours}} ώρες",
+  "services.labels.startingPrice": "Τιμή εκκίνησης",
+  "services.labels.duration": "Διάρκεια",
+  "services.whatsIncluded": "Περιλαμβάνει:",
+  "services.bookThis": "Κλείστε Υπηρεσία",
+  "services.items": {
+    "fullDetail": {
+      "title": "Πλήρες Εσωτερικό & Εξωτερικό Detailing",
+      "description": "Επαγγελματική υπηρεσία που μεταμορφώνει το όχημά σας μέσα κι έξω με ολοκληρωμένο καθαρισμό και προστασία.",
+      "features": [
+        "Άνευ επαφής προπλύσιμο & πλύσιμο στο χέρι",
+        "Απορρύπανση επιφάνειας βαφής (ρήτινες, πίσσα, ενσωματωμένοι ρύποι)",
+        "Λεπτομερής καθαρισμός ζαντών & ελαστικών (+ dressing)",
+        "Βαθύς καθαρισμός εσωτερικού (ηλεκτρ. σκούπα, χαλιά, καθίσματα, αεραγωγοί, πλαστικά)",
+        "Περιποίηση πλαστικών & προστασία UV",
+        "Καθαρισμός & περιποίηση δέρματος",
+        "Καθάρισμα κρυστάλλων χωρίς γραμμές (μέσα & έξω)"
+      ]
+    },
+    "ceramicCoating": {
+      "title": "Πακέτο Κεραμικής Προστασίας",
+      "description": "Πλήρες Detailing εσωτερικού/εξωτερικού και εφαρμογή επαγγελματικής κεραμικής επίστρωσης για μέγιστη προστασία.",
+      "features": [
+        "Πλήρες Εσωτερικό & Εξωτερικό Detailing",
+        "Εφαρμογή κεραμικής επίστρωσης σε όλες τις βαμμένες επιφάνειες",
+        "Υδροφοβική προστασία για ευκολότερο πλύσιμο & έντονο beading",
+        "Ενισχυμένη γυαλάδα και βάθος χρώματος",
+        "Μακράς διάρκειας προστασία από UV, ρύπους και περιβαλλοντικούς παράγοντες"
+      ]
+    },
+    "paintCorrection": {
+      "title": "Πακέτο Διόρθωσης Χρώματος",
+      "description": "Πλήρης αποκατάσταση βαφής με πολυσταδιακή διόρθωση, κεραμική επίστρωση και ολοκληρωμένο detailing.",
+      "features": [
+        "Πλήρες Εσωτερικό & Εξωτερικό Detailing",
+        "Εφαρμογή κεραμικής επίστρωσης σε όλες τις βαμμένες επιφάνειες",
+        "Ανάλυση ελαττωμάτων & έλεγχος βαφής",
+        "Πολυσταδιακό γυάλισμα για αποκατάσταση διαύγειας",
+        "Αφαίρεση swirl, οξείδωσης & ελαφριών γρατζουνιών",
+        "Κεραμική επίστρωση για επιπλέον προστασία & λάμψη",
+        "Εγγύηση προστασίας βαφής"
+      ]
+    }
+  }
+}

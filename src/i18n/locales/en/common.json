@@ -41,7 +41,7 @@
   "booking.toast.unavailable.title": "Time unavailable",
   "booking.toast.unavailable.desc": "That slot is already booked. Please pick another.",
   "booking.toast.ok.title": "Appointment booked!",
-  "booking.toast.ok.desc": "We’ll contact you within 24 hours to confirm.",
+  "booking.toast.ok.desc": "We’ll contact you within 24 hours to confirm. Your visit is only confirmed once you receive an appointment confirmation. Please do not come without one",
   "booking.toast.fail.title": "Booking failed",
   "booking.toast.fail.desc": "Please try again.",
 

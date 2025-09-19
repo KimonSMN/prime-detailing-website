@@ -59,52 +59,80 @@
   "footer.address": "Kleious 39, Cholargos 15561",
   "footer.copyright": "© {{year}} Prime Detailing. All rights reserved.",
 
-  "services.title.prefix": "Our",
-  "services.title.accent": "Services",
-  "services.subtitle": "Professional car detailing services designed to restore and protect your vehicle's appearance",
-  "services.fromPrice": "From {{price}}",
-  "services.durationHours": "{{hours}} hours",
-  "services.labels.startingPrice": "Starting price",
-  "services.labels.duration": "Duration",
-  "services.whatsIncluded": "What's Included:",
-  "services.bookThis": "Book This Service",
-  "services.items": {
-    "fullDetail": {
-      "title": "Full Exterior & Interior Detail",
-      "description": "Professional detailing service that transforms your vehicle inside and out with comprehensive cleaning and protection.",
-      "features": [
-        "Contactless pre-wash & hand wash",
-        "Paint surface decontamination (removes tar, sap, and bonded contaminants)",
-        "Wheel & tire detailing (deep clean + dressing)",
-        "Interior deep cleaning (vacuuming, carpets, seats, vents, trims)",
-        "Plastic trim conditioning & UV protection",
-        "Leather cleaning & conditioning",
-        "Streak-free glass cleaning (inside & out)"
-      ]
+  "services": {
+    "title": {
+      "prefix": "Our",
+      "accent": "Services"
     },
-    "ceramicCoating": {
-      "title": "Ceramic Coating Package",
-      "description": "Includes Full Exterior & Interior Detail plus professional-grade ceramic coating for ultimate protection.",
-      "features": [
-        "Complete Full Exterior & Interior Detail",
-        "Professional-grade ceramic coating applied to all painted surfaces",
-        "Hydrophobic protection for easier washing and water beading",
-        "Enhanced gloss and depth of paint color",
-        "Long-lasting protection against UV rays, dirt, and contaminants"
-      ]
+    "subtitle": "Professional car detailing packages tailored to restore, protect, and enhance your vehicle.",
+    "fromPrice": "From {{price}}",
+    "durationHours": "{{hours}} hours",
+    "labels": {
+      "startingPrice": "Starting price",
+      "duration": "Duration"
     },
-    "paintCorrection": {
-      "title": "Paint Correction Package",
-      "description": "Complete paint restoration service with multi-stage correction, ceramic coating, and comprehensive detailing.",
-      "features": [
-        "Complete Full Exterior & Interior Detail",
-        "Professional-grade ceramic coating applied to all painted surfaces",
-        "Paint defect analysis & inspection",
-        "Multi-stage paint correction (machine polishing to restore clarity)",
-        "Swirl mark, oxidation & light scratch removal",
-        "Ceramic coating application for added protection and shine",
-        "Paint protection guarantee"
-      ]
+    "whatsIncluded": "What's Included:",
+    "bookThis": "Book This Service",
+    "requestQuote": "Currently unavailable",
+    "items": {
+      "basicWash": {
+        "title": "Basic Wash",
+        "description": "Quick and efficient refresh for both exterior and interior with light protection.",
+        "features": [
+          "Contactless pre-wash & hand wash using safe techniques",
+          "Protective wax layer for enhanced water repellency",
+          "Thorough tire cleaning and professional dressing",
+          "Crystal-clear, streak-free glass finish",
+          "Quick interior vacuuming and surface wipe-down"
+        ]
+      },
+      "fullDetail": {
+        "title": "Full Exterior & Interior Detail",
+        "description": "Comprehensive inside-and-out detail that restores your car’s appearance and adds lasting protection.",
+        "features": [
+          "Contactless pre-wash & hand wash",
+          "Paint surface decontamination (removes tar, sap, and bonded contaminants)",
+          "Wheel & tire detailing (deep clean + tire dressing)",
+          "Interior deep cleaning (vacuuming, carpets, seats, vents, trims)",
+          "Door jambs and trunk crevices thoroughly cleaned",
+          "Crystal-clear, streak-free glass finish (inside & out)",
+          "Plastic trim conditioning & UV protection",
+          "Leather cleaning & conditioning"
+        ]
+      },
+      "ceramicCoating": {
+        "title": "Ceramic Coating Package",
+        "description": "Full Exterior & Interior Detail plus ceramic coating for durable shine and protection.",
+        "features": [
+          "All services from Full Exterior & Interior Detail",
+          "Advanced ceramic coating applied to all painted surfaces",
+          "Exceptional hydrophobic effect – water beads and sheets off effortlessly, making washing faster and easier",
+          "Deep, mirror-like gloss with enhanced color depth and clarity",
+          "Long-lasting protection, typically 4 weeks up to 4 months depending on maintenance and driving conditions",
+          "Cleaning and maintenance of exterior rubber and plastic surfaces"
+        ]
+      },
+      "paintCorrection": {
+        "title": "Paint Correction Package",
+        "description": "Professional-grade correction and coating for a showroom-quality finish.",
+        "features": [
+          "All services from Full Exterior & Interior Detail",
+          "Full decontamination including clay bar treatment",
+          "Multi-stage paint correction (removes swirls, oxidation, light scratches)",
+          "Ceramic coating for lasting gloss and protection",
+          "Enhanced paint clarity and depth"
+        ]
+      },
+      "ultimateDetail": {
+        "title": "Ultimate Detailing Package",
+        "description": "Our top-tier, bespoke detailing service designed for perfection without compromise.",
+        "features": [
+          "Tailored full exterior & interior transformation",
+          "Custom paint correction and protection plan",
+          "Premium coatings for maximum durability",
+          "Comprehensive care to meet your car’s unique needs"
+        ]
+      }
     }
   }
 }

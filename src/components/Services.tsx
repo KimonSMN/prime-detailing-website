@@ -6,18 +6,34 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Car, Shield, Palette, Sparkles } from "lucide-react";
+import { Car, Shield, Palette, Sparkles, Droplets, Crown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 type ServiceDef = {
-  id: "fullDetail" | "ceramicCoating" | "paintCorrection";
+  id:
+    | "basicWash"
+    | "fullDetail"
+    | "ceramicCoating"
+    | "paintCorrection"
+    | "ultimateDetail";
   icon: any;
-  priceFrom: number; // just the number; currency via i18n
-  durationLabelKey: string; // e.g. "3-4", "4-5", "6-8" -> we feed to i18n
+  priceFrom?: number; // optional for Ultimate Detail
+  durationLabelKey?: string; // optional for Ultimate Detail
 };
 
 const serviceDefs: ServiceDef[] = [
-  { id: "fullDetail", icon: Car, priceFrom: 40, durationLabelKey: "3-4" },
+  {
+    id: "basicWash",
+    icon: Droplets,
+    priceFrom: 20,
+    durationLabelKey: "1-2",
+  },
+  {
+    id: "fullDetail",
+    icon: Car,
+    priceFrom: 40,
+    durationLabelKey: "3-4",
+  },
   {
     id: "ceramicCoating",
     icon: Shield,
@@ -29,6 +45,10 @@ const serviceDefs: ServiceDef[] = [
     icon: Palette,
     priceFrom: 100,
     durationLabelKey: "6-8",
+  },
+  {
+    id: "ultimateDetail",
+    icon: Crown,
   },
 ];
 
@@ -54,7 +74,6 @@ const Services = () => {
           {serviceDefs.map((svc, index) => {
             const IconComponent = svc.icon;
 
-            // pull localized fields by id
             const title = t(`services.items.${svc.id}.title`);
             const description = t(`services.items.${svc.id}.description`);
             const features = t(`services.items.${svc.id}.features`, {
@@ -71,41 +90,39 @@ const Services = () => {
                   <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
                     <IconComponent className="w-8 h-8 text-primary-foreground" />
                   </div>
-
-                  {/* lock heights so rows align */}
-                  <CardTitle className="text-2xl font-bold text-foreground h-[4rem] overflow-hidden">
+                  <CardTitle className="text-2xl font-bold text-foreground">
                     {title}
                   </CardTitle>
-
-                  <CardDescription className="text-lg text-muted-foreground h-[5.25rem] overflow-hidden">
+                  <CardDescription className="text-lg text-muted-foreground">
                     {description}
                   </CardDescription>
                 </CardHeader>
 
-                {/* Grow content and pin button bottom */}
                 <CardContent className="space-y-6 flex flex-col flex-grow">
-                  <div className="flex justify-between items-center text-center">
-                    <div>
-                      <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                        {t("services.fromPrice", {
-                          price: `${svc.priceFrom}€`,
-                        })}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {t("services.labels.startingPrice")}
-                      </p>
+                  {svc.priceFrom && svc.durationLabelKey && (
+                    <div className="flex justify-between items-center text-center">
+                      <div>
+                        <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                          {t("services.fromPrice", {
+                            price: `${svc.priceFrom}€`,
+                          })}
+                        </p>
+                        <p className="text-sm text-white">
+                          {t("services.labels.startingPrice")}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-lg font-semibold text-foreground">
+                          {t("services.durationHours", {
+                            hours: svc.durationLabelKey,
+                          })}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {t("services.labels.duration")}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-lg font-semibold text-foreground">
-                        {t("services.durationHours", {
-                          hours: svc.durationLabelKey,
-                        })}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {t("services.labels.duration")}
-                      </p>
-                    </div>
-                  </div>
+                  )}
 
                   <div className="space-y-2 flex-grow">
                     <h4 className="font-semibold text-foreground flex items-center gap-2">
@@ -116,10 +133,10 @@ const Services = () => {
                       {features.map((feature, idx) => (
                         <li
                           key={idx}
-                          className="text-muted-foreground flex items-center gap-2"
+                          className="text-muted-foreground flex gap-2"
                         >
-                          <div className="w-1.5 h-1.5 bg-primary rounded-full"></div>
-                          {feature}
+                          <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full"></span>
+                          <span className="flex-1">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -136,14 +153,16 @@ const Services = () => {
                           "service-select"
                         ) as HTMLSelectElement | null;
                         if (bookingSection && serviceSelect) {
-                          serviceSelect.value = svc.id; // FYI: if you're using shadcn <Select>, consider lifting state instead
+                          serviceSelect.value = svc.id;
                           bookingSection.scrollIntoView({ behavior: "smooth" });
                         } else if (bookingSection) {
                           bookingSection.scrollIntoView({ behavior: "smooth" });
                         }
                       }}
                     >
-                      {t("services.bookThis")}
+                      {svc.id === "ultimateDetail"
+                        ? t("services.requestQuote")
+                        : t("services.bookThis")}
                     </Button>
                   </div>
                 </CardContent>

@@ -15,7 +15,7 @@
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <link rel="canonical" href="https://prime-detailing.vercel.app/" />
 
-    <!-- Language alternates (SPA uses i18next querystring) -->
+    <!-- Language alternates -->
     <link
       rel="alternate"
       href="https://prime-detailing.vercel.app/?lng=en"
@@ -76,17 +76,17 @@
       content="https://lovable.dev/opengraph-image-p98pqg.png"
     />
 
-    <!-- Icons / PWA basics (safe no-op if files are missing) -->
+    <!-- Icons / PWA basics -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0b1320" />
 
-    <!-- Preconnect (minor perf win for fonts/images if used later) -->
+    <!-- Preconnects -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
 
-    <!-- Structured Data: LocalBusiness (AutomotiveBusiness) -->
+    <!-- Structured Data -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -133,19 +133,17 @@
         "sameAs": ["https://www.instagram.com/primedetailing.ath/"]
       }
     </script>
-
-    <!-- Build assets -->
-    <link rel="stylesheet" href="/assets/index-2tsDIVHc.css" crossorigin />
-    <script type="module" src="/assets/index-D7jeA8uf.js" crossorigin></script>
   </head>
 
   <body>
     <div id="root"></div>
+
+    <!-- Only the Vite entry. Do NOT reference /assets/index-*.js or *.css -->
     <script type="module" src="/src/main.tsx"></script>
-    <!-- Optional: noscript fallback for basic contact info -->
+
     <noscript>
-      Prime Detailing, Kleious 39 & Aetideon 46, Cholargos 15561 — (+30) 693 994
-      9788
+      Prime Detailing, Kleious 39 &amp; Aetideon 46, Cholargos 15561 — (+30) 693
+      994 9788
     </noscript>
   </body>
 </html>

@@ -133,6 +133,28 @@
           "Comprehensive care to meet your car’s unique needs"
         ]
       }
+    },
+    "reviews": {
+      "aria": "Google reviews",
+      "heading": "What Clients Say on Google",
+      "subheading": "Verified feedback from real customers",
+      "viewOnGoogle": "View on Google",
+      "attribution": "These reviews are taken from our Google Business Profile"
+    },
+    "gallery": {
+      "heading": "Our Work",
+      "ariaTeaser": "Gallery teaser",
+      "ariaOpen": "Open full detailing gallery",
+      "showMore": "Show more photos",
+      "showMoreAria": "Show more photos",
+      "close": "Close",
+      "prev": "Previous",
+      "next": "Next",
+      "cta": {
+        "viewAll": "View full gallery",
+        "viewMore_one": "See {{count}} more photo",
+        "viewMore_other": "See {{count}} more photos"
+      }
     }
   }
 }

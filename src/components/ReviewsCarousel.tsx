@@ -1,0 +1,121 @@
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
+import { Star } from "lucide-react";
+import { useTranslation } from "react-i18next";
+
+const REVIEWS = [
+  {
+    author: "adonis smirlianos",
+    text: "Went for a deep clean and he also fixed some paint scratches, amazing",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/pf9Np6HUaZqD6hpS6", // replace with real link
+  },
+  {
+    author: "Theophilos Chrysoulis",
+    text: "Πολύ προσεκτικοί στη δουλειά τους. Άφησα το αυτοκίνητο μου το πρωί γεμάτο χώμα κουτσουλιές και σκόνη. Μεσημέρι το είχα πεντακάθ...",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/mv2zVisf9tUpBz7n6",
+  },
+  {
+    author: "Αναστάσης Τακάς",
+    text: "Έκανε το μηχανάκι μου σαν καινούργιο, για πολυ καλη τιμή. Ειναι και ωραίο παιδί",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/AhskH7Jgg95neHPy7",
+  },
+  {
+    author: "Giorgos Athanassiou",
+    text: "Εξαιρετική και λεπτομερείς δουλειά",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/aDK5UgVssvB97hoN9",
+  },
+  {
+    author: "ΘΟΔΩΡΗΣ ΤΣΙΠΛΑΚΟΣ",
+    text: "Άψογη εξυπηρέτηση! Πήγα το αμάξι μου για βαθύ καθαρισμό και έμεινα έκπληκτος με το αποτελέσμα. Να τους προτιμήσετε!",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/r1bdcJ6xbeedsG4E7",
+  },
+  {
+    author: "Tessie Tsitsani",
+    text: "Καταπληκτική δουλειά!",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/9BewizNhoMg93HEp7",
+  },
+];
+
+const ReviewsCarousel = () => {
+  const { t } = useTranslation();
+  const [emblaRef] = useEmblaCarousel(
+    { loop: true, align: "start", skipSnaps: false },
+    [Autoplay({ delay: 5000, stopOnInteraction: true })]
+  );
+
+  return (
+    <section
+      id="reviews"
+      className="px-4 py-14 pb-0 md:py-20 md:pb-0 bg-muted/20"
+      aria-label={t("reviews.aria", "Google reviews")}
+    >
+      <div className="max-w-6xl mx-auto">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
+            {t("reviews.heading", "What Clients Say on Google")}
+          </h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("reviews.subheading", "Verified feedback from real customers")}
+          </p>
+        </div>
+
+        <div className="overflow-hidden" ref={emblaRef}>
+          <ul className="flex gap-4">
+            {REVIEWS.map((r, idx) => (
+              <li
+                key={idx}
+                className="min-w-0 flex-[0_0_100%] md:flex-[0_0_48%] lg:flex-[0_0_31%] rounded-2xl border bg-card p-6"
+              >
+                <div className="flex items-center justify-between mb-3">
+                  <p className="font-medium text-foreground">{r.author}</p>
+                </div>
+
+                <div className="flex items-center gap-1 mb-2">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className={`h-4 w-4 ${
+                        i < r.rating
+                          ? "text-yellow-400 fill-yellow-400" // solid gold/yellow
+                          : "text-muted-foreground"
+                      }`}
+                      aria-hidden="true"
+                    />
+                  ))}
+                </div>
+
+                <p className="text-foreground leading-relaxed">{r.text}</p>
+
+                {r.authorUrl && (
+                  <a
+                    href={r.authorUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-block text-sm text-primary underline"
+                  >
+                    {t("reviews.viewOnGoogle", "View on Google")}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          {t(
+            "reviews.attribution",
+            "These reviews are taken from our Google Business Profile"
+          )}
+        </p>
+      </div>
+    </section>
+  );
+};
+
+export default ReviewsCarousel;

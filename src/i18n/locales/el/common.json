@@ -134,5 +134,29 @@
         ]
       }
     }
+  },
+
+  "reviews": {
+    "aria": "Κριτικές Google",
+    "heading": "Τι λένε οι πελάτες μας στο Google",
+    "subheading": "Επαληθευμένα σχόλια από πραγματικούς πελάτες",
+    "viewOnGoogle": "Δείτε στο Google",
+    "attribution": "Αυτές οι κριτικές προέρχονται από το Google Business Profile μας"
+  },
+  "reviews.cta": "Διαβάστε όλες τις κριτικές στο Google",
+
+  "gallery": {
+    "ariaTeaser": "Προεπισκόπηση γκαλερί",
+    "ariaOpen": "Άνοιγμα πλήρους γκαλερί detailing",
+    "showMore": "Δείτε περισσότερες φωτογραφίες",
+    "showMoreAria": "Δείτε περισσότερες φωτογραφίες",
+    "close": "Κλείσιμο",
+    "prev": "Προηγούμενη",
+    "next": "Επόμενη",
+    "cta": {
+      "viewAll": "Δείτε την πλήρη συλλογή",
+      "viewMore_one": "Δείτε ακόμη {{count}} φωτογραφία",
+      "viewMore_other": "Δείτε ακόμη {{count}} φωτογραφίες"
+    }
   }
 }

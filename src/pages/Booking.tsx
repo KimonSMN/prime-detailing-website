@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet-async";
 
 /* ---------------- helpers (Safari-safe local time) ---------------- */
 
@@ -286,6 +287,13 @@ const Booking = () => {
   /* ---------------- UI ---------------- */
   return (
     <section id="booking" className="py-20 px-4 bg-secondary/20">
+      <Helmet>
+        <title>Book an Appointment | Prime Detailing Cholargos</title>
+        <meta
+          name="description"
+          content="Book your car detailing appointment in Cholargos — choose service, date, and time online."
+        />
+      </Helmet>
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-12 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">

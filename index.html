@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+    <!-- Primary SEO -->
     <title>Prime Detailing Cholargos | Car Detailing in Athens</title>
     <meta
       name="description"
@@ -14,22 +15,137 @@
     <meta name="robots" content="index,follow,max-image-preview:large" />
     <link rel="canonical" href="https://prime-detailing.vercel.app/" />
 
-    <!-- alternates, OG/Twitter, icons, schema, etc. keep as-is -->
+    <!-- Language alternates (SPA uses i18next querystring) -->
+    <link
+      rel="alternate"
+      href="https://prime-detailing.vercel.app/?lng=en"
+      hreflang="en"
+    />
+    <link
+      rel="alternate"
+      href="https://prime-detailing.vercel.app/?lng=el"
+      hreflang="el-GR"
+    />
+    <link
+      rel="alternate"
+      href="https://prime-detailing.vercel.app/"
+      hreflang="x-default"
+    />
 
-    <!-- ❌ REMOVE any hardcoded build assets like these in dev:
-         <link rel="stylesheet" href="/assets/index-*.css">
-         <script type="module" src="/assets/index-*.js"></script>
-    -->
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Prime Detailing Cholargos" />
+    <meta property="og:url" content="https://prime-detailing.vercel.app/" />
+    <meta
+      property="og:title"
+      content="Prime Detailing Cholargos — Car Detailing in Athens"
+    />
+    <meta
+      property="og:description"
+      content="Professional car detailing in Cholargos, Athens. Hand wash, paint correction, and ceramic coating. Book online."
+    />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale:alternate" content="el_GR" />
+    <meta
+      property="og:image"
+      content="https://lovable.dev/opengraph-image-p98pqg.png"
+    />
+    <meta
+      property="og:image:secure_url"
+      content="https://lovable.dev/opengraph-image-p98pqg.png"
+    />
+    <meta
+      property="og:image:alt"
+      content="Prime Detailing — showroom shine after professional detailing"
+    />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Prime Detailing Cholargos — Car Detailing in Athens"
+    />
+    <meta
+      name="twitter:description"
+      content="Hand wash & interior deep clean, paint correction, ceramic coating. Book online for a showroom shine."
+    />
+    <meta
+      name="twitter:image"
+      content="https://lovable.dev/opengraph-image-p98pqg.png"
+    />
+
+    <!-- Icons / PWA basics (safe no-op if files are missing) -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0b1320" />
+
+    <!-- Preconnect (minor perf win for fonts/images if used later) -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+
+    <!-- Structured Data: LocalBusiness (AutomotiveBusiness) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "AutomotiveBusiness",
+        "name": "Prime Detailing Cholargos",
+        "url": "https://prime-detailing.vercel.app/",
+        "image": "https://lovable.dev/opengraph-image-p98pqg.png",
+        "logo": "https://prime-detailing.vercel.app/favicon.ico",
+        "email": "kimonsmirlianos@gmail.com",
+        "telephone": "+30-693-994-9788",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Kleious 39, Aetideon 46",
+          "addressLocality": "Cholargos",
+          "addressRegion": "Attica",
+          "postalCode": "15561",
+          "addressCountry": "GR"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 37.999296,
+          "longitude": 23.7968089
+        },
+        "areaServed": ["Cholargos", "Athens"],
+        "priceRange": "€€",
+        "currenciesAccepted": "EUR",
+        "paymentAccepted": "Cash, Card",
+        "acceptsReservations": "True",
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": [
+              "Monday",
+              "Tuesday",
+              "Wednesday",
+              "Thursday",
+              "Friday",
+              "Saturday"
+            ],
+            "opens": "08:00",
+            "closes": "16:00"
+          }
+        ],
+        "sameAs": ["https://www.instagram.com/primedetailing.ath/"]
+      }
+    </script>
+
+    <!-- Build assets -->
+    <link rel="stylesheet" href="/assets/index-2tsDIVHc.css" crossorigin />
+    <script type="module" src="/assets/index-D7jeA8uf.js" crossorigin></script>
   </head>
 
   <body>
     <div id="root"></div>
-    <!-- ✅ Dev entry: Vite serves from source -->
     <script type="module" src="/src/main.tsx"></script>
-
+    <!-- Optional: noscript fallback for basic contact info -->
     <noscript>
-      Prime Detailing, Kleious 39 &amp; Aetideon 46, Cholargos 15561 — (+30) 693
-      994 9788
+      Prime Detailing, Kleious 39 & Aetideon 46, Cholargos 15561 — (+30) 693 994
+      9788
     </noscript>
   </body>
 </html>

@@ -1,14 +1,8 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Prevent private/system pages from being indexed
+Disallow: /admin
+Disallow: /404
+
+Sitemap: https://prime-detailing.vercel.app/sitemap.xml

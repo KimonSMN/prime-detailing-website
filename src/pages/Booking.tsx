@@ -244,16 +244,24 @@ const Booking = () => {
 
     setLoading(true);
     try {
-      const { error } = await supabase.rpc("create_booking", {
-        p_full_name: name,
-        p_email: email,
-        p_phone: phone,
-        p_vehicle_info: formData.vehicleInfo || null,
-        p_notes: formData.notes || null,
-        p_preferred_at: preferred_at.toISOString(),
-        p_service_ids: [serviceId],
+      const res = await fetch("/api/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          email,
+          phone,
+          vehicleInfo: formData.vehicleInfo || null,
+          notes: formData.notes || null,
+          preferred_at: preferred_at.toISOString(),
+          serviceId, // for linking booking → service
+        }),
       });
-      if (error) throw error;
+
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j?.error || "Booking failed");
+      }
 
       toast({
         title: t("booking.toast.ok.title"),

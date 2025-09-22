@@ -37,6 +37,7 @@ const TopNavbar = () => {
           >
             Services
           </NavLink>
+
           <NavLink
             to="/gallery"
             className={({ isActive }) =>
@@ -49,6 +50,7 @@ const TopNavbar = () => {
           >
             Gallery
           </NavLink>
+
           {/* Language selector (desktop) */}
           <div className="pl-2 border-l pr-2 border-r border-border">
             <LanguageSwitcher />
@@ -97,6 +99,15 @@ const TopNavbar = () => {
               className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
             >
               Services
+            </NavLink>
+
+            {/* NEW: Gallery on mobile */}
+            <NavLink
+              to="/gallery"
+              onClick={() => setOpen(false)}
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
+            >
+              Gallery
             </NavLink>
 
             <NavLink

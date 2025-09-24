@@ -63,6 +63,7 @@ export default function BeforeAfterStrip({
                   src={p.link}
                   alt={p.alt}
                   loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 h-full w-full object-cover object-[center_75%]"
                   width={1280}
                   height={800}

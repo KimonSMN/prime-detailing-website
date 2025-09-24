@@ -2,13 +2,6 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
-// OPTIONAL: replace with your actual hero assets (AVIF/WebP/JPG in /public or /src/assets)
-// Example filenames:
-//  - /public/hero-1600.avif, /public/hero-1600.webp, /public/hero-1600.jpg
-const HERO_JPG = "/hero-1600.jpg";
-const HERO_WEBP = "/hero-1600.webp";
-const HERO_AVIF = "/hero-1600.avif";
-
 const Hero = () => {
   const { t } = useTranslation();
 
@@ -19,24 +12,6 @@ const Hero = () => {
     >
       {/* LCP Image as real <img> for SEO/perf */}
       <div className="absolute inset-0 -z-10">
-        <picture>
-          {/* Newer formats first */}
-          <source srcSet={HERO_AVIF} type="image/avif" />
-          <source srcSet={HERO_WEBP} type="image/webp" />
-          {/* width/height prevent CLS; adjust to your image’s intrinsic size */}
-          <img
-            src={HERO_JPG}
-            alt={t(
-              "hero.imageAlt",
-              "Professional car detailing in Athens – glossy black sedan after detailing"
-            )}
-            loading="eager"
-            fetchPriority="high"
-            width={1600}
-            height={900}
-            className="h-full w-full object-cover object-center"
-          />
-        </picture>
         {/* Brand gradient overlay */}
         <div
           className="absolute inset-0 bg-hero-gradient opacity-80"

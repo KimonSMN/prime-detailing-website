@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { ExternalLink } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 
 type Props = {
   /** Paste the iframe src from Google Maps “Embed a map” (NOT the whole iframe). */
@@ -10,24 +11,49 @@ type Props = {
 
 const GoogleReviewsEmbed = ({ embedSrc, reviewsLink }: Props) => {
   const { t } = useTranslation();
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          io.disconnect(); // load only once
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+
   return (
     <section
       id="google-reviews"
       className="px-4 py-14 md:py-20 bg-muted/20"
       aria-label={t("reviews.aria", "Google reviews")}
+      ref={ref}
     >
       <div className="max-w-6xl mx-auto">
         {/* Responsive 16:9 wrapper */}
         <div className="relative w-full overflow-hidden rounded-2xl border bg-card">
           <div className="pt-[56.25%]" aria-hidden="true" />
-          <iframe
-            title={t("reviews.iframeTitle", "Prime Detailing on Google Maps")}
-            src={embedSrc}
-            className="absolute inset-0 h-full w-full"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            allowFullScreen
-          />
+          {visible ? (
+            <iframe
+              title={t("reviews.iframeTitle", "Prime Detailing on Google Maps")}
+              src={embedSrc}
+              className="absolute inset-0 h-full w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              allowFullScreen
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-muted-foreground">
+              {t("reviews.loading", "Loading map…")}
+            </div>
+          )}
         </div>
 
         {/* CTA row */}
@@ -45,7 +71,7 @@ const GoogleReviewsEmbed = ({ embedSrc, reviewsLink }: Props) => {
           </div>
         ) : null}
 
-        {/* Attribution (good practice) */}
+        {/* Attribution */}
         <p className="mt-3 text-center text-xs text-muted-foreground">
           {t("reviews.attribution", "Ratings & reviews powered by Google")}
         </p>

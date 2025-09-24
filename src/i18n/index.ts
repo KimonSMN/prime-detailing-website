@@ -19,14 +19,16 @@ i18n
     defaultNS: "common",
     interpolation: { escapeValue: false },
     detection: {
-      // Querystring should be first so ?lng= overrides cache & browser
+      // Querystring should override storage/browser
       order: ["querystring", "localStorage", "htmlTag", "navigator"],
       lookupQuerystring: "lng",
       caches: ["localStorage"],
     },
   });
 
-// keep <html lang> correct
+// keep <html lang="..."> accurate
 i18n.on("languageChanged", (lng) => {
   document.documentElement.lang = lng || "en";
 });
+
+export default i18n;

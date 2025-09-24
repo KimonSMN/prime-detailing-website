@@ -8,8 +8,7 @@
     "build": "vite build",
     "postbuild": "node generate-sitemap.js",
     "preview": "vite preview",
-    "lint": "eslint .",
-    "img:gallery": "node scripts/resize-gallery.mjs"
+    "lint": "eslint ."
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",

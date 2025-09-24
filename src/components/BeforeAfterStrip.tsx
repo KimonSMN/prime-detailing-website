@@ -30,6 +30,19 @@ type BeforeAfterStripProps = {
   heading?: string;
 };
 
+/** Build srcset variants from a base .webp path (expects -480/-768/-1000 files to exist). */
+function buildVariants(link: string) {
+  const base = link.replace(/\.webp$/i, "");
+  return {
+    avif: `${base}-480.avif 480w, ${base}-768.avif 768w, ${base}-1000.avif 1000w`,
+    webp: `${base}-480.webp 480w, ${base}-768.webp 768w, ${base}-1000.webp 1000w`,
+    fallback: `${base}-1000.webp`,
+  };
+}
+
+// Match your grid: 1 col on mobile (100vw), 2 cols on md (≈50vw), cap around 640px per item
+const SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 640px";
+
 export default function BeforeAfterStrip({
   maxShown = 4,
   galleryUrl = "/gallery",
@@ -52,25 +65,32 @@ export default function BeforeAfterStrip({
 
         {/* Tight 2×2 grid on desktop, 1×N on mobile */}
         <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
-          {shown.map((p, i) => (
-            <figure
-              key={i}
-              className="overflow-hidden rounded-xl border bg-card"
-            >
-              {/* maintain aspect ratio to prevent CLS */}
-              <div className="relative w-full pt-[75%]">
-                <img
-                  src={p.link}
-                  alt={p.alt}
-                  loading="lazy"
-                  decoding="async"
-                  className="absolute inset-0 h-full w-full object-cover object-[center_75%]"
-                  width={1280}
-                  height={800}
-                />
-              </div>
-            </figure>
-          ))}
+          {shown.map((p, i) => {
+            const v = buildVariants(p.link);
+            return (
+              <figure
+                key={i}
+                className="overflow-hidden rounded-xl border bg-card"
+              >
+                {/* Maintain aspect ratio (4:3 here) to prevent CLS */}
+                <div className="relative w-full pt-[75%]">
+                  <picture>
+                    <source type="image/avif" srcSet={v.avif} sizes={SIZES} />
+                    <source type="image/webp" srcSet={v.webp} sizes={SIZES} />
+                    <img
+                      src={v.fallback}
+                      alt={p.alt}
+                      loading="lazy"
+                      decoding="async"
+                      width={1000}
+                      height={750}
+                      className="absolute inset-0 h-full w-full object-cover object-[center_75%]"
+                    />
+                  </picture>
+                </div>
+              </figure>
+            );
+          })}
         </div>
 
         <div className="mt-6 text-center">
@@ -80,9 +100,7 @@ export default function BeforeAfterStrip({
             aria-label={t("gallery.ariaOpen", "Open full detailing gallery")}
           >
             {remaining > 0
-              ? t("gallery.cta.viewMore", {
-                  count: remaining, // enables pluralization
-                })
+              ? t("gallery.cta.viewMore", { count: remaining })
               : t("gallery.cta.viewAll", "View full gallery")}
           </a>
         </div>

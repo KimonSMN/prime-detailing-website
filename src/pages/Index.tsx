@@ -82,7 +82,7 @@ const Index = () => {
       <ReviewsCarousel />
 
       <GoogleReviewsEmbed
-        embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.049742905001!2d23.794233977768958!3d37.99930019919164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1993446e8c7eb%3A0x299bfe2c72a90cd6!2sPrime%20Detailing%20Cholargos!5e0!3m2!1sen!2sgr!4v1758465390716!5m2!1sen!2sgr"
+        embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.049742905001!2d23.794233977768958!3d37.99930019919164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1993446e8c7eb%3A0x299bfe2c72a90cd6!2zUHJpbWUgRGV0YWlsaW5nIC0gz4DOu8-Fzr3PhM6uz4HOuc6_IM6xz4XPhM6_zrrOuc69zq7PhM-Jzr0gzqfOv867zrHPgc6zz4zPgg!5e0!3m2!1sen!2sgr!4v1758733703425!5m2!1sen!2sgr"
         reviewsLink="https://www.google.com/maps/place/?q=place_id:ChIJ68foRjSZoRQR1gypciz-myk"
       />
 

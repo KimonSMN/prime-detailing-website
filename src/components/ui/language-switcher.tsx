@@ -35,14 +35,25 @@ export function LanguageSwitcher() {
 
   const setLang = (lng: "en" | "el") => {
     i18n.changeLanguage(lng);
-    localStorage.setItem("i18nextLng", lng); // persist
-    document.documentElement.lang = lng; // SEO/a11y
+    localStorage.setItem("i18nextLng", lng);
+    document.documentElement.lang = lng;
+
+    // Update the URL without reload
+    const url = new URL(window.location.href);
+    url.searchParams.set("lng", lng);
+    window.history.pushState({}, "", url);
   };
 
   useEffect(() => {
-    // ensure html[lang] is correct on load
-    document.documentElement.lang = i18n.resolvedLanguage || "en";
-  }, [i18n.resolvedLanguage]);
+    // Sync on back/forward: if URL lng changes, update i18n
+    const onPopState = () => {
+      const url = new URL(window.location.href);
+      const lng = (url.searchParams.get("lng") as "en" | "el") || null;
+      if (lng && i18n.resolvedLanguage !== lng) i18n.changeLanguage(lng);
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
+  }, [i18n]);
 
   return (
     <div

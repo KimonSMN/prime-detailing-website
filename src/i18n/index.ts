@@ -14,15 +14,19 @@ i18n
       el: { common: el },
     },
     fallbackLng: "en",
+    supportedLngs: ["en", "el"],
     ns: ["common"],
     defaultNS: "common",
+    interpolation: { escapeValue: false },
     detection: {
-      order: ["localStorage", "navigator", "htmlTag", "querystring"],
+      // Querystring should be first so ?lng= overrides cache & browser
+      order: ["querystring", "localStorage", "htmlTag", "navigator"],
+      lookupQuerystring: "lng",
       caches: ["localStorage"],
-    },
-    interpolation: {
-      escapeValue: false,
     },
   });
 
-export default i18n;
+// keep <html lang> correct
+i18n.on("languageChanged", (lng) => {
+  document.documentElement.lang = lng || "en";
+});

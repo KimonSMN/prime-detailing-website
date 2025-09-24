@@ -1,4 +1,4 @@
-export const BASE_URL = "https://prime-detailing.vercel.app";
+export const BASE_URL = "https://prime-detailing-cholargos.com";
 
 export function buildCanonical(): string {
   // Keep full path and query (including ?lng=)

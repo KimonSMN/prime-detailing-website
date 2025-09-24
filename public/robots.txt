@@ -1,8 +1,7 @@
 User-agent: *
 Allow: /
 
-# Prevent private/system pages from being indexed
 Disallow: /admin
 Disallow: /404
 
-Sitemap: https://prime-detailing.vercel.app/sitemap.xml
+Sitemap: https://prime-detailing-cholargos.com/sitemap.xml

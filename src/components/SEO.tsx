@@ -16,7 +16,7 @@ export function Seo({
   description,
   canonical,
   locale = "el_GR",
-  image = "https://prime-detailing.vercel.app/og-default.webp",
+  image = "https://prime-detailing-cholargos.com/og-default.webp",
   robots = "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
   jsonLd,
   siteName = "Prime Detailing Cholargos",

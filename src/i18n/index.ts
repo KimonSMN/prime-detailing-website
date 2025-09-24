@@ -15,20 +15,18 @@ i18n
     },
     fallbackLng: "en",
     supportedLngs: ["en", "el"],
+    load: "languageOnly", // <-- normalize en-US -> en
     ns: ["common"],
     defaultNS: "common",
     interpolation: { escapeValue: false },
     detection: {
-      // Querystring should override storage/browser
       order: ["querystring", "localStorage", "htmlTag", "navigator"],
       lookupQuerystring: "lng",
       caches: ["localStorage"],
     },
+    returnEmptyString: false, // safer: don’t treat "" as valid
   });
 
-// keep <html lang="..."> accurate
 i18n.on("languageChanged", (lng) => {
   document.documentElement.lang = lng || "en";
 });
-
-export default i18n;

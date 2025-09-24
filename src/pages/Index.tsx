@@ -71,12 +71,12 @@ const Index = () => {
         siteName={t("seo.siteName")}
         canonical={canonical}
         locale={locale}
-        image={`${BASE_URL}/og-default.webp`} // replace with your own OG image
+        image={`${BASE_URL}/og-default.webp`}
         jsonLd={businessJsonLd}
       />
       <Hreflang />
 
-      <TopNavbar />
+      {/* <TopNavbar /> */}
       <Hero />
       {/* <USPIntro /> */}
       <ReviewsCarousel />

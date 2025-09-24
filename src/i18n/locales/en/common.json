@@ -133,66 +133,66 @@
           "Comprehensive care to meet your car’s unique needs"
         ]
       }
+    }
+  },
+  "reviews": {
+    "aria": "Google reviews",
+    "heading": "What Clients Say on Google",
+    "subheading": "Verified feedback from real customers",
+    "viewOnGoogle": "View on Google",
+    "attribution": "These reviews are taken from our Google Business Profile"
+  },
+  "gallery": {
+    "heading": "Our Work",
+    "ariaTeaser": "Gallery teaser",
+    "ariaOpen": "Open full detailing gallery",
+    "showMore": "Show more photos",
+    "showMoreAria": "Show more photos",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next",
+    "cta": {
+      "viewAll": "View full gallery",
+      "viewMore_one": "See {{count}} more photo",
+      "viewMore_other": "See {{count}} more photos"
+    }
+  },
+  "seo": {
+    "siteName": "Prime Detailing Cholargos",
+
+    "home": {
+      "title": "Prime Detailing | Car Detailing in Cholargos, Athens",
+      "description": "Hand wash, interior deep clean, paint correction, ceramic coating. Book online."
     },
-    "reviews": {
-      "aria": "Google reviews",
-      "heading": "What Clients Say on Google",
-      "subheading": "Verified feedback from real customers",
-      "viewOnGoogle": "View on Google",
-      "attribution": "These reviews are taken from our Google Business Profile"
+
+    "services": {
+      "title": "Car Detailing Services | Prime Detailing",
+      "description": "Exterior & interior detailing, paint correction, ceramic coating in Cholargos, Athens."
     },
+
+    "ceramic": {
+      "title": "Ceramic Coating | Prime Detailing Cholargos",
+      "description": "Up to 5 years paint protection, hydrophobic finish & gloss. View packages & pricing."
+    },
+
+    "paintCorrection": {
+      "title": "Paint Correction | Prime Detailing Cholargos",
+      "description": "Remove swirls and light scratches with professional polishing."
+    },
+
+    "interior": {
+      "title": "Interior / Deep Cleaning | Prime Detailing Cholargos",
+      "description": "Steam cleaning, fabric shampoo, odor removal for a fresh cabin."
+    },
+
     "gallery": {
-      "heading": "Our Work",
-      "ariaTeaser": "Gallery teaser",
-      "ariaOpen": "Open full detailing gallery",
-      "showMore": "Show more photos",
-      "showMoreAria": "Show more photos",
-      "close": "Close",
-      "prev": "Previous",
-      "next": "Next",
-      "cta": {
-        "viewAll": "View full gallery",
-        "viewMore_one": "See {{count}} more photo",
-        "viewMore_other": "See {{count}} more photos"
-      }
+      "title": "Before / After Gallery | Prime Detailing",
+      "description": "Real results from our detailing work in Cholargos."
     },
-    "seo": {
-      "siteName": "Prime Detailing Cholargos",
 
-      "home": {
-        "title": "Prime Detailing | Car Detailing in Cholargos, Athens",
-        "description": "Hand wash, interior deep clean, paint correction, ceramic coating. Book online."
-      },
-
-      "services": {
-        "title": "Car Detailing Services | Prime Detailing",
-        "description": "Exterior & interior detailing, paint correction, ceramic coating in Cholargos, Athens."
-      },
-
-      "ceramic": {
-        "title": "Ceramic Coating | Prime Detailing Cholargos",
-        "description": "Up to 5 years paint protection, hydrophobic finish & gloss. View packages & pricing."
-      },
-
-      "paintCorrection": {
-        "title": "Paint Correction | Prime Detailing Cholargos",
-        "description": "Remove swirls and light scratches with professional polishing."
-      },
-
-      "interior": {
-        "title": "Interior / Deep Cleaning | Prime Detailing Cholargos",
-        "description": "Steam cleaning, fabric shampoo, odor removal for a fresh cabin."
-      },
-
-      "gallery": {
-        "title": "Before / After Gallery | Prime Detailing",
-        "description": "Real results from our detailing work in Cholargos."
-      },
-
-      "contact": {
-        "title": "Contact & Booking | Prime Detailing",
-        "description": "Address, phone, hours. Book your detailing appointment online."
-      }
+    "contact": {
+      "title": "Contact & Booking | Prime Detailing",
+      "description": "Address, phone, hours. Book your detailing appointment online."
     }
   }
 }

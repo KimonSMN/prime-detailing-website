@@ -24,10 +24,6 @@ const IMAGES: GalleryImage[] = [
     alt: "Opel Mokka Exterior Detailing",
   },
   {
-    src: "/gallery/detailing-citroen-c4-cholargos-1.webp",
-    alt: "Opel Mokka Exterior Detailing",
-  },
-  {
     src: "/gallery/detailing-citroen-c4-cholargos-3.webp",
     alt: "Opel Mokka Exterior Detailing",
   },

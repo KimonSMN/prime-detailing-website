@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -34,7 +34,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Calendar as DatePicker } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
 
 /* -------------------- Sign-in box -------------------- */
 function AdminSignIn({ onSignedIn }: { onSignedIn: () => void }) {
@@ -103,8 +103,25 @@ type BookingRow = {
       name: string;
       base_price: string | null;
       min_minutes: number | null;
-    }; // <-- includes min_minutes
+    };
   }[];
+};
+
+type DayRow = {
+  id: string;
+  preferred_at: string;
+  status: BookingRow["status"];
+  booking_service: {
+    quantity: number | null;
+    service: { min_minutes: number | null } | null;
+  }[];
+};
+
+type AdminBlock = {
+  id: string;
+  start_at: string; // ISO
+  minutes: number;
+  note: string | null;
 };
 
 const TIMES = [
@@ -118,6 +135,11 @@ const TIMES = [
   "15:00",
   "16:00",
 ];
+
+const DURATIONS = [60, 90, 120, 150, 180, 240]; // minutes
+
+// Reason a specific HH:mm slot is unavailable
+type UnavailKind = "booking" | "block" | "both";
 
 export default function AdminBookings() {
   const { toast } = useToast();
@@ -136,9 +158,26 @@ export default function AdminBookings() {
   const [resDate, setResDate] = useState<Date | undefined>(undefined);
   const [resTime, setResTime] = useState<string>("");
   const [resBusy, setResBusy] = useState(false);
-  const [unavailableTimes, setUnavailableTimes] = useState<Set<string>>(
+
+  // unavailable slots for currently selected date: HH:mm -> kind
+  const [unavailableMap, setUnavailableMap] = useState<
+    Map<string, UnavailKind>
+  >(new Map());
+
+  // Block-time dialog state
+  const [blockOpen, setBlockOpen] = useState(false);
+  const [blockDate, setBlockDate] = useState<Date | undefined>(undefined);
+  const [blockTime, setBlockTime] = useState<string>("");
+  const [blockMinutes, setBlockMinutes] = useState<number>(60);
+  const [blockNote, setBlockNote] = useState<string>("");
+  const [blockBusy, setBlockBusy] = useState(false);
+  const [dayBlocks, setDayBlocks] = useState<AdminBlock[]>([]); // for manage/undo
+
+  // Month-level blocks for coloring the calendar days (admin-only UI)
+  const [monthWithBlocks, setMonthWithBlocks] = useState<Set<string>>(
     new Set()
   );
+  const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
 
   // keep auth state
   useEffect(() => {
@@ -181,7 +220,11 @@ export default function AdminBookings() {
   }
 
   useEffect(() => {
-    if (authed) load();
+    if (authed) {
+      load();
+      // prime calendar month blocks
+      refreshMonthBlocks(new Date());
+    }
   }, [authed]);
 
   const filtered = useMemo(() => {
@@ -226,7 +269,7 @@ export default function AdminBookings() {
     }
   }
 
-  // ---- Reschedule helpers ----
+  // ---- Helpers ----
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -240,10 +283,8 @@ export default function AdminBookings() {
     acc: Set<string>
   ) {
     const s = new Date(startISO);
-    const e = new Date(s);
-    e.setMinutes(e.getMinutes() + minutes);
+    const e = new Date(s.getTime() + minutes * 60000);
 
-    // snap to the hour of s
     const t = new Date(s);
     t.setMinutes(0, 0, 0);
     acc.add(format(t, "HH:mm"));
@@ -254,7 +295,50 @@ export default function AdminBookings() {
     }
   }
 
-  // For a given date, compute blocked slots from OTHER bookings (exclude current)
+  async function fetchDayBlocks(date: Date): Promise<AdminBlock[]> {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
+    const { data, error } = await supabase
+      .from("admin_block")
+      .select("id,start_at,minutes,note")
+      .gte("start_at", start.toISOString())
+      .lt("start_at", end.toISOString())
+      .order("start_at", { ascending: true })
+      .returns<AdminBlock[]>();
+
+    if (error) {
+      console.warn(error);
+      return [];
+    }
+    return data ?? [];
+  }
+
+  async function refreshMonthBlocks(month: Date) {
+    const from = startOfMonth(month);
+    const to = endOfMonth(month);
+
+    const { data, error } = await supabase
+      .from("admin_block")
+      .select("start_at")
+      .gte("start_at", from.toISOString())
+      .lte("start_at", to.toISOString());
+
+    if (error) {
+      console.warn(error);
+      setMonthWithBlocks(new Set());
+      return;
+    }
+    const set = new Set<string>();
+    (data ?? []).forEach((r: { start_at: string }) => {
+      set.add(format(new Date(r.start_at), "yyyy-MM-dd"));
+    });
+    setMonthWithBlocks(set);
+  }
+
+  // For a given date, compute unavailable slots + kind map
   async function fetchUnavailableForDate(
     date: Date,
     excludeBookingId?: string
@@ -264,17 +348,7 @@ export default function AdminBookings() {
     const end = new Date(date);
     end.setHours(23, 59, 59, 999);
 
-    type DayRow = {
-      id: string;
-      preferred_at: string;
-      status: BookingRow["status"];
-      booking_service: {
-        quantity: number | null;
-        service: { min_minutes: number | null } | null;
-      }[];
-    };
-
-    const { data, error } = await supabase
+    const { data: bookings, error } = await supabase
       .from("booking")
       .select(
         `
@@ -292,13 +366,14 @@ export default function AdminBookings() {
 
     if (error) {
       console.error(error);
-      setUnavailableTimes(new Set());
+      setUnavailableMap(new Map());
       return;
     }
 
-    const set = new Set<string>();
-    for (const b of data ?? []) {
-      if (b.id === excludeBookingId) continue; // free the current booking's window
+    // collect hours separately to tag reason
+    const bookedSet = new Set<string>();
+    for (const b of bookings ?? []) {
+      if (b.id === excludeBookingId) continue;
       const mins = Math.max(
         1,
         (b.booking_service ?? []).reduce((sum, bs) => {
@@ -307,20 +382,24 @@ export default function AdminBookings() {
           return sum + qty * m;
         }, 0)
       );
-      expandBlockedHours(b.preferred_at, mins, set);
+      expandBlockedHours(b.preferred_at, mins, bookedSet);
     }
 
-    setUnavailableTimes(set);
-
-    // If currently picked time is now blocked by others, keep it (we allow selecting blocked),
-    // but warn once so it's obvious.
-    if (resTime && set.has(resTime)) {
-      toast({
-        title: "Heads up",
-        description:
-          "That time overlaps another booking. You can pick it, but saving will fail.",
-      });
+    const blocks = await fetchDayBlocks(date);
+    setDayBlocks(blocks);
+    const blockSet = new Set<string>();
+    for (const blk of blocks) {
+      expandBlockedHours(blk.start_at, blk.minutes, blockSet);
     }
+
+    // merge with reasons
+    const map = new Map<string, UnavailKind>();
+    for (const t of bookedSet) map.set(t, "booking");
+    for (const t of blockSet) {
+      if (map.has(t)) map.set(t, "both");
+      else map.set(t, "block");
+    }
+    setUnavailableMap(map);
   }
 
   function openReschedule(r: BookingRow) {
@@ -339,7 +418,6 @@ export default function AdminBookings() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resDate]);
 
-  // Compute this booking's own minimal minutes
   function currentBookingMinMinutes(r: BookingRow | null) {
     if (!r) return 180;
     const total = (r.booking_service ?? []).reduce((sum, bs) => {
@@ -350,41 +428,22 @@ export default function AdminBookings() {
     return total > 0 ? total : 180;
   }
 
-  // Check overlap of [aStart, aEnd) vs [bStart, bEnd)
   function windowsOverlap(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date) {
     return aStart < bEnd && bStart < aEnd;
   }
 
-  async function saveReschedule() {
-    if (!resBooking || !resDate || !resTime) {
-      toast({ title: "Missing date/time", variant: "destructive" });
-      return;
-    }
-    if (resDate.getDay() === 0) {
-      toast({ title: "Closed on Sundays", variant: "destructive" });
-      return;
-    }
+  async function hasConflictOnDay(
+    date: Date,
+    start: Date,
+    minutes: number,
+    excludeBookingId?: string
+  ): Promise<boolean> {
+    const end = new Date(start.getTime() + minutes * 60000);
 
-    const myMin = currentBookingMinMinutes(resBooking);
-    const newStart = new Date(`${format(resDate, "yyyy-MM-dd")}T${resTime}:00`);
-    const newEnd = newStart
-      ? new Date(newStart.getTime() + myMin * 60000)
-      : null;
-
-    // Re-validate against live data: fetch other bookings on that day with durations
-    const dayStart = new Date(resDate);
+    const dayStart = new Date(date);
     dayStart.setHours(0, 0, 0, 0);
-    const dayEnd = new Date(resDate);
+    const dayEnd = new Date(date);
     dayEnd.setHours(23, 59, 59, 999);
-
-    type DayRow = {
-      id: string;
-      preferred_at: string;
-      booking_service: {
-        quantity: number | null;
-        service: { min_minutes: number | null } | null;
-      }[];
-    };
 
     const { data: others, error: othersErr } = await supabase
       .from("booking")
@@ -400,15 +459,12 @@ export default function AdminBookings() {
       .gte("preferred_at", dayStart.toISOString())
       .lt("preferred_at", dayEnd.toISOString())
       .in("status", ["pending", "confirmed"])
-      .neq("id", resBooking.id)
       .returns<DayRow[]>();
 
-    if (othersErr) {
-      console.warn(othersErr);
-    }
+    if (othersErr) console.warn(othersErr);
 
-    let conflict = false;
     for (const b of others ?? []) {
+      if (b.id === excludeBookingId) continue;
       const mins = Math.max(
         1,
         (b.booking_service ?? []).reduce((sum, bs) => {
@@ -419,17 +475,44 @@ export default function AdminBookings() {
       );
       const bStart = new Date(b.preferred_at);
       const bEnd = new Date(bStart.getTime() + mins * 60000);
-      if (windowsOverlap(newStart, newEnd!, bStart, bEnd)) {
-        conflict = true;
-        break;
-      }
+      if (windowsOverlap(start, end, bStart, bEnd)) return true;
     }
+
+    const blocks = await fetchDayBlocks(date);
+    for (const blk of blocks) {
+      const bStart = new Date(blk.start_at);
+      const bEnd = new Date(bStart.getTime() + blk.minutes * 60000);
+      if (windowsOverlap(start, end, bStart, bEnd)) return true;
+    }
+
+    return false;
+  }
+
+  async function saveReschedule() {
+    if (!resBooking || !resDate || !resTime) {
+      toast({ title: "Missing date/time", variant: "destructive" });
+      return;
+    }
+    if (resDate.getDay() === 0) {
+      toast({ title: "Closed on Sundays", variant: "destructive" });
+      return;
+    }
+
+    const myMin = currentBookingMinMinutes(resBooking);
+    const newStart = new Date(`${format(resDate, "yyyy-MM-dd")}T${resTime}:00`);
+
+    const conflict = await hasConflictOnDay(
+      resDate,
+      newStart,
+      myMin,
+      resBooking.id
+    );
 
     if (conflict) {
       toast({
         title: "Overlapping window",
         description:
-          "This time overlaps another booking. Choose a different slot or reschedule the other booking first.",
+          "This time overlaps another booking or an admin block. Choose a different slot.",
         variant: "destructive",
       });
       return;
@@ -456,11 +539,93 @@ export default function AdminBookings() {
     }
   }
 
+  async function openBlockDialog() {
+    const base = new Date();
+    setBlockDate(base);
+    setBlockTime("");
+    setBlockMinutes(60);
+    setBlockNote("");
+    setBlockOpen(true);
+    await fetchUnavailableForDate(base);
+  }
+
+  useEffect(() => {
+    if (blockOpen && blockDate) {
+      fetchUnavailableForDate(blockDate);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [blockDate, blockOpen]);
+
+  async function saveBlock() {
+    if (!blockDate || !blockTime || !blockMinutes) {
+      toast({ title: "Missing date/time", variant: "destructive" });
+      return;
+    }
+    if (blockDate.getDay() === 0) {
+      toast({ title: "Closed on Sundays", variant: "destructive" });
+      return;
+    }
+    const start = new Date(
+      `${format(blockDate, "yyyy-MM-dd")}T${blockTime}:00`
+    );
+
+    const conflict = await hasConflictOnDay(blockDate, start, blockMinutes);
+    if (conflict) {
+      toast({
+        title: "Overlapping window",
+        description:
+          "This block overlaps an existing booking or block. Pick a different time.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setBlockBusy(true);
+    const { error } = await supabase.from("admin_block").insert({
+      start_at: start.toISOString(),
+      minutes: blockMinutes,
+      note: blockNote || null,
+    });
+    setBlockBusy(false);
+
+    if (error) {
+      toast({
+        title: "Create block failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Time blocked" });
+      setBlockOpen(false);
+      await load();
+      await refreshMonthBlocks(calendarMonth);
+    }
+  }
+
+  async function deleteBlock(id: string) {
+    const { error } = await supabase.from("admin_block").delete().eq("id", id);
+    if (error) {
+      toast({
+        title: "Delete failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    } else {
+      toast({ title: "Block removed" });
+      if (blockDate) await fetchUnavailableForDate(blockDate);
+      await refreshMonthBlocks(calendarMonth);
+    }
+  }
+
+  // helpers for DayPicker modifiers
+  const dayHasBlocks = (date: Date) =>
+    monthWithBlocks.has(format(date, "yyyy-MM-dd"));
+
   if (!authed) return <AdminSignIn onSignedIn={() => setAuthed(true)} />;
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-4">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h1 className="text-2xl font-semibold">Bookings</h1>
         <div className="flex gap-2">
           <Select
@@ -481,11 +646,195 @@ export default function AdminBookings() {
           <Button variant="outline" onClick={load} disabled={loading}>
             {loading ? "Loading..." : "Refresh"}
           </Button>
+          <Button variant="secondary" onClick={openBlockDialog}>
+            Block time
+          </Button>
           <Button variant="destructive" onClick={() => supabase.auth.signOut()}>
             Sign out
           </Button>
         </div>
       </div>
+
+      {/* Block time dialog */}
+      <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Block time (admin)</DialogTitle>
+            <DialogDescription>
+              Create a personal block; these appear in{" "}
+              <span className="font-semibold">amber</span> on the calendar and
+              as “block” in the time list.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <CalendarIcon className="w-4 h-4 text-primary" /> Date
+              </Label>
+              <DatePicker
+                mode="single"
+                selected={blockDate}
+                onSelect={(d) => d && setBlockDate(d)}
+                disabled={(d) => d.getDay() === 0 || d < today}
+                onMonthChange={(m) => {
+                  setCalendarMonth(m);
+                  refreshMonthBlocks(m);
+                }}
+                modifiers={{ adminBlocked: (d) => dayHasBlocks(d) }}
+                modifiersClassNames={{
+                  adminBlocked:
+                    "relative after:absolute after:inset-0 after:rounded-md after:ring-1 ",
+                }}
+                classNames={{
+                  day_today: "bg-primary/15 text-primary font-semibold",
+                  day_selected: "bg-primary/20 text-foreground",
+                }}
+              />
+              <p className="text-xs text-muted-foreground">
+                Amber days contain one or more admin blocks.
+              </p>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Start time</Label>
+              <Select
+                value={blockTime}
+                onValueChange={setBlockTime}
+                disabled={!blockDate}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={blockDate ? "Select time" : "Pick date first"}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIMES.map((t) => {
+                    const kind = unavailableMap.get(t); // booking | block | both | undefined
+                    const isUnavailable = !!kind;
+                    const badge =
+                      kind === "both"
+                        ? "both"
+                        : kind === "booking"
+                        ? "booked"
+                        : kind === "block"
+                        ? "block"
+                        : "";
+                    return (
+                      <SelectItem
+                        key={t}
+                        value={t}
+                        className={isUnavailable ? "opacity-80" : ""}
+                      >
+                        <div className="flex w-full items-center justify-between gap-2">
+                          <span>{t}</span>
+                          {badge && (
+                            <span
+                              className={
+                                badge === "block"
+                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900"
+                                  : badge === "booked"
+                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
+                                  : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
+                              }
+                            >
+                              {badge}
+                            </span>
+                          )}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Duration</Label>
+              <Select
+                value={String(blockMinutes)}
+                onValueChange={(v) => setBlockMinutes(Number(v))}
+                disabled={!blockDate}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select duration" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DURATIONS.map((m) => (
+                    <SelectItem key={m} value={String(m)}>
+                      {m} minutes
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Note (optional)</Label>
+              <Input
+                placeholder="e.g., Supply run / Personal"
+                value={blockNote}
+                onChange={(e) => setBlockNote(e.target.value)}
+              />
+            </div>
+
+            {/* Manage / Undo blocks for selected day */}
+            <div className="space-y-2">
+              <Label>Existing blocks for this day</Label>
+              {dayBlocks.length === 0 ? (
+                <p className="text-sm text-muted-foreground">None</p>
+              ) : (
+                <ul className="space-y-2">
+                  {dayBlocks.map((b) => {
+                    const start = new Date(b.start_at);
+                    const end = new Date(start.getTime() + b.minutes * 60000);
+                    return (
+                      <li
+                        key={b.id}
+                        className="flex items-center justify-between rounded border px-2 py-1 text-sm"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-medium">
+                            {format(start, "HH:mm")} – {format(end, "HH:mm")}
+                          </span>
+                          {b.note && (
+                            <span className="text-xs text-muted-foreground">
+                              {b.note}
+                            </span>
+                          )}
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => deleteBlock(b.id)}
+                          title="Remove block"
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <p className="text-xs text-muted-foreground">
+                Click the trash icon to undo a block.
+              </p>
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2 sm:justify-end">
+            <Button variant="outline" onClick={() => setBlockOpen(false)}>
+              Close
+            </Button>
+            <Button
+              onClick={saveBlock}
+              disabled={blockBusy || !blockDate || !blockTime || !blockMinutes}
+            >
+              {blockBusy ? "Saving..." : "Save block"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {filtered.length === 0 ? (
         <Card>
@@ -574,7 +923,8 @@ export default function AdminBookings() {
                         <DialogTitle>Reschedule booking</DialogTitle>
                         <DialogDescription>
                           Pick a new date and time. Sundays blocked; booked
-                          slots are dimmed (you can still select them).
+                          slots are dimmed. Admin blocks are shown in{" "}
+                          <span className="font-semibold">amber</span>.
                         </DialogDescription>
                       </DialogHeader>
 
@@ -589,6 +939,18 @@ export default function AdminBookings() {
                             selected={resDate}
                             onSelect={(d) => d && setResDate(d)}
                             disabled={(d) => d.getDay() === 0 || d < today}
+                            onMonthChange={(m) => {
+                              setCalendarMonth(m);
+                              refreshMonthBlocks(m);
+                            }}
+                            /* mark days that have admin blocks */
+                            modifiers={{ adminBlocked: (d) => dayHasBlocks(d) }}
+                            /* style the custom modifier */
+                            modifiersClassNames={{
+                              adminBlocked:
+                                "relative after:absolute after:inset-0 after:rounded-md after:ring-1",
+                            }}
+                            /* keep your usual built-in classNames */
                             classNames={{
                               day_today:
                                 "bg-primary/15 text-primary font-semibold",
@@ -603,11 +965,16 @@ export default function AdminBookings() {
                             value={resTime}
                             onValueChange={(v) => {
                               setResTime(v);
-                              if (unavailableTimes.has(v)) {
+                              const kind = unavailableMap.get(v);
+                              if (kind) {
                                 toast({
                                   title: "Potential conflict",
                                   description:
-                                    "This slot overlaps another booking. Saving will prevent overlaps.",
+                                    kind === "block"
+                                      ? "This slot has an admin block."
+                                      : kind === "booking"
+                                      ? "This slot overlaps a booking."
+                                      : "This slot overlaps booking + block.",
                                 });
                               }
                             }}
@@ -622,23 +989,34 @@ export default function AdminBookings() {
                             </SelectTrigger>
                             <SelectContent>
                               {TIMES.map((t) => {
-                                const taken = unavailableTimes.has(t);
+                                const kind = unavailableMap.get(t);
+                                const badge =
+                                  kind === "both"
+                                    ? "both"
+                                    : kind === "booking"
+                                    ? "booked"
+                                    : kind === "block"
+                                    ? "block"
+                                    : "";
                                 return (
                                   <SelectItem
                                     key={t}
                                     value={t}
-                                    // not disabling; just dim + label
-                                    className={
-                                      taken
-                                        ? "opacity-60 data-[state=checked]:opacity-60"
-                                        : ""
-                                    }
+                                    className={kind ? "opacity-80" : ""}
                                   >
                                     <div className="flex w-full items-center justify-between">
                                       <span>{t}</span>
-                                      {taken && (
-                                        <span className="text-xs text-muted-foreground">
-                                          booked
+                                      {badge && (
+                                        <span
+                                          className={
+                                            badge === "block"
+                                              ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900"
+                                              : badge === "booked"
+                                              ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
+                                              : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
+                                          }
+                                        >
+                                          {badge}
                                         </span>
                                       )}
                                     </div>
@@ -648,8 +1026,8 @@ export default function AdminBookings() {
                             </SelectContent>
                           </Select>
                           <p className="text-xs text-muted-foreground">
-                            Booked slots are dimmed. You can select them, but
-                            you’ll need to move the conflicting booking first.
+                            “booked” = customer booking, “block” = admin block,
+                            “both” = overlap.
                           </p>
                         </div>
                       </div>

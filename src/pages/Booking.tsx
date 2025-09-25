@@ -60,6 +60,11 @@ type AvailabilityRow = {
   total_minutes: number | null; // aggregated duration from the view
 };
 
+type AdminBlockRow = {
+  start_at: string; // ISO
+  minutes: number;
+};
+
 const TIMES = [
   "08:00",
   "09:00",
@@ -137,7 +142,7 @@ const Booking = () => {
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
-  /* ---------------- availability (reads from booking_availability view) ---------------- */
+  /* ---------------- availability (bookings + admin blocks) ---------------- */
   useEffect(() => {
     (async () => {
       if (!formData.date) {
@@ -147,30 +152,44 @@ const Booking = () => {
 
       const { start, end } = localDayRange(formData.date);
 
-      const { data, error } = await supabase
+      // 1) Load customer bookings from the availability view
+      const { data: avail, error: availErr } = await supabase
         .from("booking_availability")
         .select("preferred_at, status, total_minutes")
         .gte("preferred_at", start.toISOString())
         .lt("preferred_at", end.toISOString())
         .returns<AvailabilityRow[]>();
 
-      if (error) {
-        console.error("availability error:", error);
+      if (availErr) {
+        console.error("availability error:", availErr);
         toast({
           title: t(
             "booking.toast.availabilityFailTitle",
             "Couldn’t load availability"
           ),
-          description: error.message,
+          description: availErr.message,
           variant: "destructive",
         });
         setUnavailableTimes(new Set());
         return;
       }
 
+      // 2) Load admin blocks for the same day
+      const { data: blocks, error: blocksErr } = await supabase
+        .from("admin_block")
+        .select("start_at, minutes")
+        .gte("start_at", start.toISOString())
+        .lt("start_at", end.toISOString())
+        .order("start_at", { ascending: true })
+        .returns<AdminBlockRow[]>();
+
+      if (blocksErr) {
+        console.warn("admin_block fetch error:", blocksErr);
+      }
+
+      // Build the blocked set (treat blocks the same as bookings)
       const blocked = new Set<string>();
 
-      // Block each hour touched by [start, start+minutes)
       function blockRange(startISO: string, minutes: number) {
         const s = new Date(startISO);
         const e = new Date(s.getTime() + minutes * 60000);
@@ -186,9 +205,16 @@ const Booking = () => {
         }
       }
 
-      for (const b of data ?? []) {
+      // From bookings (view)
+      for (const b of avail ?? []) {
         const mins = Math.max(1, Number(b.total_minutes ?? 0)) || 180;
         blockRange(b.preferred_at, mins);
+      }
+
+      // From admin blocks
+      for (const blk of blocks ?? []) {
+        const mins = Math.max(1, Number(blk.minutes ?? 0));
+        blockRange(blk.start_at, mins);
       }
 
       setUnavailableTimes(blocked);
@@ -467,7 +493,7 @@ const Booking = () => {
                           description: t("booking.toast.unavailable.desc"),
                           variant: "destructive",
                         });
-                        return; // hard stop on mobile webviews
+                        return;
                       }
                       handleInputChange("time", v);
                     }}

@@ -54,18 +54,10 @@ type ServiceRow = {
   base_price: string | number | null;
 };
 
-// NEW: fetch raw bookings with services; we’ll compute using MAX minutes
-type DayBookingRow = {
-  id: string;
+type AvailabilityRow = {
   preferred_at: string; // ISO
   status: "pending" | "confirmed";
-  booking_service: {
-    quantity: number | null;
-    service: {
-      min_minutes: number | null;
-      max_minutes: number | null; // expecting this column to exist
-    } | null;
-  }[];
+  total_minutes: number | null; // aggregated duration from the view
 };
 
 type AdminBlockRow = {
@@ -150,7 +142,7 @@ const Booking = () => {
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
-  /* ---------------- availability (bookings using UPPER duration + admin blocks) ---------------- */
+  /* ---------------- availability (bookings + admin blocks) ---------------- */
   useEffect(() => {
     (async () => {
       if (!formData.date) {
@@ -160,36 +152,29 @@ const Booking = () => {
 
       const { start, end } = localDayRange(formData.date);
 
-      // ---- BOOKINGS: use max_minutes when present, else min_minutes, else 180
-      const { data: bookings, error: bookingsErr } = await supabase
-        .from("booking")
-        .select(
-          `
-          id, preferred_at, status,
-          booking_service (
-            quantity,
-            service:service_id ( min_minutes, max_minutes )
-          )
-        `
-        )
+      // 1) Load customer bookings from the availability view
+      const { data: avail, error: availErr } = await supabase
+        .from("booking_availability")
+        .select("preferred_at, status, total_minutes")
         .gte("preferred_at", start.toISOString())
         .lt("preferred_at", end.toISOString())
-        .in("status", ["pending", "confirmed"])
-        .returns<DayBookingRow[]>();
+        .returns<AvailabilityRow[]>();
 
-      if (bookingsErr) {
-        console.error("booking fetch error:", bookingsErr);
+      if (availErr) {
+        console.error("availability error:", availErr);
         toast({
           title: t(
             "booking.toast.availabilityFailTitle",
             "Couldn’t load availability"
           ),
-          description: bookingsErr.message,
+          description: availErr.message,
           variant: "destructive",
         });
+        setUnavailableTimes(new Set());
+        return;
       }
 
-      // ---- ADMIN BLOCKS
+      // 2) Load admin blocks for the same day
       const { data: blocks, error: blocksErr } = await supabase
         .from("admin_block")
         .select("start_at, minutes")
@@ -220,18 +205,10 @@ const Booking = () => {
         }
       }
 
-      // From bookings: sum quantity × UPPER(minutes) across services in the booking
-      for (const b of bookings ?? []) {
-        const totalUpper = (b.booking_service ?? []).reduce((sum, bs) => {
-          const qty = Number(bs?.quantity ?? 1);
-          const maxM = Number(bs?.service?.max_minutes ?? 0);
-          const minM = Number(bs?.service?.min_minutes ?? 0);
-          const chosen = maxM > 0 ? maxM : minM; // prefer max, else min
-          return sum + qty * chosen;
-        }, 0);
-
-        const minutes = totalUpper > 0 ? totalUpper : 180; // fallback 3h if missing
-        blockRange(b.preferred_at, minutes);
+      // From bookings (view)
+      for (const b of avail ?? []) {
+        const mins = Math.max(1, Number(b.total_minutes ?? 0)) || 180;
+        blockRange(b.preferred_at, mins);
       }
 
       // From admin blocks

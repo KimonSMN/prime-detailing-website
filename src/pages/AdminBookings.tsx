@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback, memo } from "react";
 import { format, startOfMonth, endOfMonth } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Calendar as DatePicker } from "@/components/ui/calendar";
 import {
@@ -163,7 +162,7 @@ export default function AdminBookings() {
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  // Reschedule dialog state
+  // Reschedule dialog state (single instance)
   const [resOpen, setResOpen] = useState(false);
   const [resBooking, setResBooking] = useState<BookingRow | null>(null);
   const [resDate, setResDate] = useState<Date | undefined>(undefined);
@@ -200,7 +199,7 @@ export default function AdminBookings() {
     return () => sub.subscription.unsubscribe();
   }, []);
 
-  async function load() {
+  const load = useCallback(async () => {
     setLoading(true);
     const query = supabase
       .from("booking")
@@ -229,57 +228,62 @@ export default function AdminBookings() {
     } else {
       setRows((data as any) || []);
     }
-  }
+  }, [toast]);
 
   useEffect(() => {
     if (authed) {
       load();
-      // prime calendar month blocks
       refreshMonthBlocks(new Date());
     }
-  }, [authed]);
+  }, [authed, load]);
 
   const filtered = useMemo(() => {
     if (statusFilter === "all") return rows;
     return rows.filter((r) => r.status === statusFilter);
   }, [rows, statusFilter]);
 
-  async function setStatus(id: string, status: BookingRow["status"]) {
-    const { error } = await supabase
-      .from("booking")
-      .update({ status })
-      .eq("id", id);
-    if (error) {
-      toast({
-        title: "Update failed",
-        description: error.message,
-        variant: "destructive",
-      });
-    } else {
-      toast({ title: `Marked ${status}` });
-      load();
-    }
-  }
+  const setStatus = useCallback(
+    async (id: string, status: BookingRow["status"]) => {
+      const { error } = await supabase
+        .from("booking")
+        .update({ status })
+        .eq("id", id);
+      if (error) {
+        toast({
+          title: "Update failed",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({ title: `Marked ${status}` });
+        load();
+      }
+    },
+    [toast, load]
+  );
 
-  async function deleteBooking(id: string) {
-    try {
-      setDeletingId(id);
-      await supabase.from("booking_service").delete().eq("booking_id", id);
-      const { error } = await supabase.from("booking").delete().eq("id", id);
-      if (error) throw error;
-      toast({ title: "Booking deleted" });
-      await load();
-    } catch (err: any) {
-      toast({
-        title: "Delete failed",
-        description: err?.message ?? "Please try again.",
-        variant: "destructive",
-      });
-      console.error(err);
-    } finally {
-      setDeletingId(null);
-    }
-  }
+  const deleteBooking = useCallback(
+    async (id: string) => {
+      try {
+        setDeletingId(id);
+        await supabase.from("booking_service").delete().eq("booking_id", id);
+        const { error } = await supabase.from("booking").delete().eq("id", id);
+        if (error) throw error;
+        toast({ title: "Booking deleted" });
+        await load();
+      } catch (err: any) {
+        toast({
+          title: "Delete failed",
+          description: err?.message ?? "Please try again.",
+          variant: "destructive",
+        });
+        console.error(err);
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [toast, load]
+  );
 
   // ---- Helpers ----
   const today = useMemo(() => {
@@ -328,7 +332,7 @@ export default function AdminBookings() {
     return data ?? [];
   }
 
-  async function refreshMonthBlocks(month: Date) {
+  const refreshMonthBlocks = useCallback(async (month: Date) => {
     const from = startOfMonth(month);
     const to = endOfMonth(month);
 
@@ -348,7 +352,7 @@ export default function AdminBookings() {
       set.add(format(new Date(r.start_at), "yyyy-MM-dd"));
     });
     setMonthWithBlocks(set);
-  }
+  }, []);
 
   // For a given date, compute unavailable slots + kind map
   async function fetchUnavailableForDate(
@@ -382,7 +386,6 @@ export default function AdminBookings() {
       return;
     }
 
-    // collect hours separately to tag reason
     const bookedSet = new Set<string>();
     for (const b of bookings ?? []) {
       if (b.id === excludeBookingId) continue;
@@ -390,10 +393,7 @@ export default function AdminBookings() {
         1,
         (b.booking_service ?? []).reduce((sum, bs) => {
           const qty = Number(bs?.quantity ?? 1);
-          const m = Number(
-            // default service min to 0 if null
-            bs?.service?.min_minutes ?? 0
-          );
+          const m = Number(bs?.service?.min_minutes ?? 0);
           return sum + qty * m;
         }, 0)
       );
@@ -407,7 +407,6 @@ export default function AdminBookings() {
       expandBlockedHours(blk.start_at, blk.minutes, blockSet);
     }
 
-    // merge with reasons
     const map = new Map<string, UnavailKind>();
     for (const t of bookedSet) map.set(t, "booking");
     for (const t of blockSet) {
@@ -417,14 +416,14 @@ export default function AdminBookings() {
     setUnavailableMap(map);
   }
 
-  function openReschedule(r: BookingRow) {
+  const openReschedule = useCallback((r: BookingRow) => {
     const d = new Date(r.preferred_at);
     setResBooking(r);
     setResDate(d);
     setResTime(format(d, "HH:mm"));
     setResOpen(true);
     fetchUnavailableForDate(d, r.id);
-  }
+  }, []);
 
   useEffect(() => {
     if (resOpen && resDate && resBooking) {
@@ -731,9 +730,17 @@ export default function AdminBookings() {
         </div>
       </div>
 
-      {/* Block time dialog */}
+      {/* Block time dialog (mobile-friendly, scrollable, sticky footer) */}
       <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          className="
+      w-[calc(100vw-2rem)]
+      sm:max-w-md
+      max-h-[90vh] sm:max-h-none
+      overflow-y-auto sm:overflow-visible
+      p-6
+    "
+        >
           <DialogHeader>
             <DialogTitle>Block time (admin)</DialogTitle>
             <DialogDescription>
@@ -743,7 +750,8 @@ export default function AdminBookings() {
             </DialogDescription>
           </DialogHeader>
 
-          <div className="grid gap-4">
+          {/* Body */}
+          <div className="grid gap-4 text-[16px] sm:text-base">
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <CalendarIcon className="w-4 h-4 text-primary" /> Date
@@ -808,7 +816,7 @@ export default function AdminBookings() {
                 </SelectTrigger>
                 <SelectContent>
                   {TIMES.map((t) => {
-                    const kind = unavailableMap.get(t); // booking | block | both | undefined
+                    const kind = unavailableMap.get(t);
                     const isUnavailable = !!kind;
                     const badge =
                       kind === "both"
@@ -862,7 +870,7 @@ export default function AdminBookings() {
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {HOURS.map((h) => (
+                  {[1, 2, 3, 4, 5, 6, 7, 8].map((h) => (
                     <SelectItem key={h} value={String(h)}>
                       {h} {h === 1 ? "hour" : "hours"}
                     </SelectItem>
@@ -928,27 +936,28 @@ export default function AdminBookings() {
                 Click the trash icon to undo a block.
               </p>
             </div>
-          </div>
 
-          <DialogFooter className="gap-2 sm:justify-end">
-            <Button variant="outline" onClick={() => setBlockOpen(false)}>
-              Close
-            </Button>
-            <Button
-              onClick={saveBlock}
-              disabled={
-                blockBusy ||
-                !blockDate ||
-                (!blockFullDay && (!blockTime || !blockMinutes))
-              }
-            >
-              {blockBusy
-                ? "Saving..."
-                : blockFullDay
-                ? "Save full-day block"
-                : "Save block"}
-            </Button>
-          </DialogFooter>
+            {/* Footer (kept inside the scroll container; always reachable) */}
+            <div className="flex gap-2 justify-end pt-2">
+              <Button variant="outline" onClick={() => setBlockOpen(false)}>
+                Close
+              </Button>
+              <Button
+                onClick={saveBlock}
+                disabled={
+                  blockBusy ||
+                  !blockDate ||
+                  (!blockFullDay && (!blockTime || !blockMinutes))
+                }
+              >
+                {blockBusy
+                  ? "Saving..."
+                  : blockFullDay
+                  ? "Save full-day block"
+                  : "Save block"}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -959,253 +968,272 @@ export default function AdminBookings() {
           </CardContent>
         </Card>
       ) : (
-        filtered.map((r) => {
-          const total = (r.booking_service || []).reduce((sum, bs) => {
-            const price = Number(
-              bs.price_at_booking ?? bs.service?.base_price ?? 0
-            );
-            return sum + price * (bs.quantity ?? 1);
-          }, 0);
-
-          return (
-            <Card key={r.id}>
-              <CardHeader>
-                <CardTitle className="flex justify-between flex-wrap gap-2">
-                  <span>
-                    {r.customer?.full_name ?? "Unknown"} —{" "}
-                    {new Date(r.preferred_at).toLocaleString(undefined, {
-                      dateStyle: "medium",
-                      timeStyle: "short",
-                    })}
-                  </span>
-                  <span className="text-sm opacity-70">Status: {r.status}</span>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                <div className="text-sm">
-                  Email: {r.customer?.email ?? "—"} · Phone:{" "}
-                  {r.customer?.phone ?? "—"}
-                </div>
-                <div className="text-sm">Vehicle: {r.vehicle_info ?? "—"}</div>
-                <div className="text-sm">Notes: {r.notes ?? "—"}</div>
-                <div className="text-sm">
-                  Services:{" "}
-                  {(r.booking_service || [])
-                    .map((bs) => bs.service?.name)
-                    .filter(Boolean)
-                    .join(", ") || "—"}
-                </div>
-                <div className="text-sm font-medium">
-                  Estimate: ${total.toFixed(2)}
-                </div>
-
-                <div className="flex flex-wrap gap-2 pt-3">
-                  <Button onClick={() => setStatus(r.id, "confirmed")}>
-                    Confirm
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => setStatus(r.id, "completed")}
-                  >
-                    Complete
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={() => setStatus(r.id, "cancelled")}
-                  >
-                    Cancel
-                  </Button>
-
-                  {/* Reschedule */}
-                  <Dialog
-                    open={resOpen && resBooking?.id === r.id}
-                    onOpenChange={(o) => {
-                      if (!o) {
-                        setResOpen(false);
-                        setResBooking(null);
-                      }
-                    }}
-                  >
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="outline"
-                        onClick={() => openReschedule(r)}
-                      >
-                        Reschedule
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Reschedule booking</DialogTitle>
-                        <DialogDescription>
-                          Pick a new date and time. Sundays blocked; booked
-                          slots are dimmed. Admin blocks are shown in{" "}
-                          <span className="font-semibold">amber</span>.
-                        </DialogDescription>
-                      </DialogHeader>
-
-                      <div className="grid gap-4">
-                        <div className="space-y-2">
-                          <Label className="flex items-center gap-2">
-                            <CalendarIcon className="w-4 h-4 text-primary" />{" "}
-                            New Date
-                          </Label>
-                          <DatePicker
-                            mode="single"
-                            selected={resDate}
-                            onSelect={(d) => d && setResDate(d)}
-                            disabled={(d) => d.getDay() === 0 || d < today}
-                            onMonthChange={(m) => {
-                              setCalendarMonth(m);
-                              refreshMonthBlocks(m);
-                            }}
-                            /* mark days that have admin blocks */
-                            modifiers={{ adminBlocked: (d) => dayHasBlocks(d) }}
-                            /* style the custom modifier */
-                            modifiersClassNames={{
-                              adminBlocked:
-                                "relative after:absolute after:inset-0 after:rounded-md after:ring-1",
-                            }}
-                            /* keep your usual built-in classNames */
-                            classNames={{
-                              day_today:
-                                "bg-primary/15 text-primary font-semibold",
-                              day_selected: "bg-primary/20 text-foreground",
-                            }}
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label>New Time</Label>
-                          <Select
-                            value={resTime}
-                            onValueChange={(v) => {
-                              setResTime(v);
-                              const kind = unavailableMap.get(v);
-                              if (kind) {
-                                toast({
-                                  title: "Potential conflict",
-                                  description:
-                                    kind === "block"
-                                      ? "This slot has an admin block."
-                                      : kind === "booking"
-                                      ? "This slot overlaps a booking."
-                                      : "This slot overlaps booking + block.",
-                                });
-                              }
-                            }}
-                            disabled={!resDate}
-                          >
-                            <SelectTrigger>
-                              <SelectValue
-                                placeholder={
-                                  resDate ? "Select time" : "Pick date first"
-                                }
-                              />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {TIMES.map((t) => {
-                                const kind = unavailableMap.get(t);
-                                const badge =
-                                  kind === "both"
-                                    ? "both"
-                                    : kind === "booking"
-                                    ? "booked"
-                                    : kind === "block"
-                                    ? "block"
-                                    : "";
-                                return (
-                                  <SelectItem
-                                    key={t}
-                                    value={t}
-                                    className={kind ? "opacity-80" : ""}
-                                  >
-                                    <div className="flex w-full items-center justify-between">
-                                      <span>{t}</span>
-                                      {badge && (
-                                        <span
-                                          className={
-                                            badge === "block"
-                                              ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900"
-                                              : badge === "booked"
-                                              ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
-                                              : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
-                                          }
-                                        >
-                                          {badge}
-                                        </span>
-                                      )}
-                                    </div>
-                                  </SelectItem>
-                                );
-                              })}
-                            </SelectContent>
-                          </Select>
-                          <p className="text-xs text-muted-foreground">
-                            “booked” = customer booking, “block” = admin block,
-                            “both” = overlap.
-                          </p>
-                        </div>
-                      </div>
-
-                      <DialogFooter className="gap-2 sm:justify-end">
-                        <Button
-                          variant="outline"
-                          onClick={() => {
-                            setResOpen(false);
-                            setResBooking(null);
-                          }}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          onClick={saveReschedule}
-                          disabled={resBusy || !resDate || !resTime}
-                        >
-                          {resBusy ? "Saving..." : "Save"}
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-
-                  {/* Delete */}
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        className="ml-auto"
-                        disabled={deletingId === r.id}
-                      >
-                        {deletingId === r.id ? "Deleting..." : "Delete"}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>
-                          Delete this booking?
-                        </AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will permanently remove the booking and its
-                          services. This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => deleteBooking(r.id)}
-                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })
+        filtered.map((r) => (
+          <BookingCard
+            key={r.id}
+            row={r}
+            onConfirm={() => setStatus(r.id, "confirmed")}
+            onComplete={() => setStatus(r.id, "completed")}
+            onCancel={() => setStatus(r.id, "cancelled")}
+            onDelete={() => deleteBooking(r.id)}
+            onOpenReschedule={() => openReschedule(r)}
+            deleting={deletingId === r.id}
+          />
+        ))
       )}
+
+      {/* Single Reschedule dialog — mounted once (mobile-friendly) */}
+      <Dialog
+        open={resOpen}
+        onOpenChange={(o) => {
+          if (!o) {
+            setResOpen(false);
+            setResBooking(null);
+          }
+        }}
+      >
+        <DialogContent
+          className="
+      w-[calc(100vw-2rem)]
+      sm:max-w-md
+      max-h-[90vh] sm:max-h-none
+      overflow-y-auto sm:overflow-visible
+      p-6
+    "
+        >
+          <DialogHeader>
+            <DialogTitle>Reschedule booking</DialogTitle>
+            <DialogDescription>
+              Pick a new date and time. Sundays blocked; booked slots are
+              dimmed. Admin blocks are shown in{" "}
+              <span className="font-semibold">amber</span>.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4 text-[16px] sm:text-base">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <CalendarIcon className="w-4 h-4 text-primary" /> New Date
+              </Label>
+              <DatePicker
+                mode="single"
+                selected={resDate}
+                onSelect={(d) => d && setResDate(d)}
+                disabled={(d) => d.getDay() === 0 || d < today}
+                onMonthChange={(m) => {
+                  setCalendarMonth(m);
+                  refreshMonthBlocks(m);
+                }}
+                modifiers={{ adminBlocked: (d) => dayHasBlocks(d) }}
+                modifiersClassNames={{
+                  adminBlocked:
+                    "relative after:absolute after:inset-0 after:rounded-md after:ring-1",
+                }}
+                classNames={{
+                  day_today: "bg-primary/15 text-primary font-semibold",
+                  day_selected: "bg-primary/20 text-foreground",
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>New Time</Label>
+              <Select
+                value={resTime}
+                onValueChange={(v) => {
+                  setResTime(v);
+                  const kind = unavailableMap.get(v);
+                  if (kind) {
+                    toast({
+                      title: "Potential conflict",
+                      description:
+                        kind === "block"
+                          ? "This slot has an admin block."
+                          : kind === "booking"
+                          ? "This slot overlaps a booking."
+                          : "This slot overlaps booking + block.",
+                    });
+                  }
+                }}
+                disabled={!resDate}
+              >
+                <SelectTrigger>
+                  <SelectValue
+                    placeholder={resDate ? "Select time" : "Pick date first"}
+                  />
+                </SelectTrigger>
+                <SelectContent>
+                  {TIMES.map((t) => {
+                    const kind = unavailableMap.get(t);
+                    const badge =
+                      kind === "both"
+                        ? "both"
+                        : kind === "booking"
+                        ? "booked"
+                        : kind === "block"
+                        ? "block"
+                        : "";
+                    return (
+                      <SelectItem
+                        key={t}
+                        value={t}
+                        className={kind ? "opacity-80" : ""}
+                      >
+                        <div className="flex w-full items-center justify-between">
+                          <span>{t}</span>
+                          {badge && (
+                            <span
+                              className={
+                                badge === "block"
+                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900"
+                                  : badge === "booked"
+                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
+                                  : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
+                              }
+                            >
+                              {badge}
+                            </span>
+                          )}
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground">
+                “booked” = customer booking, “block” = admin block, “both” =
+                overlap.
+              </p>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-2">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setResOpen(false);
+                  setResBooking(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={saveReschedule}
+                disabled={resBusy || !resDate || !resTime}
+              >
+                {resBusy ? "Saving..." : "Save"}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+/* -------------------- Lightweight booking card (memoized) -------------------- */
+const BookingCard = memo(function BookingCard({
+  row,
+  onConfirm,
+  onComplete,
+  onCancel,
+  onDelete,
+  onOpenReschedule,
+  deleting,
+}: {
+  row: BookingRow;
+  onConfirm: () => void;
+  onComplete: () => void;
+  onCancel: () => void;
+  onDelete: () => void;
+  onOpenReschedule: () => void;
+  deleting: boolean;
+}) {
+  const total = useMemo(
+    () =>
+      (row.booking_service || []).reduce((sum, bs) => {
+        const price = Number(
+          bs.price_at_booking ?? bs.service?.base_price ?? 0
+        );
+        return sum + price * (bs.quantity ?? 1);
+      }, 0),
+    [row.booking_service]
+  );
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex justify-between flex-wrap gap-2">
+          <span>
+            {row.customer?.full_name ?? "Unknown"} —{" "}
+            {new Date(row.preferred_at).toLocaleString(undefined, {
+              dateStyle: "medium",
+              timeStyle: "short",
+            })}
+          </span>
+          <span className="text-sm opacity-70">Status: {row.status}</span>
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-2">
+        <div className="text-sm">
+          Email: {row.customer?.email ?? "—"} · Phone:{" "}
+          {row.customer?.phone ?? "—"}
+        </div>
+        <div className="text-sm">Vehicle: {row.vehicle_info ?? "—"}</div>
+        <div className="text-sm">Notes: {row.notes ?? "—"}</div>
+        <div className="text-sm">
+          Services:{" "}
+          {(row.booking_service || [])
+            .map((bs) => bs.service?.name)
+            .filter(Boolean)
+            .join(", ") || "—"}
+        </div>
+        <div className="text-sm font-medium">Estimate: ${total.toFixed(2)}</div>
+
+        <div className="flex flex-wrap gap-2 pt-3">
+          <Button onClick={onConfirm}>Confirm</Button>
+          <Button variant="outline" onClick={onComplete}>
+            Complete
+          </Button>
+          <Button variant="destructive" onClick={onCancel}>
+            Cancel
+          </Button>
+
+          <Button variant="outline" onClick={onOpenReschedule}>
+            Reschedule
+          </Button>
+
+          {/* Delete */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                className="ml-auto"
+                disabled={deleting}
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete this booking?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently remove the booking and its services.
+                  This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={onDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});

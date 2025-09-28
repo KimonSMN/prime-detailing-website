@@ -34,7 +34,17 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Calendar as DatePicker } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon, Trash2 } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Trash2,
+  EllipsisVertical,
+} from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 /* -------------------- Sign-in box -------------------- */
 function AdminSignIn({ onSignedIn }: { onSignedIn: () => void }) {
@@ -136,7 +146,8 @@ const TIMES = [
   "16:00",
 ];
 
-const DURATIONS = [60, 90, 120, 150, 180, 240]; // minutes
+// WHOLE-HOUR options (1–8 hours)
+const HOURS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 // Reason a specific HH:mm slot is unavailable
 type UnavailKind = "booking" | "block" | "both";
@@ -168,9 +179,10 @@ export default function AdminBookings() {
   const [blockOpen, setBlockOpen] = useState(false);
   const [blockDate, setBlockDate] = useState<Date | undefined>(undefined);
   const [blockTime, setBlockTime] = useState<string>("");
-  const [blockMinutes, setBlockMinutes] = useState<number>(60);
+  const [blockMinutes, setBlockMinutes] = useState<number>(60); // default 1 hour
   const [blockNote, setBlockNote] = useState<string>("");
   const [blockBusy, setBlockBusy] = useState(false);
+  const [blockFullDay, setBlockFullDay] = useState(false); // NEW: full-day toggle
   const [dayBlocks, setDayBlocks] = useState<AdminBlock[]>([]); // for manage/undo
 
   // Month-level blocks for coloring the calendar days (admin-only UI)
@@ -378,7 +390,10 @@ export default function AdminBookings() {
         1,
         (b.booking_service ?? []).reduce((sum, bs) => {
           const qty = Number(bs?.quantity ?? 1);
-          const m = Number(bs?.service?.min_minutes ?? 0);
+          const m = Number(
+            // default service min to 0 if null
+            bs?.service?.min_minutes ?? 0
+          );
           return sum + qty * m;
         }, 0)
       );
@@ -545,6 +560,7 @@ export default function AdminBookings() {
     setBlockTime("");
     setBlockMinutes(60);
     setBlockNote("");
+    setBlockFullDay(false);
     setBlockOpen(true);
     await fetchUnavailableForDate(base);
   }
@@ -557,19 +573,32 @@ export default function AdminBookings() {
   }, [blockDate, blockOpen]);
 
   async function saveBlock() {
-    if (!blockDate || !blockTime || !blockMinutes) {
-      toast({ title: "Missing date/time", variant: "destructive" });
+    if (!blockDate) {
+      toast({ title: "Missing date", variant: "destructive" });
       return;
     }
     if (blockDate.getDay() === 0) {
       toast({ title: "Closed on Sundays", variant: "destructive" });
       return;
     }
-    const start = new Date(
-      `${format(blockDate, "yyyy-MM-dd")}T${blockTime}:00`
-    );
 
-    const conflict = await hasConflictOnDay(blockDate, start, blockMinutes);
+    let start: Date;
+    let minutes: number;
+
+    if (blockFullDay) {
+      // Full-day: 00:00 for 24h
+      start = new Date(format(blockDate, "yyyy-MM-dd") + "T00:00:00");
+      minutes = 1440;
+    } else {
+      if (!blockTime || !blockMinutes) {
+        toast({ title: "Missing time / hours", variant: "destructive" });
+        return;
+      }
+      start = new Date(`${format(blockDate, "yyyy-MM-dd")}T${blockTime}:00`);
+      minutes = blockMinutes; // already hours*60 from the Select
+    }
+
+    const conflict = await hasConflictOnDay(blockDate, start, minutes);
     if (conflict) {
       toast({
         title: "Overlapping window",
@@ -583,7 +612,7 @@ export default function AdminBookings() {
     setBlockBusy(true);
     const { error } = await supabase.from("admin_block").insert({
       start_at: start.toISOString(),
-      minutes: blockMinutes,
+      minutes,
       note: blockNote || null,
     });
     setBlockBusy(false);
@@ -595,7 +624,7 @@ export default function AdminBookings() {
         variant: "destructive",
       });
     } else {
-      toast({ title: "Time blocked" });
+      toast({ title: blockFullDay ? "Day blocked" : "Time blocked" });
       setBlockOpen(false);
       await load();
       await refreshMonthBlocks(calendarMonth);
@@ -625,14 +654,16 @@ export default function AdminBookings() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 space-y-4">
-      <div className="flex items-center justify-between gap-2">
+      <div className="flex items-center justify-between gap-2 flex-wrap">
         <h1 className="text-2xl font-semibold">Bookings</h1>
-        <div className="flex gap-2">
+
+        {/* Controls */}
+        <div className="flex items-center gap-2">
           <Select
             value={statusFilter}
             onValueChange={(v) => setStatusFilter(v as any)}
           >
-            <SelectTrigger className="w-44">
+            <SelectTrigger className="w-40 sm:w-44">
               <SelectValue placeholder="Filter status" />
             </SelectTrigger>
             <SelectContent>
@@ -643,15 +674,60 @@ export default function AdminBookings() {
               <SelectItem value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" onClick={load} disabled={loading}>
-            {loading ? "Loading..." : "Refresh"}
-          </Button>
-          <Button variant="secondary" onClick={openBlockDialog}>
-            Block time
-          </Button>
-          <Button variant="destructive" onClick={() => supabase.auth.signOut()}>
-            Sign out
-          </Button>
+
+          {/* Desktop buttons */}
+          <div className="hidden sm:flex gap-2">
+            <Button variant="outline" onClick={load} disabled={loading}>
+              {loading ? "Loading..." : "Refresh"}
+            </Button>
+            <Button variant="secondary" onClick={openBlockDialog}>
+              Block time
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => supabase.auth.signOut()}
+            >
+              Sign out
+            </Button>
+          </div>
+
+          {/* Mobile dropdown */}
+          <div className="sm:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" aria-label="Actions">
+                  <EllipsisVertical className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    if (!loading) load();
+                  }}
+                  className={loading ? "opacity-50 pointer-events-none" : ""}
+                >
+                  {loading ? "Loading..." : "Refresh"}
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    openBlockDialog();
+                  }}
+                >
+                  Block time
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    supabase.auth.signOut();
+                  }}
+                >
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
@@ -696,16 +772,38 @@ export default function AdminBookings() {
               </p>
             </div>
 
+            {/* Full-day toggle */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  className="h-4 w-4"
+                  checked={blockFullDay}
+                  onChange={(e) => setBlockFullDay(e.target.checked)}
+                />
+                Block entire day
+              </Label>
+              <p className="text-xs text-muted-foreground">
+                When enabled, the selected date will be fully unavailable.
+              </p>
+            </div>
+
             <div className="space-y-2">
               <Label>Start time</Label>
               <Select
                 value={blockTime}
                 onValueChange={setBlockTime}
-                disabled={!blockDate}
+                disabled={!blockDate || blockFullDay}
               >
                 <SelectTrigger>
                   <SelectValue
-                    placeholder={blockDate ? "Select time" : "Pick date first"}
+                    placeholder={
+                      blockFullDay
+                        ? "Disabled (full day)"
+                        : blockDate
+                        ? "Select time"
+                        : "Pick date first"
+                    }
                   />
                 </SelectTrigger>
                 <SelectContent>
@@ -750,19 +848,23 @@ export default function AdminBookings() {
             </div>
 
             <div className="space-y-2">
-              <Label>Duration</Label>
+              <Label>Hours</Label>
               <Select
-                value={String(blockMinutes)}
-                onValueChange={(v) => setBlockMinutes(Number(v))}
-                disabled={!blockDate}
+                value={String(blockMinutes / 60)}
+                onValueChange={(v) => setBlockMinutes(Number(v) * 60)}
+                disabled={!blockDate || blockFullDay}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select duration" />
+                  <SelectValue
+                    placeholder={
+                      blockFullDay ? "Disabled (full day)" : "Select hours"
+                    }
+                  />
                 </SelectTrigger>
                 <SelectContent>
-                  {DURATIONS.map((m) => (
-                    <SelectItem key={m} value={String(m)}>
-                      {m} minutes
+                  {HOURS.map((h) => (
+                    <SelectItem key={h} value={String(h)}>
+                      {h} {h === 1 ? "hour" : "hours"}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -788,6 +890,7 @@ export default function AdminBookings() {
                   {dayBlocks.map((b) => {
                     const start = new Date(b.start_at);
                     const end = new Date(start.getTime() + b.minutes * 60000);
+                    const full = Number(b.minutes) >= 1440;
                     return (
                       <li
                         key={b.id}
@@ -795,7 +898,12 @@ export default function AdminBookings() {
                       >
                         <div className="flex flex-col">
                           <span className="font-medium">
-                            {format(start, "HH:mm")} – {format(end, "HH:mm")}
+                            {full
+                              ? "Full day"
+                              : `${format(start, "HH:mm")} – ${format(
+                                  end,
+                                  "HH:mm"
+                                )}`}
                           </span>
                           {b.note && (
                             <span className="text-xs text-muted-foreground">
@@ -828,9 +936,17 @@ export default function AdminBookings() {
             </Button>
             <Button
               onClick={saveBlock}
-              disabled={blockBusy || !blockDate || !blockTime || !blockMinutes}
+              disabled={
+                blockBusy ||
+                !blockDate ||
+                (!blockFullDay && (!blockTime || !blockMinutes))
+              }
             >
-              {blockBusy ? "Saving..." : "Save block"}
+              {blockBusy
+                ? "Saving..."
+                : blockFullDay
+                ? "Save full-day block"
+                : "Save block"}
             </Button>
           </DialogFooter>
         </DialogContent>

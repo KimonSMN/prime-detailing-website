@@ -114,6 +114,14 @@ type BookingRow = {
       min_minutes: number | null;
     };
   }[];
+  booking_addon: {
+    quantity: number | null;
+    addon: {
+      name: string;
+      base_price: string | null;
+      duration_min: number | null;
+    } | null;
+  }[];
 };
 
 type DayRow = {
@@ -123,6 +131,10 @@ type DayRow = {
   booking_service: {
     quantity: number | null;
     service: { min_minutes: number | null } | null;
+  }[];
+  booking_addon?: {
+    quantity: number | null;
+    addon: { duration_min: number | null } | null;
   }[];
 };
 
@@ -144,9 +156,6 @@ const TIMES = [
   "15:00",
   "16:00",
 ];
-
-// WHOLE-HOUR options (1–8 hours)
-const HOURS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
 
 // Reason a specific HH:mm slot is unavailable
 type UnavailKind = "booking" | "block" | "both";
@@ -181,10 +190,10 @@ export default function AdminBookings() {
   const [blockMinutes, setBlockMinutes] = useState<number>(60); // default 1 hour
   const [blockNote, setBlockNote] = useState<string>("");
   const [blockBusy, setBlockBusy] = useState(false);
-  const [blockFullDay, setBlockFullDay] = useState(false); // NEW: full-day toggle
-  const [dayBlocks, setDayBlocks] = useState<AdminBlock[]>([]); // for manage/undo
+  const [blockFullDay, setBlockFullDay] = useState(false);
+  const [dayBlocks, setDayBlocks] = useState<AdminBlock[]>([]);
 
-  // Month-level blocks for coloring the calendar days (admin-only UI)
+  // Month-level blocks for coloring the calendar days
   const [monthWithBlocks, setMonthWithBlocks] = useState<Set<string>>(
     new Set()
   );
@@ -205,14 +214,18 @@ export default function AdminBookings() {
       .from("booking")
       .select(
         `
-        id, created_at, preferred_at, status, vehicle_info, notes,
-        customer:customer_id ( full_name, email, phone ),
-        booking_service (
-          quantity,
-          price_at_booking,
-          service:service_id ( name, base_price, min_minutes )
-        )
-      `
+    id, created_at, preferred_at, status, vehicle_info, notes,
+    customer:customer_id ( full_name, email, phone ),
+    booking_service (
+      quantity,
+      price_at_booking,
+      service:service_id ( name, base_price, min_minutes )
+    ),
+    booking_addon (
+      quantity,
+      addon:addon_id ( name, base_price, duration_min )
+    )
+  `
       )
       .order("preferred_at", { ascending: true })
       .limit(200);
@@ -267,6 +280,7 @@ export default function AdminBookings() {
       try {
         setDeletingId(id);
         await supabase.from("booking_service").delete().eq("booking_id", id);
+        await supabase.from("booking_addon").delete().eq("booking_id", id);
         const { error } = await supabase.from("booking").delete().eq("id", id);
         if (error) throw error;
         toast({ title: "Booking deleted" });
@@ -372,6 +386,10 @@ export default function AdminBookings() {
         booking_service (
           quantity,
           service:service_id ( min_minutes )
+        ),
+        booking_addon (
+          quantity,
+          addon:addon_id ( duration_min )
         )
       `
       )
@@ -389,14 +407,20 @@ export default function AdminBookings() {
     const bookedSet = new Set<string>();
     for (const b of bookings ?? []) {
       if (b.id === excludeBookingId) continue;
-      const mins = Math.max(
-        1,
-        (b.booking_service ?? []).reduce((sum, bs) => {
-          const qty = Number(bs?.quantity ?? 1);
-          const m = Number(bs?.service?.min_minutes ?? 0);
-          return sum + qty * m;
-        }, 0)
-      );
+
+      const serviceMins = (b.booking_service ?? []).reduce((sum, bs) => {
+        const qty = Number(bs?.quantity ?? 1);
+        const m = Number(bs?.service?.min_minutes ?? 0);
+        return sum + qty * m;
+      }, 0);
+
+      const addonMins = (b.booking_addon ?? []).reduce((sum, ba) => {
+        const qty = Number(ba?.quantity ?? 1);
+        const m = Number(ba?.addon?.duration_min ?? 0);
+        return sum + qty * m;
+      }, 0);
+
+      const mins = Math.max(1, serviceMins + addonMins);
       expandBlockedHours(b.preferred_at, mins, bookedSet);
     }
 
@@ -434,11 +458,17 @@ export default function AdminBookings() {
 
   function currentBookingMinMinutes(r: BookingRow | null) {
     if (!r) return 180;
-    const total = (r.booking_service ?? []).reduce((sum, bs) => {
+    const services = (r.booking_service ?? []).reduce((sum, bs) => {
       const qty = Number(bs?.quantity ?? 1);
       const m = Number(bs?.service?.min_minutes ?? 0);
       return sum + qty * m;
     }, 0);
+    const addons = (r.booking_addon ?? []).reduce((sum, ba) => {
+      const qty = Number(ba?.quantity ?? 1);
+      const m = Number(ba?.addon?.duration_min ?? 0);
+      return sum + qty * m;
+    }, 0);
+    const total = services + addons;
     return total > 0 ? total : 180;
   }
 
@@ -467,6 +497,10 @@ export default function AdminBookings() {
         booking_service (
           quantity,
           service:service_id ( min_minutes )
+        ),
+        booking_addon (
+          quantity,
+          addon:addon_id ( duration_min )
         )
       `
       )
@@ -479,14 +513,19 @@ export default function AdminBookings() {
 
     for (const b of others ?? []) {
       if (b.id === excludeBookingId) continue;
-      const mins = Math.max(
-        1,
-        (b.booking_service ?? []).reduce((sum, bs) => {
-          const qty = Number(bs?.quantity ?? 1);
-          const m = Number(bs?.service?.min_minutes ?? 0);
-          return sum + qty * m;
-        }, 0)
-      );
+
+      const serviceMins = (b.booking_service ?? []).reduce((sum, bs) => {
+        const qty = Number(bs?.quantity ?? 1);
+        const m = Number(bs?.service?.min_minutes ?? 0);
+        return sum + qty * m;
+      }, 0);
+      const addonMins = (b.booking_addon ?? []).reduce((sum, ba) => {
+        const qty = Number(ba?.quantity ?? 1);
+        const m = Number(ba?.addon?.duration_min ?? 0);
+        return sum + qty * m;
+      }, 0);
+
+      const mins = Math.max(1, serviceMins + addonMins);
       const bStart = new Date(b.preferred_at);
       const bEnd = new Date(bStart.getTime() + mins * 60000);
       if (windowsOverlap(start, end, bStart, bEnd)) return true;
@@ -585,7 +624,6 @@ export default function AdminBookings() {
     let minutes: number;
 
     if (blockFullDay) {
-      // Full-day: 00:00 for 24h
       start = new Date(format(blockDate, "yyyy-MM-dd") + "T00:00:00");
       minutes = 1440;
     } else {
@@ -594,7 +632,7 @@ export default function AdminBookings() {
         return;
       }
       start = new Date(`${format(blockDate, "yyyy-MM-dd")}T${blockTime}:00`);
-      minutes = blockMinutes; // already hours*60 from the Select
+      minutes = blockMinutes;
     }
 
     const conflict = await hasConflictOnDay(blockDate, start, minutes);
@@ -730,17 +768,9 @@ export default function AdminBookings() {
         </div>
       </div>
 
-      {/* Block time dialog (mobile-friendly, scrollable, sticky footer) */}
+      {/* Block time dialog */}
       <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
-        <DialogContent
-          className="
-      w-[calc(100vw-2rem)]
-      sm:max-w-md
-      max-h-[90vh] sm:max-h-none
-      overflow-y-auto sm:overflow-visible
-      p-6
-    "
-        >
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md max-h-[90vh] sm:max-h-none overflow-y-auto sm:overflow-visible p-6">
           <DialogHeader>
             <DialogTitle>Block time (admin)</DialogTitle>
             <DialogDescription>
@@ -750,7 +780,6 @@ export default function AdminBookings() {
             </DialogDescription>
           </DialogHeader>
 
-          {/* Body */}
           <div className="grid gap-4 text-[16px] sm:text-base">
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
@@ -780,7 +809,6 @@ export default function AdminBookings() {
               </p>
             </div>
 
-            {/* Full-day toggle */}
             <div className="space-y-2">
               <Label className="flex items-center gap-2">
                 <input
@@ -888,7 +916,6 @@ export default function AdminBookings() {
               />
             </div>
 
-            {/* Manage / Undo blocks for selected day */}
             <div className="space-y-2">
               <Label>Existing blocks for this day</Label>
               {dayBlocks.length === 0 ? (
@@ -937,7 +964,6 @@ export default function AdminBookings() {
               </p>
             </div>
 
-            {/* Footer (kept inside the scroll container; always reachable) */}
             <div className="flex gap-2 justify-end pt-2">
               <Button variant="outline" onClick={() => setBlockOpen(false)}>
                 Close
@@ -982,7 +1008,7 @@ export default function AdminBookings() {
         ))
       )}
 
-      {/* Single Reschedule dialog — mounted once (mobile-friendly) */}
+      {/* Reschedule dialog */}
       <Dialog
         open={resOpen}
         onOpenChange={(o) => {
@@ -992,15 +1018,7 @@ export default function AdminBookings() {
           }
         }}
       >
-        <DialogContent
-          className="
-      w-[calc(100vw-2rem)]
-      sm:max-w-md
-      max-h-[90vh] sm:max-h-none
-      overflow-y-auto sm:overflow-visible
-      p-6
-    "
-        >
+        <DialogContent className="w-[calc(100vw-2rem)] sm:max-w-md max-h-[90vh] sm:max-h-none overflow-y-auto sm:overflow-visible p-6">
           <DialogHeader>
             <DialogTitle>Reschedule booking</DialogTitle>
             <DialogDescription>
@@ -1130,7 +1148,7 @@ export default function AdminBookings() {
   );
 }
 
-/* -------------------- Lightweight booking card (memoized) -------------------- */
+/* -------------------- Booking card (memoized) -------------------- */
 const BookingCard = memo(function BookingCard({
   row,
   onConfirm,
@@ -1148,16 +1166,34 @@ const BookingCard = memo(function BookingCard({
   onOpenReschedule: () => void;
   deleting: boolean;
 }) {
-  const total = useMemo(
-    () =>
-      (row.booking_service || []).reduce((sum, bs) => {
-        const price = Number(
-          bs.price_at_booking ?? bs.service?.base_price ?? 0
-        );
-        return sum + price * (bs.quantity ?? 1);
-      }, 0),
-    [row.booking_service]
-  );
+  const total = useMemo(() => {
+    const svc = (row.booking_service || []).reduce((sum, bs) => {
+      const price = Number(bs.price_at_booking ?? bs.service?.base_price ?? 0);
+      return sum + price * (bs.quantity ?? 1);
+    }, 0);
+
+    const addons = (row.booking_addon || []).reduce((sum, ba) => {
+      const price = Number(ba.addon?.base_price ?? 0);
+      const qty = Number(ba.quantity ?? 1);
+      return sum + price * qty;
+    }, 0);
+
+    return svc + addons;
+  }, [row.booking_service, row.booking_addon]);
+
+  const addonsList = useMemo(() => {
+    const items =
+      row.booking_addon
+        ?.map((ba) =>
+          ba.addon?.name
+            ? `${ba.addon.name}${
+                ba.quantity && ba.quantity > 1 ? ` × ${ba.quantity}` : ""
+              }`
+            : null
+        )
+        .filter(Boolean) || [];
+    return items.length ? items.join(", ") : "—";
+  }, [row.booking_addon]);
 
   return (
     <Card>
@@ -1180,6 +1216,7 @@ const BookingCard = memo(function BookingCard({
         </div>
         <div className="text-sm">Vehicle: {row.vehicle_info ?? "—"}</div>
         <div className="text-sm">Notes: {row.notes ?? "—"}</div>
+
         <div className="text-sm">
           Services:{" "}
           {(row.booking_service || [])
@@ -1187,7 +1224,12 @@ const BookingCard = memo(function BookingCard({
             .filter(Boolean)
             .join(", ") || "—"}
         </div>
-        <div className="text-sm font-medium">Estimate: ${total.toFixed(2)}</div>
+
+        <div className="text-sm">
+          Add-ons: <span className="opacity-90">{addonsList}</span>
+        </div>
+
+        <div className="text-sm font-medium">Estimate: €{total.toFixed(2)}</div>
 
         <div className="flex flex-wrap gap-2 pt-3">
           <Button onClick={onConfirm}>Confirm</Button>
@@ -1217,8 +1259,8 @@ const BookingCard = memo(function BookingCard({
               <AlertDialogHeader>
                 <AlertDialogTitle>Delete this booking?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This will permanently remove the booking and its services.
-                  This action cannot be undone.
+                  This will permanently remove the booking and its
+                  services/add-ons. This action cannot be undone.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

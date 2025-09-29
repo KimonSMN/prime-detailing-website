@@ -1,3 +1,4 @@
+// src/pages/Services.tsx
 import {
   Card,
   CardContent,
@@ -18,31 +19,34 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
-type ServiceId = "basicWash" | "fullDetail" | "paintCorrection";
-
-type ServiceDef = {
-  id: ServiceId;
-  icon: any;
-  priceFrom?: number;
-  durationLabelKey?: string; // e.g. "1-2"
+/* ---------------- Types from DB ---------------- */
+type ServiceRow = {
+  id: string;
+  name: string;
+  base_price: number | string | null;
+  duration_min: number | null; // shown on Services page
+  active: boolean | null;
 };
 
-const serviceDefs: ServiceDef[] = [
-  { id: "basicWash", icon: Droplets, priceFrom: 20, durationLabelKey: "1-2" },
-  { id: "fullDetail", icon: Car, priceFrom: 40, durationLabelKey: "3-6" },
-  {
-    id: "paintCorrection",
-    icon: Palette,
-    priceFrom: 100,
-    durationLabelKey: "6-8",
-  },
-];
+type AddonRow = {
+  id: string;
+  slug: string | null; // use for icon & mapping
+  name: string;
+  base_price: number | string | null;
+  duration_min: number | null;
+  active: boolean | null;
+};
 
-// Fallback copy if i18n keys are missing
+/* ---------------- Local service ids used by i18n ---------------- */
+type ServiceId = "basicWash" | "fullDetail" | "paintCorrection";
+
+/* Fallback copy if i18n keys are missing */
 const serviceCopyFallback: Record<
   ServiceId,
-  { title: string; description: string; features: string[] }
+  { title: string; description: string; features: string[]; defaultIcon: any }
 > = {
   basicWash: {
     title: "Basic Exterior & Interior Wash",
@@ -57,6 +61,7 @@ const serviceCopyFallback: Record<
       "No clay bar / no tar or sap removal",
       "No deep carpet/seat extraction",
     ],
+    defaultIcon: Droplets,
   },
   fullDetail: {
     title: "Full Exterior & Interior Detail",
@@ -73,6 +78,7 @@ const serviceCopyFallback: Record<
       "Leather surfaces cleaned & conditioned",
       "Fabric seats deep cleaned with extraction machine (wet-vac) where needed",
     ],
+    defaultIcon: Car,
   },
   paintCorrection: {
     title: "Paint Correction",
@@ -86,32 +92,169 @@ const serviceCopyFallback: Record<
       "Panel wipe to prepare for protection",
       "Recommended: add a sealant or ceramic for long-term lock-in",
     ],
+    defaultIcon: Palette,
   },
 };
 
-// ---- Add-ons driven by i18n ----
-type AddonId =
-  | "sprayWax"
-  | "premiumWax"
-  | "ceramicSpray"
-  | "nanoSealant"
-  | "proCeramic"
-  | "engineBay";
+/* Map DB services by fuzzy name → our i18n service ids */
+function mapServiceIdByName(name: string): ServiceId | null {
+  const n = name.toLowerCase();
+  if (/(basic).*(wash)/i.test(name) || n.includes("basic")) return "basicWash";
+  if (/(full).*(detail)/i.test(name) || n.includes("interior detail"))
+    return "fullDetail";
+  if (n.includes("paint correction")) return "paintCorrection";
+  return null;
+}
 
-type AddonDef = { id: AddonId; icon: any; priceFrom?: number };
+/* Add-on icon by slug */
+function addonIconBySlug(slug?: string | null) {
+  switch (slug) {
+    case "sprayWax":
+      return Droplets;
+    case "premiumWax":
+      return Palette;
+    case "ceramicSpray":
+      return Settings;
+    case "nanoSealant":
+      return Shield;
+    case "proCeramic":
+      return Crown;
+    case "engineBay":
+      return Wrench;
+    default:
+      return Sparkles;
+  }
+}
 
-// Placeholder prices — adjust anytime
-const addonDefs: AddonDef[] = [
-  { id: "sprayWax", icon: Droplets, priceFrom: 15 },
-  { id: "premiumWax", icon: Palette, priceFrom: 30 },
-  { id: "ceramicSpray", icon: Settings, priceFrom: 50 },
-  { id: "nanoSealant", icon: Shield, priceFrom: 120 },
-  { id: "proCeramic", icon: Crown, priceFrom: 300 },
-  { id: "engineBay", icon: Wrench, priceFrom: 40 },
-];
+/* Format minutes to hours (compact) */
+function minutesToHoursLabel(min?: number | null) {
+  if (!min || min <= 0) return "";
+  const hours = Math.round((Number(min) / 60) * 10) / 10;
+  const pretty = Number.isInteger(hours) ? `${hours}` : `${hours}`;
+  return `${pretty}`;
+}
 
 const Services = () => {
   const { t } = useTranslation();
+
+  const [dbServices, setDbServices] = useState<ServiceRow[]>([]);
+  const [dbAddons, setDbAddons] = useState<AddonRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  /* Load dynamic prices/durations from Supabase */
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const [srv, add] = await Promise.all([
+        supabase
+          .from("service")
+          .select("id,name,base_price,duration_min,active")
+          .eq("active", true)
+          .order("name"),
+        supabase
+          .from("addon")
+          .select("id,slug,name,base_price,duration_min,active")
+          .eq("active", true)
+          .order("name"),
+      ]);
+      if (!srv.error) setDbServices(srv.data ?? []);
+      if (!add.error) setDbAddons(add.data ?? []);
+      setLoading(false);
+    })();
+  }, []);
+
+  /* Build a map of dynamic price/duration for our three services */
+  const dynamicServices = useMemo(() => {
+    const base: Record<
+      ServiceId,
+      {
+        id: ServiceId;
+        priceFrom?: number;
+        durationMin?: number;
+        icon: any;
+      }
+    > = {
+      basicWash: {
+        id: "basicWash",
+        icon: serviceCopyFallback.basicWash.defaultIcon,
+      },
+      fullDetail: {
+        id: "fullDetail",
+        icon: serviceCopyFallback.fullDetail.defaultIcon,
+      },
+      paintCorrection: {
+        id: "paintCorrection",
+        icon: serviceCopyFallback.paintCorrection.defaultIcon,
+      },
+    };
+
+    for (const s of dbServices) {
+      const mapped = mapServiceIdByName(s.name);
+      if (mapped) {
+        base[mapped].priceFrom =
+          s.base_price == null ? undefined : Number(s.base_price);
+        base[mapped].durationMin =
+          s.duration_min == null ? undefined : Number(s.duration_min);
+      }
+    }
+    return base;
+  }, [dbServices]);
+
+  /* Add-ons from DB → with icon, i18n title/features — SORTED BY PRICE ASC */
+  const addonCards = useMemo(() => {
+    const arr = dbAddons.map((a) => {
+      const Icon = addonIconBySlug(a.slug ?? undefined);
+      const keyFromSlug =
+        a.slug && `services.items.addons.items.${a.slug}.title`;
+      const title =
+        (keyFromSlug && t(keyFromSlug)) ||
+        a.name ||
+        t("services.items.addons.title", "Protection Options");
+
+      const features =
+        (a.slug &&
+          (t(`services.items.addons.items.${a.slug}.features`, {
+            returnObjects: true,
+          }) as unknown as string[])) ||
+        [];
+
+      const priceFrom =
+        a.base_price == null
+          ? undefined
+          : Number.parseFloat(String(a.base_price));
+
+      return {
+        id: a.id,
+        slug: a.slug,
+        title,
+        features,
+        priceFrom,
+        durationMin:
+          a.duration_min == null ? undefined : Number(a.duration_min),
+        Icon,
+      };
+    });
+
+    // --- sort by price ascending (null/undefined -> last), name tiebreaker ---
+    arr.sort((a, b) => {
+      const ap = a.priceFrom ?? Number.POSITIVE_INFINITY;
+      const bp = b.priceFrom ?? Number.POSITIVE_INFINITY;
+      if (ap !== bp) return ap - bp;
+      return (a.title || "").localeCompare(b.title || "");
+    });
+
+    return arr;
+  }, [dbAddons, t]);
+
+  if (loading) {
+    return (
+      <section id="services" className="py-20 px-4">
+        <div className="max-w-6xl mx-auto text-center opacity-70">
+          {t("common.loading", "Loading...")}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="services" className="py-20 px-4">
@@ -132,103 +275,122 @@ const Services = () => {
           </p>
         </div>
 
+        {/* 3 service cards, with dynamic price/duration */}
         <div className="flex flex-wrap justify-center gap-8">
-          {serviceDefs.map((svc, index) => {
-            const IconComponent = svc.icon;
+          {(Object.keys(serviceCopyFallback) as ServiceId[]).map(
+            (svcId, index) => {
+              const copy = serviceCopyFallback[svcId];
+              const dyn = dynamicServices[svcId];
+              const IconComponent = dyn.icon || Sparkles;
 
-            const title =
-              t(`services.items.${svc.id}.title`) ||
-              serviceCopyFallback[svc.id].title;
-            const description =
-              t(`services.items.${svc.id}.description`) ||
-              serviceCopyFallback[svc.id].description;
+              const title = t(`services.items.${svcId}.title`) || copy.title;
+              const description =
+                t(`services.items.${svcId}.description`) || copy.description;
 
-            let features =
-              (t(`services.items.${svc.id}.features`, {
-                returnObjects: true,
-              }) as unknown as string[]) ||
-              serviceCopyFallback[svc.id].features;
+              let features =
+                (t(`services.items.${svcId}.features`, {
+                  returnObjects: true,
+                }) as unknown as string[]) || copy.features;
+              if (!Array.isArray(features) || features.length === 0) {
+                features = copy.features;
+              }
 
-            if (!Array.isArray(features)) {
-              features = serviceCopyFallback[svc.id].features;
-            }
+              const priceFrom = dyn.priceFrom;
+              const durationH = dyn.durationMin
+                ? minutesToHoursLabel(dyn.durationMin)
+                : undefined;
 
-            return (
-              <Card
-                key={svc.id}
-                className="w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
-                style={{ animationDelay: `${index * 0.2}s` }}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                    <IconComponent className="w-8 h-8 text-primary-foreground" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold text-foreground">
-                    {title}
-                  </CardTitle>
-                  <CardDescription className="text-lg text-muted-foreground">
-                    {description}
-                  </CardDescription>
-                </CardHeader>
-
-                <CardContent className="space-y-6 flex flex-col flex-grow">
-                  {svc.priceFrom && svc.durationLabelKey && (
-                    <div className="flex justify-between items-center text-center">
-                      <div>
-                        <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                          {t("services.fromPrice", {
-                            price: `${svc.priceFrom}€`,
-                          })}
-                        </p>
-                        <p className="text-sm text-white">
-                          {t("services.labels.startingPrice", "Starting price")}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-lg font-semibold text-foreground">
-                          {t("services.durationHours", {
-                            hours: svc.durationLabelKey,
-                          })}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {t("services.labels.duration", "Estimated hours")}
-                        </p>
-                      </div>
+              return (
+                <Card
+                  key={svcId}
+                  className="w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
+                  style={{ animationDelay: `${index * 0.2}s` }}
+                >
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
+                      <IconComponent className="w-8 h-8 text-primary-foreground" />
                     </div>
-                  )}
+                    <CardTitle className="text-2xl font-bold text-foreground">
+                      {title}
+                    </CardTitle>
+                    <CardDescription className="text-lg text-muted-foreground">
+                      {description}
+                    </CardDescription>
+                  </CardHeader>
 
-                  <div className="space-y-2 flex-grow">
-                    <h4 className="font-semibold text-foreground flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      {t("services.whatsIncluded", "What’s included")}
-                    </h4>
-                    <ul className="space-y-1">
-                      {features.map((feature, idx) => (
-                        <li
-                          key={idx}
-                          className="text-muted-foreground flex gap-2"
-                        >
-                          <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                          <span className="flex-1">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <CardContent className="space-y-6 flex flex-col flex-grow">
+                    {(priceFrom != null || durationH) && (
+                      <div className="flex justify-between items-center text-center">
+                        <div>
+                          {priceFrom != null && (
+                            <>
+                              <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                                {t("services.fromPrice", {
+                                  price: `${priceFrom}€`,
+                                })}
+                              </p>
+                              <p className="text-sm text-white">
+                                {t(
+                                  "services.labels.startingPrice",
+                                  "Starting price"
+                                )}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                        <div>
+                          {durationH && (
+                            <>
+                              <p className="text-lg font-semibold text-foreground">
+                                {t("services.durationHours", {
+                                  hours: durationH,
+                                })}
+                              </p>
+                              <p className="text-sm text-muted-foreground">
+                                {t(
+                                  "services.labels.duration",
+                                  "Estimated hours"
+                                )}
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    )}
 
-                  <div className="mt-auto">
-                    <NavLink to={`/booking?serviceId=${svc.id}`}>
-                      <Button variant="hero" className="w-full">
-                        {t("services.bookThis", "Book this")}
-                      </Button>
-                    </NavLink>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                    <div className="space-y-2 flex-grow">
+                      <h4 className="font-semibold text-foreground flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-primary" />
+                        {t("services.whatsIncluded", "What’s included")}
+                      </h4>
+                      <ul className="space-y-1">
+                        {features.map((feature, idx) => (
+                          <li
+                            key={idx}
+                            className="text-muted-foreground flex gap-2"
+                          >
+                            <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                            <span className="flex-1">{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="mt-auto">
+                      <NavLink to={`/booking?serviceId=${svcId}`}>
+                        <Button variant="hero" className="w-full">
+                          {t("services.bookThis", "Book this")}
+                        </Button>
+                      </NavLink>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            }
+          )}
         </div>
 
-        {/* Protection Options (Add-ons) from i18n */}
+        {/* Add-ons (sorted by price asc) */}
         <div className="text-center mt-20 mb-12">
           <h3 className="text-3xl font-bold">
             {t("services.items.addons.title", "Protection Options")}
@@ -242,63 +404,22 @@ const Services = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-8">
-          {addonDefs.map((addon, index) => {
-            const IconComponent = addon.icon;
+          {addonCards.map((addon, index) => {
+            const TitleIcon = addon.Icon;
+            const durationH = addon.durationMin
+              ? minutesToHoursLabel(addon.durationMin)
+              : undefined;
 
-            const title =
-              t(`services.items.addons.items.${addon.id}.title`) ||
-              (
-                {
-                  sprayWax: "Spray Wax Protection",
-                  premiumWax: "Premium Wax Protection",
-                  ceramicSpray: "Ceramic Spray Protection (SiO₂)",
-                  nanoSealant: "Nano Sealant Protection",
-                  proCeramic: "Professional Ceramic Coating (SiO₂)",
-                  engineBay: "Engine Bay Cleaning",
-                } as Record<AddonId, string>
-              )[addon.id];
-
-            let features =
-              (t(`services.items.addons.items.${addon.id}.features`, {
-                returnObjects: true,
-              }) as unknown as string[]) || [];
-
-            if (!Array.isArray(features) || features.length === 0) {
-              const fallback: Record<AddonId, string[]> = {
-                sprayWax: [
-                  "Fast polymer wax application for instant gloss",
-                  "Hydrophobic layer: water beads and rolls off",
-                  "Durability: ~4–6 weeks • Reapply monthly",
-                ],
-                premiumWax: [
-                  "Carnauba + polymer blend for warm, deep shine",
-                  "Strong hydrophobics; easier washing",
-                  "Durability: ~2–3 months • Reapply every 2–3 months",
-                ],
-                ceramicSpray: [
-                  "SiO₂ ceramic spray for paint & plastics",
-                  "Slick finish; strong sheeting",
-                  "Durability: ~3–4 months • Reapply quarterly",
-                ],
-                nanoSealant: [
-                  "Polymer nano sealant bonds to paint",
-                  "Deep gloss, UV/chemical resistance",
-                  "Durability: up to ~12 months • Reapply annually",
-                ],
-                proCeramic: [
-                  "High-end SiO₂ ceramic, semi-permanent layer",
-                  "Extreme hydrophobics; maximum gloss",
-                  "Durability: 2+ years • Reapply 24–30 months",
-                ],
-                engineBay: [
-                  "Degrease & clean engine bay surfaces",
-                  "Safe rinse and careful drying",
-                  "Plastic trims dressed for a fresh look",
-                  "Helps spot fluid leaks and keep the bay tidy",
-                ],
-              };
-              features = fallback[addon.id];
-            }
+            const features =
+              addon.features && addon.features.length > 0
+                ? addon.features
+                : [
+                    t("services.addon.quickApply", "Quick application"),
+                    t(
+                      "services.addon.hydrophobic",
+                      "Improves hydrophobic performance"
+                    ),
+                  ];
 
             return (
               <Card
@@ -308,17 +429,27 @@ const Services = () => {
               >
                 <CardHeader className="text-center pb-4">
                   <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                    <IconComponent className="w-8 h-8 text-primary-foreground" />
+                    <TitleIcon className="w-8 h-8 text-primary-foreground" />
                   </div>
                   <CardTitle className="text-xl font-bold text-foreground">
-                    {title}
+                    {addon.title}
                   </CardTitle>
-                  {typeof addon.priceFrom === "number" && (
-                    <p className="mt-2 text-2xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                      {t("services.fromPrice", {
-                        price: `${addon.priceFrom}€`,
-                      })}
-                    </p>
+
+                  {(addon.priceFrom != null || durationH) && (
+                    <div className="mt-3 flex items-center justify-center gap-4">
+                      {addon.priceFrom != null && (
+                        <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                          {t("services.fromPrice", {
+                            price: `${addon.priceFrom}€`,
+                          })}
+                        </p>
+                      )}
+                      {durationH && (
+                        <p className="text-sm text-muted-foreground">
+                          {t("services.durationHours", { hours: durationH })}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </CardHeader>
 
@@ -342,7 +473,13 @@ const Services = () => {
                   </div>
 
                   <div className="mt-auto">
-                    <NavLink to={`/booking?addonId=${addon.id}`}>
+                    <NavLink
+                      to={`/booking?${
+                        addon.slug
+                          ? `addonSlug=${addon.slug}`
+                          : `addonId=${addon.id}`
+                      }`}
+                    >
                       <Button variant="secondary" className="w-full">
                         {t("services.bookThis", "Add to booking")}
                       </Button>

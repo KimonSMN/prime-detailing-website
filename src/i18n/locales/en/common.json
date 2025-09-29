@@ -64,7 +64,7 @@
       "prefix": "Our",
       "accent": "Services"
     },
-    "subtitle": "Professional car detailing packages tailored to restore, protect, and enhance your vehicle.",
+    "subtitle": "Choose your core cleaning package, then add the protection that fits your goals and budget.",
     "fromPrice": "From {{price}}",
     "durationHours": "{{hours}} hours",
     "labels": {
@@ -77,64 +77,115 @@
     "items": {
       "basicWash": {
         "title": "Basic Wash",
-        "description": "Quick and efficient refresh for both exterior and interior with light protection.",
+        "description": "Quick and efficient refresh for both exterior and interior.",
         "features": [
-          "Contactless pre-wash & hand wash using safe techniques",
-          "Protective wax layer for enhanced water repellency",
-          "Thorough tire cleaning and professional dressing",
-          "Crystal-clear, streak-free glass finish",
-          "Quick interior vacuuming and surface wipe-down"
+          "Contactless pre-wash & safe contact hand wash",
+          "Wheels & tires cleaned and dressed",
+          "Streak-free exterior glass cleaning",
+          "Quick surface wipe-down & floor vacuum",
+          "No tar/sap removal and no clay bar decontamination",
+          "No deep cleaning of fabric seats with extraction machine",
+          "No specialized carpet cleaning for stubborn dirt"
         ]
       },
       "fullDetail": {
         "title": "Full Exterior & Interior Detail",
-        "description": "Comprehensive inside-and-out detail that restores your car’s appearance and adds lasting protection.",
+        "description": "Comprehensive inside-and-out detail that restores your car’s appearance.",
         "features": [
-          "Contactless pre-wash & hand wash",
-          "Paint surface decontamination (removes tar, sap, and bonded contaminants)",
-          "Wheel & tire detailing (deep clean + tire dressing)",
-          "Interior deep cleaning (vacuuming, carpets, seats, vents, trims)",
-          "Door jambs and trunk crevices thoroughly cleaned",
-          "Crystal-clear, streak-free glass finish (inside & out)",
-          "Plastic trim conditioning & UV protection",
-          "Leather cleaning & conditioning"
-        ]
-      },
-      "ceramicCoating": {
-        "title": "Ceramic Coating Package",
-        "description": "Full Exterior & Interior Detail plus ceramic coating for durable shine and protection.",
-        "features": [
-          "All services from Full Exterior & Interior Detail",
-          "Advanced ceramic coating applied to all painted surfaces",
-          "Exceptional hydrophobic effect – water beads and sheets off effortlessly, making washing faster and easier",
-          "Deep, mirror-like gloss with enhanced color depth and clarity",
-          "Long-lasting protection, typically 4 weeks up to 4 months depending on maintenance and driving conditions",
-          "Cleaning and maintenance of exterior rubber and plastic surfaces"
+          "Contactless pre-wash & hand wash using safe techniques",
+          "Clay bar decontamination + tar/sap removal",
+          "Wheel & tire deep clean and application of professional tire dressing",
+          "Crystal-clear glass cleaning (inside & out)",
+          "Full vacuuming and specialized carpet cleaning for stubborn dirt",
+          "Cleaning of air vents, plastics & trims with UV protection",
+          "Thorough cleaning of door jambs and trunk crevices",
+          "Leather cleaning & conditioning",
+          "Deep cleaning of fabric seats with extraction machine (wet-vac)"
         ]
       },
       "paintCorrection": {
-        "title": "Paint Correction Package",
-        "description": "Professional-grade correction and coating for a showroom-quality finish.",
+        "title": "Paint Correction",
+        "description": "Multi-stage machine polishing to remove swirls/oxidation and restore depth & clarity. Ideal prep before long-term coatings.",
         "features": [
-          "All services from Full Exterior & Interior Detail",
-          "Full decontamination including clay bar treatment",
-          "Multi-stage paint correction (removes swirls, oxidation, light scratches)",
-          "Ceramic coating for lasting gloss and protection",
-          "Enhanced paint clarity and depth"
+          "Contactless pre-wash and safe contact hand wash",
+          "Full decontamination: clay bar + removal of tar/sap deposits",
+          "Multi-stage machine polishing tailored to paint condition",
+          "Improves gloss, clarity, and color depth",
+          "Panel wipe to prepare the surface for protection",
+          "Recommended: add nano sealant or ceramic coating to lock in the finish"
         ]
       },
-      "ultimateDetail": {
-        "title": "Ultimate Detailing Package",
-        "description": "Our top-tier, bespoke detailing service designed for perfection without compromise.",
-        "features": [
-          "Tailored full exterior & interior transformation",
-          "Custom paint correction and protection plan",
-          "Premium coatings for maximum durability",
-          "Comprehensive care to meet your car’s unique needs"
-        ]
+      "addons": {
+        "title": "Protection Options",
+        "subtitle": "Upgrade longevity, gloss, and hydrophobic performance with wax, nano sealant, or ceramic coating.",
+        "items": {
+          "sprayWax": {
+            "title": "Spray Wax Protection",
+            "features": [
+              "Polymer wax application for instant gloss",
+              "Basic hydrophobic effect",
+              "Reduces water spots and makes drying quicker",
+              "Durability: 4–6 weeks",
+              "Reapply: every wash or monthly"
+            ]
+          },
+          "premiumWax": {
+            "title": "Premium Wax Protection",
+            "features": [
+              "Natural carnauba wax blended with polymers for a deep, warm shine",
+              "Enhanced hydrophobic effect",
+              "Great for dark/metallic colors",
+              "Durability: 2–3 months",
+              "Reapply: every 2–3 months"
+            ]
+          },
+          "ceramicSpray": {
+            "title": "Ceramic Spray Protection (SiO₂)",
+            "features": [
+              "SiO₂ ceramic spray coating",
+              "Slick, smooth finish with enhanced gloss",
+              "Advanced hydrophobic effect",
+              "Durability: 3–4 months",
+              "Reapply: quarterly"
+            ]
+          },
+          "nanoSealant": {
+            "title": "Nano Sealant Protection",
+            "features": [
+              "Polymer nano sealant that chemically bonds to paint",
+              "Deep gloss, UV/chemical resistance, easier washing",
+              "High hydrophobic effect",
+              "Durability: up to 12 months",
+              "Reapply: annually",
+              "Recommended: paint correction before application for best bonding and finish"
+            ]
+          },
+          "proCeramic": {
+            "title": "Professional Ceramic Coating (SiO₂)",
+            "features": [
+              "High-end SiO₂ ceramic with a semi-permanent protective layer",
+              "Unmatched gloss and extreme hydrophobic performance",
+              "Strong resistance to UV, chemicals, tar and sap",
+              "Durability: 2+ years with proper maintenance",
+              "Reapply: every 24–30 months",
+              "Strongly advised: full paint correction before application to ensure flawless bonding and appearance"
+            ]
+          },
+          "engineBay": {
+            "title": "Engine Bay Cleaning",
+            "features": [
+              "Safe cleaning of engine bay with specialized products",
+              "Removes dust, oil, and grease buildup",
+              "Restores cleanliness and presentation of engine compartment",
+              "Reduces risk of corrosion and wear",
+              "Ideal before selling or showcasing the vehicle"
+            ]
+          }
+        }
       }
     }
   },
+
   "reviews": {
     "aria": "Google reviews",
     "heading": "What Clients Say on Google",
@@ -157,39 +208,33 @@
       "viewMore_other": "See {{count}} more photos"
     }
   },
+
   "seo": {
     "siteName": "Prime Detailing Cholargos",
-
     "home": {
       "title": "Prime Detailing | Car Detailing in Cholargos, Athens",
       "description": "Hand wash, interior deep clean, paint correction, ceramic coating. Book online."
     },
-
     "services": {
       "title": "Car Detailing Services | Prime Detailing",
       "description": "Exterior & interior detailing, paint correction, ceramic coating in Cholargos, Athens."
     },
-
     "ceramic": {
       "title": "Ceramic Coating | Prime Detailing Cholargos",
       "description": "Up to 5 years paint protection, hydrophobic finish & gloss. View packages & pricing."
     },
-
     "paintCorrection": {
       "title": "Paint Correction | Prime Detailing Cholargos",
       "description": "Remove swirls and light scratches with professional polishing."
     },
-
     "interior": {
       "title": "Interior / Deep Cleaning | Prime Detailing Cholargos",
       "description": "Steam cleaning, fabric shampoo, odor removal for a fresh cabin."
     },
-
     "gallery": {
       "title": "Before / After Gallery | Prime Detailing",
       "description": "Real results from our detailing work in Cholargos."
     },
-
     "contact": {
       "title": "Contact & Booking | Prime Detailing",
       "description": "Address, phone, hours. Book your detailing appointment online."

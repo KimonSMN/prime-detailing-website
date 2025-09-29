@@ -25,11 +25,13 @@ import {
   User,
   Phone,
   Mail,
-  Car,
+  Car as CarIcon,
+  Sparkles,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
+import { Checkbox } from "@/components/ui/checkbox";
 
 /* ---------------- helpers (Safari-safe local time) ---------------- */
 
@@ -52,6 +54,13 @@ type ServiceRow = {
   id: string;
   name: string;
   base_price: string | number | null;
+};
+
+type AddonRow = {
+  id: string;
+  name: string;
+  base_price: string | number | null;
+  duration_min: number | null; // NEW
 };
 
 type AvailabilityRow = {
@@ -81,7 +90,13 @@ const Booking = () => {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+
   const [services, setServices] = useState<ServiceRow[]>([]);
+  const [addons, setAddons] = useState<AddonRow[]>([]);
+  const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
+    new Set()
+  );
+
   const [isCalOpen, setIsCalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -100,7 +115,23 @@ const Booking = () => {
     new Set()
   );
 
-  // localized date label for the button
+  // selected add-ons resolved to objects
+  const selectedAddons = useMemo(
+    () => addons.filter((a) => selectedAddonIds.has(a.id)),
+    [addons, selectedAddonIds]
+  );
+
+  // total extra minutes from selected add-ons
+  const totalAddonMinutes = useMemo(
+    () =>
+      selectedAddons.reduce(
+        (sum, a) => sum + (Number(a.duration_min ?? 0) || 0),
+        0
+      ),
+    [selectedAddons]
+  );
+
+  // localized date label
   const fmtDate = (d?: Date) =>
     d
       ? new Intl.DateTimeFormat(i18n.language, {
@@ -111,7 +142,7 @@ const Booking = () => {
         }).format(d)
       : "";
 
-  // local today for disabling past days in the calendar
+  // local today for disabling past days
   const today = useMemo(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
@@ -139,6 +170,27 @@ const Booking = () => {
     })();
   }, [toast, t]);
 
+  /* ---------------- load addons (WITH duration_min) ---------------- */
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await supabase
+        .from("addon")
+        .select("id,name,base_price,duration_min") // NEW
+        .eq("active", true)
+        .order("name");
+
+      if (error) {
+        toast({
+          title: t("booking.toast.addonsFailTitle", "Couldn’t load add-ons"),
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        setAddons(data ?? []);
+      }
+    })();
+  }, [toast, t]);
+
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
@@ -152,7 +204,7 @@ const Booking = () => {
 
       const { start, end } = localDayRange(formData.date);
 
-      // 1) Load customer bookings from the availability view
+      // 1) Load bookings for that local day from availability view
       const { data: avail, error: availErr } = await supabase
         .from("booking_availability")
         .select("preferred_at, status, total_minutes")
@@ -174,7 +226,7 @@ const Booking = () => {
         return;
       }
 
-      // 2) Load admin blocks for the same day
+      // 2) Load admin blocks
       const { data: blocks, error: blocksErr } = await supabase
         .from("admin_block")
         .select("start_at, minutes")
@@ -226,6 +278,16 @@ const Booking = () => {
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData.date]);
+
+  /* ---------------- Add-on toggle helper ---------------- */
+  const toggleAddon = (id: string, checked: boolean) => {
+    setSelectedAddonIds((prev) => {
+      const next = new Set(prev);
+      if (checked) next.add(id);
+      else next.delete(id);
+      return next;
+    });
+  };
 
   /* ---------------- submit ---------------- */
   const handleSubmit = async (e: React.FormEvent) => {
@@ -280,7 +342,8 @@ const Booking = () => {
           vehicleInfo: formData.vehicleInfo || null,
           notes: formData.notes || null,
           preferred_at: preferred_at.toISOString(),
-          serviceId, // for linking booking → service
+          serviceId, // link booking → service via booking_service
+          addonIds: Array.from(selectedAddonIds), // include selected add-ons
         }),
       });
 
@@ -304,6 +367,7 @@ const Booking = () => {
         vehicleInfo: "",
         notes: "",
       });
+      setSelectedAddonIds(new Set());
       setDateObj(undefined);
       setUnavailableTimes(new Set());
     } catch (err: any) {
@@ -325,7 +389,7 @@ const Booking = () => {
         <title>Book an Appointment | Prime Detailing Cholargos</title>
         <meta
           name="description"
-          content="Book your car detailing appointment in Cholargos — choose service, date, and time online."
+          content="Book your car detailing appointment in Cholargos — choose service, add-ons, date, and time online."
         />
       </Helmet>
       <div className="max-w-4xl mx-auto">
@@ -401,7 +465,7 @@ const Booking = () => {
                   htmlFor="service-select"
                   className="flex items-center gap-2"
                 >
-                  <Car className="w-4 h-4 text-primary" />{" "}
+                  <CarIcon className="w-4 h-4 text-primary" />{" "}
                   {t("booking.selectService")} *
                 </Label>
                 <Select
@@ -428,6 +492,86 @@ const Booking = () => {
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Add-ons */}
+              {addons.length > 0 && (
+                <div className="space-y-3">
+                  <Label className="flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                    {t(
+                      "booking.selectAddons",
+                      "Add-ons (optional): protection & extras"
+                    )}
+                  </Label>
+
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {addons.map((a) => {
+                      const checked = selectedAddonIds.has(a.id);
+                      const checkboxId = `addon-${a.id}`;
+                      const minutes = Number(a.duration_min ?? 0) || 0;
+                      return (
+                        <div
+                          key={a.id}
+                          className={`rounded-xl border p-3 bg-background transition ${
+                            checked
+                              ? "border-primary/70 ring-1 ring-primary/40"
+                              : "border-border hover:border-primary/30"
+                          }`}
+                        >
+                          <div className="flex items-start gap-3">
+                            <Checkbox
+                              id={checkboxId}
+                              checked={checked}
+                              onCheckedChange={(val) =>
+                                toggleAddon(a.id, val === true)
+                              }
+                            />
+                            <div className="flex-1">
+                              <label
+                                htmlFor={checkboxId}
+                                className="font-medium cursor-pointer"
+                              >
+                                {a.name}
+                              </label>
+
+                              <div className="flex flex-wrap items-center gap-2 mt-1">
+                                {a.base_price != null && (
+                                  <div className="text-sm text-muted-foreground">
+                                    {t("booking.fromPrice", {
+                                      price: a.base_price,
+                                    })}
+                                  </div>
+                                )}
+                                {minutes > 0 && (
+                                  <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+                                    ≈ {minutes} {t("booking.minutes", "min")}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {selectedAddons.length > 0 && (
+                    <div className="text-sm text-muted-foreground">
+                      {t("booking.addonsSelected", "Selected add-ons")}:{" "}
+                      {selectedAddons.map((a) => a.name).join(", ")}
+                      {totalAddonMinutes > 0 && (
+                        <>
+                          {" • "}
+                          {t(
+                            "booking.addonsTime",
+                            "Estimated extra time"
+                          )}: {totalAddonMinutes} {t("booking.minutes", "min")}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Date & Time */}
               <div className="grid md:grid-cols-2 gap-4">

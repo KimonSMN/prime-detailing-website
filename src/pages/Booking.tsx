@@ -54,13 +54,14 @@ type ServiceRow = {
   id: string;
   name: string;
   base_price: string | number | null;
+  duration_min: number | null; // NEW
 };
 
 type AddonRow = {
   id: string;
   name: string;
   base_price: string | number | null;
-  duration_min: number | null; // NEW
+  duration_min: number | null;
 };
 
 type AvailabilityRow = {
@@ -115,13 +116,19 @@ const Booking = () => {
     new Set()
   );
 
+  // selected service
+  const selectedService = useMemo(
+    () => services.find((s) => s.id === formData.serviceId),
+    [services, formData.serviceId]
+  );
+
   // selected add-ons resolved to objects
   const selectedAddons = useMemo(
     () => addons.filter((a) => selectedAddonIds.has(a.id)),
     [addons, selectedAddonIds]
   );
 
-  // total extra minutes from selected add-ons
+  // total minutes from selected add-ons
   const totalAddonMinutes = useMemo(
     () =>
       selectedAddons.reduce(
@@ -129,6 +136,18 @@ const Booking = () => {
         0
       ),
     [selectedAddons]
+  );
+
+  // base service minutes
+  const serviceMinutes = useMemo(
+    () => Number(selectedService?.duration_min ?? 0) || 0,
+    [selectedService]
+  );
+
+  // TOTAL minutes for the *new* booking being composed
+  const totalSelectedMinutes = useMemo(
+    () => serviceMinutes + totalAddonMinutes,
+    [serviceMinutes, totalAddonMinutes]
   );
 
   // localized date label
@@ -149,12 +168,12 @@ const Booking = () => {
     return d;
   }, []);
 
-  /* ---------------- load services ---------------- */
+  /* ---------------- load services (WITH duration_min) ---------------- */
   useEffect(() => {
     (async () => {
       const { data, error } = await supabase
         .from("service")
-        .select("id,name,base_price")
+        .select("id,name,base_price,duration_min") // CHANGED
         .eq("active", true)
         .order("name");
 
@@ -175,7 +194,7 @@ const Booking = () => {
     (async () => {
       const { data, error } = await supabase
         .from("addon")
-        .select("id,name,base_price,duration_min") // NEW
+        .select("id,name,base_price,duration_min")
         .eq("active", true)
         .order("name");
 
@@ -239,7 +258,7 @@ const Booking = () => {
         console.warn("admin_block fetch error:", blocksErr);
       }
 
-      // Build the blocked set (treat blocks the same as bookings)
+      // Build the blocked set (hours) from bookings and blocks
       const blocked = new Set<string>();
 
       function blockRange(startISO: string, minutes: number) {
@@ -289,6 +308,27 @@ const Booking = () => {
     });
   };
 
+  /* ---------------- overlap check for the current selection ---------------- */
+  const wouldOverlap = (startTimeHHmm: string) => {
+    if (!formData.date) return true; // cannot evaluate
+    const total = totalSelectedMinutes || 0;
+    if (total <= 0) return false; // no duration info, allow
+
+    const start = localDateTime(formData.date, startTimeHHmm);
+    const end = new Date(start.getTime() + total * 60000);
+
+    const iter = new Date(start);
+    iter.setMinutes(0, 0, 0);
+
+    // walk hour-by-hour; if *any* occupied hour is blocked, it overlaps
+    while (iter < end) {
+      const key = format(iter, "HH:mm");
+      if (unavailableTimes.has(key)) return true;
+      iter.setHours(iter.getHours() + 1);
+    }
+    return false;
+  };
+
   /* ---------------- submit ---------------- */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -321,10 +361,14 @@ const Booking = () => {
       });
       return;
     }
-    if (unavailableTimes.has(time)) {
+    // Check overlap with *current* total selection (service + add-ons)
+    if (wouldOverlap(time)) {
       toast({
         title: t("booking.toast.unavailable.title"),
-        description: t("booking.toast.unavailable.desc"),
+        description: t(
+          "booking.toast.unavailable.descFull",
+          "The selected start time overlaps with another booking."
+        ),
         variant: "destructive",
       });
       return;
@@ -342,8 +386,8 @@ const Booking = () => {
           vehicleInfo: formData.vehicleInfo || null,
           notes: formData.notes || null,
           preferred_at: preferred_at.toISOString(),
-          serviceId, // link booking → service via booking_service
-          addonIds: Array.from(selectedAddonIds), // include selected add-ons
+          serviceId, // backend/view keeps computing authoritative total
+          addonIds: Array.from(selectedAddonIds),
         }),
       });
 
@@ -487,6 +531,12 @@ const Booking = () => {
                               price: s.base_price,
                             })}`
                           : ""}
+                        {s.duration_min
+                          ? ` • ~${s.duration_min} ${t(
+                              "booking.minutes",
+                              "min"
+                            )}`
+                          : ""}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -555,17 +605,18 @@ const Booking = () => {
                     })}
                   </div>
 
-                  {selectedAddons.length > 0 && (
+                  {(selectedAddons.length > 0 || serviceMinutes > 0) && (
                     <div className="text-sm text-muted-foreground">
-                      {t("booking.addonsSelected", "Selected add-ons")}:{" "}
-                      {selectedAddons.map((a) => a.name).join(", ")}
+                      {t("booking.estimatedTotal", "Estimated total time")}:{" "}
+                      <strong>
+                        {totalSelectedMinutes} {t("booking.minutes", "min")}
+                      </strong>
                       {totalAddonMinutes > 0 && (
                         <>
-                          {" • "}
-                          {t(
-                            "booking.addonsTime",
-                            "Estimated extra time"
-                          )}: {totalAddonMinutes} {t("booking.minutes", "min")}
+                          {" "}
+                          ({t("booking.base", "base")}: {serviceMinutes}{" "}
+                          {t("booking.minutes", "min")} + {t("booking.addons")}:{" "}
+                          {totalAddonMinutes} {t("booking.minutes", "min")})
                         </>
                       )}
                     </div>
@@ -631,10 +682,14 @@ const Booking = () => {
                   <Select
                     value={formData.time}
                     onValueChange={(v) => {
-                      if (unavailableTimes.has(v)) {
+                      // guard in case user changes service/addons after opening
+                      if (wouldOverlap(v)) {
                         toast({
                           title: t("booking.toast.unavailable.title"),
-                          description: t("booking.toast.unavailable.desc"),
+                          description: t(
+                            "booking.toast.unavailable.descFull",
+                            "The selected start time overlaps with another booking."
+                          ),
                           variant: "destructive",
                         });
                         return;
@@ -654,17 +709,25 @@ const Booking = () => {
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
                       {TIMES.map((tm) => {
-                        const taken = unavailableTimes.has(tm);
+                        const takenByStart = unavailableTimes.has(tm);
+                        const overlap = !takenByStart && wouldOverlap(tm);
+                        const disabled = takenByStart || overlap;
                         return (
                           <SelectItem
                             key={tm}
                             value={tm}
-                            disabled={taken}
-                            className={
-                              taken ? "opacity-50 pointer-events-none" : ""
-                            }
+                            disabled={disabled}
+                            className={disabled ? "opacity-50" : ""}
                           >
-                            {tm} {taken ? `— ${t("booking.booked")}` : ""}
+                            {tm}{" "}
+                            {takenByStart
+                              ? `— ${t("booking.booked")}`
+                              : overlap
+                              ? `— ${t(
+                                  "booking.notEnoughRoom",
+                                  "not enough room"
+                                )}`
+                              : ""}
                           </SelectItem>
                         );
                       })}

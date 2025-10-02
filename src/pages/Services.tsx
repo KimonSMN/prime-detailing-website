@@ -121,6 +121,8 @@ function addonIconBySlug(slug?: string | null) {
       return Crown;
     case "engineBay":
       return Wrench;
+    case "pickupDropoff":
+      return Car;
     default:
       return Sparkles;
   }
@@ -431,9 +433,19 @@ const Services = () => {
                   <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
                     <TitleIcon className="w-8 h-8 text-primary-foreground" />
                   </div>
+
                   <CardTitle className="text-xl font-bold text-foreground">
                     {addon.title}
                   </CardTitle>
+
+                  {/* NEW: badge + subtitle for pickupDropoff */}
+                  {addon.slug === "pickupDropoff" && (
+                    <div className="mt-1 flex flex-col items-center gap-1">
+                      <span className="inline-flex items-center rounded-full border border-primary/30 px-2.5 py-0.5 text-s text-primary">
+                        Free within 3 km
+                      </span>
+                    </div>
+                  )}
 
                   {(addon.priceFrom != null || durationH) && (
                     <div className="mt-3 flex items-center justify-center gap-4">

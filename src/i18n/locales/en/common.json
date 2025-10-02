@@ -180,6 +180,14 @@
               "Reduces risk of corrosion and wear",
               "Ideal before selling or showcasing the vehicle"
             ]
+          },
+          "pickupDropoff": {
+            "title": "Pick-up & Drop-off",
+            "features": [
+              "We collect your car from your address",
+              "Detailing done at our location",
+              "Delivered back fresh & protected"
+            ]
           }
         }
       }

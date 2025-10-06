@@ -188,6 +188,13 @@
               "Detailing done at our location",
               "Delivered back fresh & protected"
             ]
+          },
+          "headlightRestoration": {
+            "title": "Headlight Restoration",
+            "features": [
+              "Remove oxidation, haze, and surface yellowing to restore full lens clarity",
+              "Applies a professional-grade UV sealant to prevent future fading and yellowing"
+            ]
           }
         }
       }

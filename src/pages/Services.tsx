@@ -16,6 +16,7 @@ import {
   Crown,
   Settings,
   Wrench,
+  Lightbulb,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
@@ -123,6 +124,8 @@ function addonIconBySlug(slug?: string | null) {
       return Wrench;
     case "pickupDropoff":
       return Car;
+    case "headlightRestoration":
+      return Lightbulb;
     default:
       return Sparkles;
   }

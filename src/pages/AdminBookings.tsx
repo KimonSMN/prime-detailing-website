@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, useCallback, memo } from "react";
-import { format, startOfMonth, endOfMonth } from "date-fns";
+import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -312,7 +312,7 @@ export default function AdminBookings() {
     minutes: number,
     acc: Set<string>
   ) {
-    const s = new Date(startISO);
+    const s = parseISO(startISO);
     const e = new Date(s.getTime() + minutes * 60000);
 
     const t = new Date(s);
@@ -323,6 +323,19 @@ export default function AdminBookings() {
       if (t < e) acc.add(format(t, "HH:mm"));
       else break;
     }
+  }
+
+  function buildLocalDate(base: Date, hhmm: string) {
+    const [h, m] = hhmm.split(":").map(Number);
+    return new Date(
+      base.getFullYear(),
+      base.getMonth(),
+      base.getDate(),
+      h,
+      m,
+      0,
+      0
+    );
   }
 
   async function fetchDayBlocks(date: Date): Promise<AdminBlock[]> {
@@ -363,7 +376,7 @@ export default function AdminBookings() {
     }
     const set = new Set<string>();
     (data ?? []).forEach((r: { start_at: string }) => {
-      set.add(format(new Date(r.start_at), "yyyy-MM-dd"));
+      set.add(format(parseISO(r.start_at), "yyyy-MM-dd"));
     });
     setMonthWithBlocks(set);
   }, []);
@@ -441,7 +454,7 @@ export default function AdminBookings() {
   }
 
   const openReschedule = useCallback((r: BookingRow) => {
-    const d = new Date(r.preferred_at);
+    const d = parseISO(r.preferred_at);
     setResBooking(r);
     setResDate(d);
     setResTime(format(d, "HH:mm"));
@@ -526,14 +539,14 @@ export default function AdminBookings() {
       }, 0);
 
       const mins = Math.max(1, serviceMins + addonMins);
-      const bStart = new Date(b.preferred_at);
+      const bStart = parseISO(b.preferred_at);
       const bEnd = new Date(bStart.getTime() + mins * 60000);
       if (windowsOverlap(start, end, bStart, bEnd)) return true;
     }
 
     const blocks = await fetchDayBlocks(date);
     for (const blk of blocks) {
-      const bStart = new Date(blk.start_at);
+      const bStart = parseISO(blk.start_at);
       const bEnd = new Date(bStart.getTime() + blk.minutes * 60000);
       if (windowsOverlap(start, end, bStart, bEnd)) return true;
     }
@@ -552,7 +565,7 @@ export default function AdminBookings() {
     }
 
     const myMin = currentBookingMinMinutes(resBooking);
-    const newStart = new Date(`${format(resDate, "yyyy-MM-dd")}T${resTime}:00`);
+    const newStart = buildLocalDate(resDate, resTime);
 
     const conflict = await hasConflictOnDay(
       resDate,
@@ -624,14 +637,14 @@ export default function AdminBookings() {
     let minutes: number;
 
     if (blockFullDay) {
-      start = new Date(format(blockDate, "yyyy-MM-dd") + "T00:00:00");
+      start = buildLocalDate(blockDate, "00:00");
       minutes = 1440;
     } else {
       if (!blockTime || !blockMinutes) {
         toast({ title: "Missing time / hours", variant: "destructive" });
         return;
       }
-      start = new Date(`${format(blockDate, "yyyy-MM-dd")}T${blockTime}:00`);
+      start = buildLocalDate(blockDate, blockTime);
       minutes = blockMinutes;
     }
 
@@ -923,7 +936,7 @@ export default function AdminBookings() {
               ) : (
                 <ul className="space-y-2">
                   {dayBlocks.map((b) => {
-                    const start = new Date(b.start_at);
+                    const start = parseISO(b.start_at);
                     const end = new Date(start.getTime() + b.minutes * 60000);
                     const full = Number(b.minutes) >= 1440;
                     return (
@@ -1201,7 +1214,7 @@ const BookingCard = memo(function BookingCard({
         <CardTitle className="flex justify-between flex-wrap gap-2">
           <span>
             {row.customer?.full_name ?? "Unknown"} —{" "}
-            {new Date(row.preferred_at).toLocaleString(undefined, {
+            {parseISO(row.preferred_at).toLocaleString(undefined, {
               dateStyle: "medium",
               timeStyle: "short",
             })}

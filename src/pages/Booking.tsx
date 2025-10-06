@@ -545,7 +545,7 @@ const Booking = () => {
 
               {/* Add-ons */}
               {addons.length > 0 && (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <Label className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-primary" />
                     {t(
@@ -554,8 +554,27 @@ const Booking = () => {
                     )}
                   </Label>
 
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    {addons.map((a) => {
+                  {(() => {
+                    const prot = addons
+                      .filter(
+                        (a) =>
+                          a.name.toLowerCase().includes("protect") ||
+                          a.name.toLowerCase().includes("coating") ||
+                          a.name.toLowerCase().includes("wax")
+                      )
+                      .sort(
+                        (a, b) =>
+                          Number(a.base_price ?? 0) - Number(b.base_price ?? 0)
+                      );
+
+                    const extras = addons
+                      .filter((a) => !prot.includes(a))
+                      .sort(
+                        (a, b) =>
+                          Number(a.base_price ?? 0) - Number(b.base_price ?? 0)
+                      );
+
+                    const renderAddon = (a: AddonRow) => {
                       const checked = selectedAddonIds.has(a.id);
                       const checkboxId = `addon-${a.id}`;
                       const minutes = Number(a.duration_min ?? 0) || 0;
@@ -602,23 +621,71 @@ const Booking = () => {
                           </div>
                         </div>
                       );
-                    })}
-                  </div>
+                    };
+
+                    return (
+                      <div className="grid sm:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-lg">Protection</h4>
+                          <p className="text-sm text-muted-foreground italic">
+                            Great to lock in the look of your freshly detailed
+                            car.
+                          </p>
+                          {prot.length > 0 ? (
+                            prot.map(renderAddon)
+                          ) : (
+                            <p className="text-sm text-muted-foreground">
+                              None available
+                            </p>
+                          )}
+                        </div>
+
+                        <div className="space-y-2">
+                          <h4 className="font-semibold text-lg">Extras</h4>
+                          <p className="text-sm text-muted-foreground italic">
+                            Optional upgrades to take your detail to the next
+                            level.
+                          </p>
+                          {extras.length > 0 ? (
+                            extras.map(renderAddon)
+                          ) : (
+                            <p className="text-sm text-muted-foreground">
+                              None available
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {(selectedAddons.length > 0 || serviceMinutes > 0) && (
                     <div className="text-sm text-muted-foreground">
                       {t("booking.estimatedTotal", "Estimated total time")}:{" "}
                       <strong>
-                        {totalSelectedMinutes} {t("booking.minutes", "min")}
+                        {(totalSelectedMinutes / 60).toFixed(1)}{" "}
+                        {t("booking.hours", "hours")}
                       </strong>
-                      {totalAddonMinutes > 0 && (
-                        <>
-                          {" "}
-                          ({t("booking.base", "base")}: {serviceMinutes}{" "}
-                          {t("booking.minutes", "min")} + {t("booking.addons")}:{" "}
-                          {totalAddonMinutes} {t("booking.minutes", "min")})
-                        </>
-                      )}
+                      <br />
+                      <span>
+                        {selectedService
+                          ? `${selectedService.name}: ${(
+                              serviceMinutes / 60
+                            ).toFixed(1)}h`
+                          : "Base service"}{" "}
+                        {selectedAddons.length > 0 && (
+                          <>
+                            {" + "}
+                            {selectedAddons
+                              .map(
+                                (a) =>
+                                  `${a.name}: ${(
+                                    Number(a.duration_min ?? 0) / 60
+                                  ).toFixed(1)}h`
+                              )
+                              .join(", ")}
+                          </>
+                        )}
+                      </span>
                     </div>
                   )}
                 </div>

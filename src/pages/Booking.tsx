@@ -240,7 +240,6 @@ const Booking = () => {
 
       const { startUTC, endUTC } = businessDayRangeUTC(formData.date);
 
-      // Bookings for that Athens business day
       const { data: bookings, error: bookErr } = await supabase
         .from("booking")
         .select(
@@ -262,19 +261,10 @@ const Booking = () => {
 
       if (bookErr) {
         console.error("booking query error:", bookErr);
-        toast({
-          title: t(
-            "booking.toast.availabilityFailTitle",
-            "Couldn’t load availability"
-          ),
-          description: bookErr.message,
-          variant: "destructive",
-        });
         setUnavailableTimes(new Set());
         return;
       }
 
-      // Admin blocks for that Athens business day
       const { data: blocks, error: blocksErr } = await supabase
         .from("admin_block")
         .select("start_at, minutes")
@@ -284,7 +274,6 @@ const Booking = () => {
 
       if (blocksErr) console.warn("admin_block fetch error:", blocksErr);
 
-      // Build blocked HH:mm set (local Athens)
       const blocked = new Set<string>();
 
       for (const b of bookings ?? []) {
@@ -293,24 +282,31 @@ const Booking = () => {
           const m = Number(bs?.service?.min_minutes ?? 0);
           return sum + qty * m;
         }, 0);
-
         const addonMins = (b.booking_addon ?? []).reduce((sum, ba) => {
           const qty = Number(ba?.quantity ?? 1);
           const m = Number(ba?.addon?.duration_min ?? 0);
           return sum + qty * m;
         }, 0);
-
         const mins = Math.max(1, serviceMins + addonMins) || 180;
         expandBlockedHoursUTC(b.preferred_at, mins, blocked);
       }
 
       for (const blk of blocks ?? []) {
-        const mins = Math.max(1, Number(blk.minutes ?? 0));
-        expandBlockedHoursUTC(blk.start_at, mins, blocked);
+        expandBlockedHoursUTC(
+          blk.start_at,
+          Math.max(1, Number(blk.minutes ?? 0)),
+          blocked
+        );
       }
 
-      setUnavailableTimes(blocked);
+      // debug – feel free to keep temporarily
+      console.log("[availability]", formData.date, {
+        bookings: bookings?.length ?? 0,
+        blocks: blocks?.length ?? 0,
+        blocked: [...blocked],
+      });
 
+      setUnavailableTimes(blocked);
       if (formData.time && blocked.has(formData.time)) {
         setFormData((p) => ({ ...p, time: "" }));
       }
@@ -351,102 +347,90 @@ const Booking = () => {
   };
 
   /* ---------------- submit ---------------- */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const { name, email, phone, serviceId, date, time } = formData;
-
-    if (!name || !email || !phone || !serviceId || !date || !time) {
-      toast({
-        title: t("booking.toast.missing.title"),
-        description: t("booking.toast.missing.desc"),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const preferredUTC = businessLocalToUTC(date, time); // STORE UTC
-
-    // Sunday check in BUSINESS_TZ
-    const localForCheck = utcToZonedTime(preferredUTC, BUSINESS_TZ);
-    if (localForCheck.getDay() === 0) {
-      toast({
-        title: t("booking.toast.sunday.title"),
-        description: t("booking.toast.sunday.desc"),
-        variant: "destructive",
-      });
-      return;
-    }
-    if (preferredUTC < new Date()) {
-      toast({
-        title: t("booking.toast.past.title"),
-        description: t("booking.toast.past.desc"),
-        variant: "destructive",
-      });
-      return;
-    }
-    if (wouldOverlap(time)) {
-      toast({
-        title: t("booking.toast.unavailable.title"),
-        description: t(
-          "booking.toast.unavailable.descFull",
-          "The selected start time overlaps with another booking."
-        ),
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const res = await fetch("/api/book", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          phone,
-          vehicleInfo: formData.vehicleInfo || null,
-          notes: formData.notes || null,
-          preferred_at: preferredUTC.toISOString(), // UTC to API/DB
-          serviceId,
-          addonIds: Array.from(selectedAddonIds),
-        }),
-      });
-
-      if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j?.error || "Booking failed");
+  /* ---------------- availability (bookings + admin blocks, TZ-safe) ---------------- */
+  useEffect(() => {
+    (async () => {
+      if (!formData.date) {
+        setUnavailableTimes(new Set());
+        return;
       }
 
-      toast({
-        title: t("booking.toast.ok.title"),
-        description: t("booking.toast.ok.desc"),
-      });
+      const { startUTC, endUTC } = businessDayRangeUTC(formData.date);
 
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        serviceId: "",
-        date: "",
-        time: "",
-        vehicleInfo: "",
-        notes: "",
-      });
-      setSelectedAddonIds(new Set());
-      setDateObj(undefined);
-      setUnavailableTimes(new Set());
-    } catch (err: any) {
-      toast({
-        title: t("booking.toast.fail.title"),
-        description: err?.message ?? t("booking.toast.fail.desc"),
-        variant: "destructive",
-      });
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+      // 1) Load bookings for that BUSINESS local day (stored as UTC in DB)
+      const { data: bookings, error: bookingsErr } = await supabase
+        .from("booking")
+        .select(
+          `
+        id, preferred_at, status,
+        booking_service ( quantity, service:service_id ( min_minutes ) ),
+        booking_addon   ( quantity, addon:addon_id   ( duration_min ) )
+      `
+        )
+        .gte("preferred_at", startUTC.toISOString())
+        .lt("preferred_at", endUTC.toISOString())
+        .in("status", ["pending", "confirmed"]);
+
+      if (bookingsErr) {
+        console.error("booking availability error:", bookingsErr);
+        toast({
+          title: t(
+            "booking.toast.availabilityFailTitle",
+            "Couldn’t load availability"
+          ),
+          description: bookingsErr.message,
+          variant: "destructive",
+        });
+        setUnavailableTimes(new Set());
+        return;
+      }
+
+      // 2) Load admin blocks for that BUSINESS local day (stored as UTC in DB)
+      const { data: blocks, error: blocksErr } = await supabase
+        .from("admin_block")
+        .select("start_at, minutes")
+        .gte("start_at", startUTC.toISOString())
+        .lt("start_at", endUTC.toISOString())
+        .order("start_at", { ascending: true });
+
+      if (blocksErr) {
+        console.warn("admin_block fetch error:", blocksErr);
+      }
+
+      // Build the blocked set (hour keys) from bookings and blocks
+      const blocked = new Set<string>();
+
+      // From bookings
+      for (const b of bookings ?? []) {
+        const serviceMins = (b.booking_service ?? []).reduce((sum, bs) => {
+          const qty = Number(bs?.quantity ?? 1);
+          const m = Number(bs?.service?.min_minutes ?? 0);
+          return sum + qty * m;
+        }, 0);
+        const addonMins = (b.booking_addon ?? []).reduce((sum, ba) => {
+          const qty = Number(ba?.quantity ?? 1);
+          const m = Number(ba?.addon?.duration_min ?? 0);
+          return sum + qty * m;
+        }, 0);
+        const mins = Math.max(1, serviceMins + addonMins) || 180;
+        expandBlockedHoursUTC(b.preferred_at, mins, blocked);
+      }
+
+      // From admin blocks
+      for (const blk of blocks ?? []) {
+        const mins = Math.max(1, Number(blk.minutes ?? 0));
+        expandBlockedHoursUTC(blk.start_at, mins, blocked);
+      }
+
+      setUnavailableTimes(blocked);
+
+      // Clear chosen time if it became blocked
+      if (formData.time && blocked.has(formData.time)) {
+        setFormData((p) => ({ ...p, time: "" }));
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData.date]);
 
   /* ---------------- UI ---------------- */
   return (

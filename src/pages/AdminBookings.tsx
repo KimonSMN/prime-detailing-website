@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, useCallback, memo } from "react";
 import { format, startOfMonth, endOfMonth, parseISO } from "date-fns";
-import { zonedTimeToUtc, utcToZonedTime } from "date-fns-tz";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,38 +44,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-/* ---------------- business timezone helpers (Athens) ---------------- */
-const BUSINESS_TZ = "Europe/Athens";
-
-function businessDayRangeUTC(yyyyMmDd: string) {
-  return {
-    startUTC: zonedTimeToUtc(`${yyyyMmDd}T00:00:00`, BUSINESS_TZ),
-    endUTC: zonedTimeToUtc(`${yyyyMmDd}T24:00:00`, BUSINESS_TZ),
-  };
-}
-
-function businessLocalToUTC(yyyyMmDd: string, hhmm: string) {
-  return zonedTimeToUtc(`${yyyyMmDd}T${hhmm}:00`, BUSINESS_TZ);
-}
-
-function expandBlockedHoursUTC(
-  startISO: string,
-  minutes: number,
-  acc: Set<string>
-) {
-  const sLocal = utcToZonedTime(new Date(startISO), BUSINESS_TZ);
-  const eLocal = new Date(sLocal.getTime() + minutes * 60000);
-
-  const t = new Date(sLocal);
-  t.setMinutes(0, 0, 0);
-  acc.add(format(t, "HH:mm"));
-  while (true) {
-    t.setHours(t.getHours() + 1);
-    if (t < eLocal) acc.add(format(t, "HH:mm"));
-    else break;
-  }
-}
 
 /* -------------------- Sign-in box -------------------- */
 function AdminSignIn({ onSignedIn }: { onSignedIn: () => void }) {
@@ -133,7 +100,7 @@ function AdminSignIn({ onSignedIn }: { onSignedIn: () => void }) {
 type BookingRow = {
   id: string;
   created_at: string;
-  preferred_at: string; // UTC ISO in DB
+  preferred_at: string;
   status: "pending" | "confirmed" | "completed" | "cancelled";
   vehicle_info: string | null;
   notes: string | null;
@@ -173,7 +140,7 @@ type DayRow = {
 
 type AdminBlock = {
   id: string;
-  start_at: string; // UTC ISO
+  start_at: string; // ISO
   minutes: number;
   note: string | null;
 };
@@ -339,16 +306,49 @@ export default function AdminBookings() {
     return d;
   }, []);
 
+  // Build a set of hourly HH:mm slots covered by [start, start + minutes)
+  function expandBlockedHours(
+    startISO: string,
+    minutes: number,
+    acc: Set<string>
+  ) {
+    const s = parseISO(startISO);
+    const e = new Date(s.getTime() + minutes * 60000);
+
+    const t = new Date(s);
+    t.setMinutes(0, 0, 0);
+    acc.add(format(t, "HH:mm"));
+    while (true) {
+      t.setHours(t.getHours() + 1);
+      if (t < e) acc.add(format(t, "HH:mm"));
+      else break;
+    }
+  }
+
+  function buildLocalDate(base: Date, hhmm: string) {
+    const [h, m] = hhmm.split(":").map(Number);
+    return new Date(
+      base.getFullYear(),
+      base.getMonth(),
+      base.getDate(),
+      h,
+      m,
+      0,
+      0
+    );
+  }
+
   async function fetchDayBlocks(date: Date): Promise<AdminBlock[]> {
-    // build UTC range for the BUSINESS_TZ day that 'date' falls in
-    const yyyyMmDd = format(date, "yyyy-MM-dd");
-    const { startUTC, endUTC } = businessDayRangeUTC(yyyyMmDd);
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
 
     const { data, error } = await supabase
       .from("admin_block")
       .select("id,start_at,minutes,note")
-      .gte("start_at", startUTC.toISOString())
-      .lt("start_at", endUTC.toISOString())
+      .gte("start_at", start.toISOString())
+      .lt("start_at", end.toISOString())
       .order("start_at", { ascending: true })
       .returns<AdminBlock[]>();
 
@@ -363,17 +363,11 @@ export default function AdminBookings() {
     const from = startOfMonth(month);
     const to = endOfMonth(month);
 
-    // Convert month range days (business tz) to UTC
-    const fromStr = format(from, "yyyy-MM-dd");
-    const toStr = format(to, "yyyy-MM-dd");
-    const { startUTC } = businessDayRangeUTC(fromStr);
-    const { endUTC } = businessDayRangeUTC(toStr);
-
     const { data, error } = await supabase
       .from("admin_block")
       .select("start_at")
-      .gte("start_at", startUTC.toISOString())
-      .lte("start_at", endUTC.toISOString());
+      .gte("start_at", from.toISOString())
+      .lte("start_at", to.toISOString());
 
     if (error) {
       console.warn(error);
@@ -382,8 +376,7 @@ export default function AdminBookings() {
     }
     const set = new Set<string>();
     (data ?? []).forEach((r: { start_at: string }) => {
-      const local = utcToZonedTime(parseISO(r.start_at), BUSINESS_TZ);
-      set.add(format(local, "yyyy-MM-dd"));
+      set.add(format(parseISO(r.start_at), "yyyy-MM-dd"));
     });
     setMonthWithBlocks(set);
   }, []);
@@ -393,8 +386,10 @@ export default function AdminBookings() {
     date: Date,
     excludeBookingId?: string
   ) {
-    const yyyyMmDd = format(date, "yyyy-MM-dd");
-    const { startUTC, endUTC } = businessDayRangeUTC(yyyyMmDd);
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
 
     const { data: bookings, error } = await supabase
       .from("booking")
@@ -411,8 +406,8 @@ export default function AdminBookings() {
         )
       `
       )
-      .gte("preferred_at", startUTC.toISOString())
-      .lt("preferred_at", endUTC.toISOString())
+      .gte("preferred_at", start.toISOString())
+      .lt("preferred_at", end.toISOString())
       .in("status", ["pending", "confirmed"])
       .returns<DayRow[]>();
 
@@ -439,14 +434,14 @@ export default function AdminBookings() {
       }, 0);
 
       const mins = Math.max(1, serviceMins + addonMins);
-      expandBlockedHoursUTC(b.preferred_at, mins, bookedSet);
+      expandBlockedHours(b.preferred_at, mins, bookedSet);
     }
 
     const blocks = await fetchDayBlocks(date);
     setDayBlocks(blocks);
     const blockSet = new Set<string>();
     for (const blk of blocks) {
-      expandBlockedHoursUTC(blk.start_at, blk.minutes, blockSet);
+      expandBlockedHours(blk.start_at, blk.minutes, blockSet);
     }
 
     const map = new Map<string, UnavailKind>();
@@ -459,12 +454,12 @@ export default function AdminBookings() {
   }
 
   const openReschedule = useCallback((r: BookingRow) => {
-    const dLocal = utcToZonedTime(parseISO(r.preferred_at), BUSINESS_TZ);
+    const d = parseISO(r.preferred_at);
     setResBooking(r);
-    setResDate(dLocal);
-    setResTime(format(dLocal, "HH:mm"));
+    setResDate(d);
+    setResTime(format(d, "HH:mm"));
     setResOpen(true);
-    fetchUnavailableForDate(dLocal, r.id);
+    fetchUnavailableForDate(d, r.id);
   }, []);
 
   useEffect(() => {
@@ -496,15 +491,16 @@ export default function AdminBookings() {
 
   async function hasConflictOnDay(
     date: Date,
-    startLocal: Date,
+    start: Date,
     minutes: number,
     excludeBookingId?: string
   ): Promise<boolean> {
-    const endLocal = new Date(startLocal.getTime() + minutes * 60000);
+    const end = new Date(start.getTime() + minutes * 60000);
 
-    // DB query by BUSINESS day range (UTC bounds)
-    const yyyyMmDd = format(date, "yyyy-MM-dd");
-    const { startUTC, endUTC } = businessDayRangeUTC(yyyyMmDd);
+    const dayStart = new Date(date);
+    dayStart.setHours(0, 0, 0, 0);
+    const dayEnd = new Date(date);
+    dayEnd.setHours(23, 59, 59, 999);
 
     const { data: others, error: othersErr } = await supabase
       .from("booking")
@@ -521,8 +517,8 @@ export default function AdminBookings() {
         )
       `
       )
-      .gte("preferred_at", startUTC.toISOString())
-      .lt("preferred_at", endUTC.toISOString())
+      .gte("preferred_at", dayStart.toISOString())
+      .lt("preferred_at", dayEnd.toISOString())
       .in("status", ["pending", "confirmed"])
       .returns<DayRow[]>();
 
@@ -543,20 +539,16 @@ export default function AdminBookings() {
       }, 0);
 
       const mins = Math.max(1, serviceMins + addonMins);
-
-      // Convert each booking's UTC to BUSINESS local to compare windows
-      const bStartLocal = utcToZonedTime(parseISO(b.preferred_at), BUSINESS_TZ);
-      const bEndLocal = new Date(bStartLocal.getTime() + mins * 60000);
-      if (windowsOverlap(startLocal, endLocal, bStartLocal, bEndLocal))
-        return true;
+      const bStart = parseISO(b.preferred_at);
+      const bEnd = new Date(bStart.getTime() + mins * 60000);
+      if (windowsOverlap(start, end, bStart, bEnd)) return true;
     }
 
     const blocks = await fetchDayBlocks(date);
     for (const blk of blocks) {
-      const bStartLocal = utcToZonedTime(parseISO(blk.start_at), BUSINESS_TZ);
-      const bEndLocal = new Date(bStartLocal.getTime() + blk.minutes * 60000);
-      if (windowsOverlap(startLocal, endLocal, bStartLocal, bEndLocal))
-        return true;
+      const bStart = parseISO(blk.start_at);
+      const bEnd = new Date(bStart.getTime() + blk.minutes * 60000);
+      if (windowsOverlap(start, end, bStart, bEnd)) return true;
     }
 
     return false;
@@ -573,20 +565,11 @@ export default function AdminBookings() {
     }
 
     const myMin = currentBookingMinMinutes(resBooking);
-    const yyyyMmDd = format(resDate, "yyyy-MM-dd");
-    const newStartLocal = new Date(
-      resDate.getFullYear(),
-      resDate.getMonth(),
-      resDate.getDate(),
-      Number(resTime.split(":")[0]),
-      Number(resTime.split(":")[1]),
-      0,
-      0
-    );
+    const newStart = buildLocalDate(resDate, resTime);
 
     const conflict = await hasConflictOnDay(
       resDate,
-      newStartLocal,
+      newStart,
       myMin,
       resBooking.id
     );
@@ -601,13 +584,10 @@ export default function AdminBookings() {
       return;
     }
 
-    // STORE UTC
-    const newStartUTC = businessLocalToUTC(yyyyMmDd, resTime);
-
     setResBusy(true);
     const { error } = await supabase
       .from("booking")
-      .update({ preferred_at: newStartUTC.toISOString() })
+      .update({ preferred_at: newStart.toISOString() })
       .eq("id", resBooking.id);
     setResBusy(false);
 
@@ -653,41 +633,22 @@ export default function AdminBookings() {
       return;
     }
 
-    let startLocal: Date;
+    let start: Date;
     let minutes: number;
-    const yyyyMmDd = format(blockDate, "yyyy-MM-dd");
 
     if (blockFullDay) {
-      // local 00:00 in BUSINESS TZ
-      startLocal = new Date(
-        blockDate.getFullYear(),
-        blockDate.getMonth(),
-        blockDate.getDate(),
-        0,
-        0,
-        0,
-        0
-      );
+      start = buildLocalDate(blockDate, "00:00");
       minutes = 1440;
     } else {
       if (!blockTime || !blockMinutes) {
         toast({ title: "Missing time / hours", variant: "destructive" });
         return;
       }
-      const [h, m] = blockTime.split(":").map(Number);
-      startLocal = new Date(
-        blockDate.getFullYear(),
-        blockDate.getMonth(),
-        blockDate.getDate(),
-        h,
-        m,
-        0,
-        0
-      );
+      start = buildLocalDate(blockDate, blockTime);
       minutes = blockMinutes;
     }
 
-    const conflict = await hasConflictOnDay(blockDate, startLocal, minutes);
+    const conflict = await hasConflictOnDay(blockDate, start, minutes);
     if (conflict) {
       toast({
         title: "Overlapping window",
@@ -698,15 +659,9 @@ export default function AdminBookings() {
       return;
     }
 
-    // STORE UTC
-    const startUTC = businessLocalToUTC(
-      yyyyMmDd,
-      blockFullDay ? "00:00" : blockTime
-    );
-
     setBlockBusy(true);
     const { error } = await supabase.from("admin_block").insert({
-      start_at: startUTC.toISOString(),
+      start_at: start.toISOString(),
       minutes,
       note: blockNote || null,
     });
@@ -742,10 +697,8 @@ export default function AdminBookings() {
   }
 
   // helpers for DayPicker modifiers
-  const dayHasBlocks = (date: Date) => {
-    const localKey = format(date, "yyyy-MM-dd");
-    return monthWithBlocks.has(localKey);
-  };
+  const dayHasBlocks = (date: Date) =>
+    monthWithBlocks.has(format(date, "yyyy-MM-dd"));
 
   if (!authed) return <AdminSignIn onSignedIn={() => setAuthed(true)} />;
 
@@ -983,13 +936,8 @@ export default function AdminBookings() {
               ) : (
                 <ul className="space-y-2">
                   {dayBlocks.map((b) => {
-                    const sLocal = utcToZonedTime(
-                      parseISO(b.start_at),
-                      BUSINESS_TZ
-                    );
-                    const eLocal = new Date(
-                      sLocal.getTime() + b.minutes * 60000
-                    );
+                    const start = parseISO(b.start_at);
+                    const end = new Date(start.getTime() + b.minutes * 60000);
                     const full = Number(b.minutes) >= 1440;
                     return (
                       <li
@@ -1000,8 +948,8 @@ export default function AdminBookings() {
                           <span className="font-medium">
                             {full
                               ? "Full day"
-                              : `${format(sLocal, "HH:mm")} – ${format(
-                                  eLocal,
+                              : `${format(start, "HH:mm")} – ${format(
+                                  end,
                                   "HH:mm"
                                 )}`}
                           </span>
@@ -1260,16 +1208,13 @@ const BookingCard = memo(function BookingCard({
     return items.length ? items.join(", ") : "—";
   }, [row.booking_addon]);
 
-  // Show preferred_at in BUSINESS local time
-  const prefLocal = utcToZonedTime(parseISO(row.preferred_at), BUSINESS_TZ);
-
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex justify-between flex-wrap gap-2">
           <span>
             {row.customer?.full_name ?? "Unknown"} —{" "}
-            {prefLocal.toLocaleString(undefined, {
+            {parseISO(row.preferred_at).toLocaleString(undefined, {
               dateStyle: "medium",
               timeStyle: "short",
             })}

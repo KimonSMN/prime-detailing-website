@@ -32,29 +32,49 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Checkbox } from "@/components/ui/checkbox";
+import { zonedTimeToUtc, utcToZonedTime } from "date-fns-tz";
 
-/* ---------------- helpers (Safari-safe local time) ---------------- */
+/* ---------------- time zone ---------------- */
+const BUSINESS_TZ = "Europe/Athens";
 
-function localDayRange(yyyyMmDd: string) {
-  const [y, m, d] = yyyyMmDd.split("-").map(Number);
-  const start = new Date(y, m - 1, d, 0, 0, 0, 0); // local 00:00
-  const end = new Date(y, m - 1, d + 1, 0, 0, 0, 0); // next local 00:00 (exclusive)
-  return { start, end };
+/** yyyy-MM-dd (business local) → [UTC start, UTC end) */
+function businessDayRangeUTC(yyyyMmDd: string) {
+  const startUTC = zonedTimeToUtc(`${yyyyMmDd}T00:00:00`, BUSINESS_TZ);
+  const endUTC = zonedTimeToUtc(`${yyyyMmDd}T24:00:00`, BUSINESS_TZ);
+  return { startUTC, endUTC };
 }
 
-function localDateTime(yyyyMmDd: string, hhmm: string) {
-  const [y, m, d] = yyyyMmDd.split("-").map(Number);
-  const [hh, mm] = hhmm.split(":").map(Number);
-  return new Date(y, m - 1, d, hh, mm, 0, 0); // local hh:mm
+/** yyyy-MM-dd + HH:mm (business local) → UTC Date to store */
+function businessLocalToUTC(yyyyMmDd: string, hhmm: string) {
+  return zonedTimeToUtc(`${yyyyMmDd}T${hhmm}:00`, BUSINESS_TZ);
+}
+
+/** Expand hours in BUSINESS_TZ for display/select disabling */
+function expandBlockedHoursUTC(
+  startISO: string,
+  minutes: number,
+  acc: Set<string>
+) {
+  const startUTC = new Date(startISO);
+  const startLocal = utcToZonedTime(startUTC, BUSINESS_TZ);
+  const endLocal = new Date(startLocal.getTime() + minutes * 60000);
+
+  const t = new Date(startLocal);
+  t.setMinutes(0, 0, 0);
+  acc.add(format(t, "HH:mm"));
+  while (true) {
+    t.setHours(t.getHours() + 1);
+    if (t < endLocal) acc.add(format(t, "HH:mm"));
+    else break;
+  }
 }
 
 /* ---------------- types & constants ---------------- */
-
 type ServiceRow = {
   id: string;
   name: string;
   base_price: string | number | null;
-  duration_min: number | null; // NEW
+  duration_min: number | null;
 };
 
 type AddonRow = {
@@ -65,13 +85,13 @@ type AddonRow = {
 };
 
 type AvailabilityRow = {
-  preferred_at: string; // ISO
+  preferred_at: string; // ISO (UTC in DB)
   status: "pending" | "confirmed";
-  total_minutes: number | null; // aggregated duration from the view
+  total_minutes: number | null;
 };
 
 type AdminBlockRow = {
-  start_at: string; // ISO
+  start_at: string; // ISO (UTC in DB)
   minutes: number;
 };
 
@@ -105,7 +125,7 @@ const Booking = () => {
     email: "",
     phone: "",
     serviceId: "",
-    date: "", // yyyy-MM-dd
+    date: "", // yyyy-MM-dd (business local)
     time: "",
     vehicleInfo: "",
     notes: "",
@@ -173,7 +193,7 @@ const Booking = () => {
     (async () => {
       const { data, error } = await supabase
         .from("service")
-        .select("id,name,base_price,duration_min") // CHANGED
+        .select("id,name,base_price,duration_min")
         .eq("active", true)
         .order("name");
 
@@ -221,14 +241,15 @@ const Booking = () => {
         return;
       }
 
-      const { start, end } = localDayRange(formData.date);
+      // use BUSINESS_TZ boundaries converted to UTC for DB
+      const { startUTC, endUTC } = businessDayRangeUTC(formData.date);
 
-      // 1) Load bookings for that local day from availability view
+      // 1) Load bookings (already aggregated minutes in the view)
       const { data: avail, error: availErr } = await supabase
         .from("booking_availability")
         .select("preferred_at, status, total_minutes")
-        .gte("preferred_at", start.toISOString())
-        .lt("preferred_at", end.toISOString())
+        .gte("preferred_at", startUTC.toISOString())
+        .lt("preferred_at", endUTC.toISOString())
         .returns<AvailabilityRow[]>();
 
       if (availErr) {
@@ -245,12 +266,12 @@ const Booking = () => {
         return;
       }
 
-      // 2) Load admin blocks
+      // 2) Load admin blocks (UTC in DB)
       const { data: blocks, error: blocksErr } = await supabase
         .from("admin_block")
         .select("start_at, minutes")
-        .gte("start_at", start.toISOString())
-        .lt("start_at", end.toISOString())
+        .gte("start_at", startUTC.toISOString())
+        .lt("start_at", endUTC.toISOString())
         .order("start_at", { ascending: true })
         .returns<AdminBlockRow[]>();
 
@@ -258,34 +279,16 @@ const Booking = () => {
         console.warn("admin_block fetch error:", blocksErr);
       }
 
-      // Build the blocked set (hours) from bookings and blocks
+      // Build the blocked set (hours) from bookings and blocks in BUSINESS_TZ
       const blocked = new Set<string>();
 
-      function blockRange(startISO: string, minutes: number) {
-        const s = new Date(startISO);
-        const e = new Date(s.getTime() + minutes * 60000);
-
-        const iter = new Date(s);
-        iter.setMinutes(0, 0, 0);
-        blocked.add(format(iter, "HH:mm"));
-
-        while (true) {
-          iter.setHours(iter.getHours() + 1);
-          if (iter < e) blocked.add(format(iter, "HH:mm"));
-          else break;
-        }
-      }
-
-      // From bookings (view)
       for (const b of avail ?? []) {
         const mins = Math.max(1, Number(b.total_minutes ?? 0)) || 180;
-        blockRange(b.preferred_at, mins);
+        expandBlockedHoursUTC(b.preferred_at, mins, blocked);
       }
-
-      // From admin blocks
       for (const blk of blocks ?? []) {
         const mins = Math.max(1, Number(blk.minutes ?? 0));
-        blockRange(blk.start_at, mins);
+        expandBlockedHoursUTC(blk.start_at, mins, blocked);
       }
 
       setUnavailableTimes(blocked);
@@ -314,14 +317,15 @@ const Booking = () => {
     const total = totalSelectedMinutes || 0;
     if (total <= 0) return false; // no duration info, allow
 
-    const start = localDateTime(formData.date, startTimeHHmm);
-    const end = new Date(start.getTime() + total * 60000);
+    // interpret chosen time as BUSINESS_TZ; walk hour buckets in that TZ
+    const startUTC = businessLocalToUTC(formData.date, startTimeHHmm);
+    const startLocal = utcToZonedTime(startUTC, BUSINESS_TZ);
+    const endLocal = new Date(startLocal.getTime() + total * 60000);
 
-    const iter = new Date(start);
+    const iter = new Date(startLocal);
     iter.setMinutes(0, 0, 0);
 
-    // walk hour-by-hour; if *any* occupied hour is blocked, it overlaps
-    while (iter < end) {
+    while (iter < endLocal) {
       const key = format(iter, "HH:mm");
       if (unavailableTimes.has(key)) return true;
       iter.setHours(iter.getHours() + 1);
@@ -343,9 +347,11 @@ const Booking = () => {
       return;
     }
 
-    const preferred_at = localDateTime(date, time);
+    const preferredUTC = businessLocalToUTC(date, time); // STORE UTC
 
-    if (preferred_at.getDay() === 0) {
+    // Sunday check in BUSINESS_TZ
+    const localForCheck = utcToZonedTime(preferredUTC, BUSINESS_TZ);
+    if (localForCheck.getDay() === 0) {
       toast({
         title: t("booking.toast.sunday.title"),
         description: t("booking.toast.sunday.desc"),
@@ -353,7 +359,7 @@ const Booking = () => {
       });
       return;
     }
-    if (preferred_at < new Date()) {
+    if (preferredUTC < new Date()) {
       toast({
         title: t("booking.toast.past.title"),
         description: t("booking.toast.past.desc"),
@@ -361,7 +367,6 @@ const Booking = () => {
       });
       return;
     }
-    // Check overlap with *current* total selection (service + add-ons)
     if (wouldOverlap(time)) {
       toast({
         title: t("booking.toast.unavailable.title"),
@@ -385,8 +390,8 @@ const Booking = () => {
           phone,
           vehicleInfo: formData.vehicleInfo || null,
           notes: formData.notes || null,
-          preferred_at: preferred_at.toISOString(),
-          serviceId, // backend/view keeps computing authoritative total
+          preferred_at: preferredUTC.toISOString(), // UTC to API/DB
+          serviceId,
           addonIds: Array.from(selectedAddonIds),
         }),
       });
@@ -532,10 +537,9 @@ const Booking = () => {
                             })}`
                           : ""}
                         {s.duration_min
-                          ? ` • ~${s.duration_min} ${t(
-                              "booking.minutes",
-                              "min"
-                            )}`
+                          ? ` • ~${(Number(s.duration_min) / 60).toFixed(
+                              1
+                            )} ${t("booking.hours", "hours")}`
                           : ""}
                       </SelectItem>
                     ))}
@@ -543,7 +547,7 @@ const Booking = () => {
                 </Select>
               </div>
 
-              {/* Add-ons */}
+              {/* Add-ons (2 columns: Protection & Extras, each price-asc) */}
               {addons.length > 0 && (
                 <div className="space-y-4">
                   <Label className="flex items-center gap-2">
@@ -556,12 +560,15 @@ const Booking = () => {
 
                   {(() => {
                     const prot = addons
-                      .filter(
-                        (a) =>
-                          a.name.toLowerCase().includes("protect") ||
-                          a.name.toLowerCase().includes("coating") ||
-                          a.name.toLowerCase().includes("wax")
-                      )
+                      .filter((a) => {
+                        const n = a.name.toLowerCase();
+                        return (
+                          n.includes("protect") ||
+                          n.includes("sealant") ||
+                          n.includes("ceramic") ||
+                          n.includes("wax")
+                        );
+                      })
                       .sort(
                         (a, b) =>
                           Number(a.base_price ?? 0) - Number(b.base_price ?? 0)
@@ -613,7 +620,8 @@ const Booking = () => {
                                 )}
                                 {minutes > 0 && (
                                   <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
-                                    ≈ {minutes} {t("booking.minutes", "min")}
+                                    ≈ {(minutes / 60).toFixed(1)}{" "}
+                                    {t("booking.hours", "hours")}
                                   </span>
                                 )}
                               </div>
@@ -724,6 +732,7 @@ const Booking = () => {
                         onSelect={(d) => {
                           if (!d) return;
                           setDateObj(d);
+                          // Keep yyyy-MM-dd in BUSINESS_TZ (calendar already local enough for selection)
                           handleInputChange("date", format(d, "yyyy-MM-dd"));
                           setIsCalOpen(false);
                         }}
@@ -749,7 +758,6 @@ const Booking = () => {
                   <Select
                     value={formData.time}
                     onValueChange={(v) => {
-                      // guard in case user changes service/addons after opening
                       if (wouldOverlap(v)) {
                         toast({
                           title: t("booking.toast.unavailable.title"),

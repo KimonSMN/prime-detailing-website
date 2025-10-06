@@ -46,17 +46,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-/* ---------------- TZ ---------------- */
+/* ---------------- business timezone helpers (Athens) ---------------- */
 const BUSINESS_TZ = "Europe/Athens";
+
 function businessDayRangeUTC(yyyyMmDd: string) {
   return {
     startUTC: zonedTimeToUtc(`${yyyyMmDd}T00:00:00`, BUSINESS_TZ),
     endUTC: zonedTimeToUtc(`${yyyyMmDd}T24:00:00`, BUSINESS_TZ),
   };
 }
+
 function businessLocalToUTC(yyyyMmDd: string, hhmm: string) {
   return zonedTimeToUtc(`${yyyyMmDd}T${hhmm}:00`, BUSINESS_TZ);
 }
+
 function expandBlockedHoursUTC(
   startISO: string,
   minutes: number,

@@ -34,37 +34,34 @@ import { Helmet } from "react-helmet-async";
 import { Checkbox } from "@/components/ui/checkbox";
 import { zonedTimeToUtc, utcToZonedTime } from "date-fns-tz";
 
-/* ---------------- time zone ---------------- */
+/* ---------------- business timezone helpers (Athens) ---------------- */
 const BUSINESS_TZ = "Europe/Athens";
 
-/** yyyy-MM-dd (business local) → [UTC start, UTC end) */
 function businessDayRangeUTC(yyyyMmDd: string) {
-  const startUTC = zonedTimeToUtc(`${yyyyMmDd}T00:00:00`, BUSINESS_TZ);
-  const endUTC = zonedTimeToUtc(`${yyyyMmDd}T24:00:00`, BUSINESS_TZ);
-  return { startUTC, endUTC };
+  return {
+    startUTC: zonedTimeToUtc(`${yyyyMmDd}T00:00:00`, BUSINESS_TZ),
+    endUTC: zonedTimeToUtc(`${yyyyMmDd}T24:00:00`, BUSINESS_TZ),
+  };
 }
 
-/** yyyy-MM-dd + HH:mm (business local) → UTC Date to store */
 function businessLocalToUTC(yyyyMmDd: string, hhmm: string) {
   return zonedTimeToUtc(`${yyyyMmDd}T${hhmm}:00`, BUSINESS_TZ);
 }
 
-/** Expand hours in BUSINESS_TZ for display/select disabling */
 function expandBlockedHoursUTC(
   startISO: string,
   minutes: number,
   acc: Set<string>
 ) {
-  const startUTC = new Date(startISO);
-  const startLocal = utcToZonedTime(startUTC, BUSINESS_TZ);
-  const endLocal = new Date(startLocal.getTime() + minutes * 60000);
+  const sLocal = utcToZonedTime(new Date(startISO), BUSINESS_TZ);
+  const eLocal = new Date(sLocal.getTime() + minutes * 60000);
 
-  const t = new Date(startLocal);
+  const t = new Date(sLocal);
   t.setMinutes(0, 0, 0);
   acc.add(format(t, "HH:mm"));
   while (true) {
     t.setHours(t.getHours() + 1);
-    if (t < endLocal) acc.add(format(t, "HH:mm"));
+    if (t < eLocal) acc.add(format(t, "HH:mm"));
     else break;
   }
 }
@@ -241,51 +238,72 @@ const Booking = () => {
         return;
       }
 
-      // use BUSINESS_TZ boundaries converted to UTC for DB
       const { startUTC, endUTC } = businessDayRangeUTC(formData.date);
 
-      // 1) Load bookings (already aggregated minutes in the view)
-      const { data: avail, error: availErr } = await supabase
-        .from("booking_availability")
-        .select("preferred_at, status, total_minutes")
+      // Bookings for that Athens business day
+      const { data: bookings, error: bookErr } = await supabase
+        .from("booking")
+        .select(
+          `
+        id, preferred_at, status,
+        booking_service (
+          quantity,
+          service:service_id ( min_minutes )
+        ),
+        booking_addon (
+          quantity,
+          addon:addon_id ( duration_min )
+        )
+      `
+        )
         .gte("preferred_at", startUTC.toISOString())
         .lt("preferred_at", endUTC.toISOString())
-        .returns<AvailabilityRow[]>();
+        .in("status", ["pending", "confirmed"]);
 
-      if (availErr) {
-        console.error("availability error:", availErr);
+      if (bookErr) {
+        console.error("booking query error:", bookErr);
         toast({
           title: t(
             "booking.toast.availabilityFailTitle",
             "Couldn’t load availability"
           ),
-          description: availErr.message,
+          description: bookErr.message,
           variant: "destructive",
         });
         setUnavailableTimes(new Set());
         return;
       }
 
-      // 2) Load admin blocks (UTC in DB)
+      // Admin blocks for that Athens business day
       const { data: blocks, error: blocksErr } = await supabase
         .from("admin_block")
         .select("start_at, minutes")
         .gte("start_at", startUTC.toISOString())
         .lt("start_at", endUTC.toISOString())
-        .order("start_at", { ascending: true })
-        .returns<AdminBlockRow[]>();
+        .order("start_at", { ascending: true });
 
-      if (blocksErr) {
-        console.warn("admin_block fetch error:", blocksErr);
-      }
+      if (blocksErr) console.warn("admin_block fetch error:", blocksErr);
 
-      // Build the blocked set (hours) from bookings and blocks in BUSINESS_TZ
+      // Build blocked HH:mm set (local Athens)
       const blocked = new Set<string>();
 
-      for (const b of avail ?? []) {
-        const mins = Math.max(1, Number(b.total_minutes ?? 0)) || 180;
+      for (const b of bookings ?? []) {
+        const serviceMins = (b.booking_service ?? []).reduce((sum, bs) => {
+          const qty = Number(bs?.quantity ?? 1);
+          const m = Number(bs?.service?.min_minutes ?? 0);
+          return sum + qty * m;
+        }, 0);
+
+        const addonMins = (b.booking_addon ?? []).reduce((sum, ba) => {
+          const qty = Number(ba?.quantity ?? 1);
+          const m = Number(ba?.addon?.duration_min ?? 0);
+          return sum + qty * m;
+        }, 0);
+
+        const mins = Math.max(1, serviceMins + addonMins) || 180;
         expandBlockedHoursUTC(b.preferred_at, mins, blocked);
       }
+
       for (const blk of blocks ?? []) {
         const mins = Math.max(1, Number(blk.minutes ?? 0));
         expandBlockedHoursUTC(blk.start_at, mins, blocked);
@@ -293,7 +311,6 @@ const Booking = () => {
 
       setUnavailableTimes(blocked);
 
-      // Clear chosen time if it became blocked
       if (formData.time && blocked.has(formData.time)) {
         setFormData((p) => ({ ...p, time: "" }));
       }

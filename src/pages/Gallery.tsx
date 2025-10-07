@@ -20,8 +20,24 @@ const IMAGES: GalleryImage[] = [
     alt: "Opel Mokka Exterior Detailing",
   },
   {
-    src: "/gallery/detailing-opel-mokka-cholargos-4.webp",
-    alt: "Opel Mokka Exterior Detailing",
+    src: "/gallery/detailing-ford-kuga-cholargos-1.webp",
+    alt: "Ford Kuga Exterior Detailing",
+  },
+  {
+    src: "/gallery/detailing-ford-kuga-cholargos-2.webp",
+    alt: "Ford Kuga Exterior Detailing",
+  },
+  {
+    src: "/gallery/detailing-ford-kuga-cholargos-3.webp",
+    alt: "Ford Kuga Exterior Detailing",
+  },
+  {
+    src: "/gallery/detailing-ford-kuga-cholargos-4.webp",
+    alt: "Ford Kuga Exterior Detailing",
+  },
+  {
+    src: "/gallery/detailing-ford-kuga-cholargos-5.webp",
+    alt: "Ford Kuga Exterior Detailing",
   },
   {
     src: "/gallery/detailing-citroen-c4-cholargos-3.webp",

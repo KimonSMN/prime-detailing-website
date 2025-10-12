@@ -1,26 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
-/** Matches your gallery-manifest.json structure */
+/** Manifest types */
 type Variant = { format: string; width: number; url: string };
 type ManifestItem = {
   id: string;
   alt: string;
-  original: { width: number; height: number; bytes: number };
+  original: { width: number; height: number; bytes: number | null };
   variants: Variant[];
 };
 
 type BeforeAfterStripProps = {
-  /** How many images to show if no IDs are given */
   maxShown?: number;
-  /** Where the CTA points to */
   galleryUrl?: string;
-  /** Optional heading override */
   heading?: string;
-  /** Specific image IDs to display (in order) */
   imageIds?: string[];
+  /** If the strip sits above-the-fold, you can eagerly load the first N images (default 0). */
+  eagerCount?: number;
 };
 
 /** Build a srcset string for a given format from the manifest's variants */
@@ -28,17 +26,17 @@ function buildSrcSet(variants: Variant[], format: string): string | undefined {
   const filtered = variants
     .filter((v) => v.format.toLowerCase() === format.toLowerCase())
     .sort((a, b) => a.width - b.width);
-  if (filtered.length === 0) return undefined;
+  if (!filtered.length) return;
   return filtered.map((v) => `${v.url} ${v.width}w`).join(", ");
 }
 
-/** Pick the largest variant as fallback <img src> */
-function largestVariantUrl(variants: Variant[], prefFormat = "webp"): string {
-  const preferred = variants
+/** Smallest (best for fallback src) */
+function smallestVariantUrl(variants: Variant[], prefFormat = "webp"): string {
+  const sameFmt = variants
     .filter((v) => v.format.toLowerCase() === prefFormat.toLowerCase())
-    .sort((a, b) => b.width - a.width);
-  if (preferred.length > 0) return preferred[0].url;
-  const any = [...variants].sort((a, b) => b.width - a.width);
+    .sort((a, b) => a.width - b.width);
+  if (sameFmt.length) return sameFmt[0].url;
+  const any = [...variants].sort((a, b) => a.width - b.width);
   return any.length ? any[0].url : "";
 }
 
@@ -49,6 +47,7 @@ export default function BeforeAfterStrip({
   galleryUrl = "/gallery",
   heading,
   imageIds,
+  eagerCount = 0,
 }: BeforeAfterStripProps) {
   const { t } = useTranslation();
   const [items, setItems] = useState<ManifestItem[]>([]);
@@ -60,15 +59,13 @@ export default function BeforeAfterStrip({
       .catch(() => setItems([]));
   }, []);
 
-  const filteredItems = React.useMemo(() => {
-    if (!imageIds || imageIds.length === 0) return items.slice(0, maxShown);
-    const lookup = new Map(items.map((i) => [i.id, i]));
-    return imageIds
-      .map((id) => lookup.get(id))
-      .filter((v): v is ManifestItem => !!v);
+  const shown = useMemo(() => {
+    if (!imageIds?.length) return items.slice(0, maxShown);
+    const map = new Map(items.map((i) => [i.id, i]));
+    return imageIds.map((id) => map.get(id)).filter(Boolean) as ManifestItem[];
   }, [items, imageIds, maxShown]);
 
-  const remaining = Math.max(0, items.length - filteredItems.length);
+  const remaining = Math.max(0, items.length - shown.length);
   const title = heading ?? t("gallery.heading", "Our Work");
 
   return (
@@ -81,19 +78,29 @@ export default function BeforeAfterStrip({
           <h2 className="text-3xl md:text-4xl font-extrabold">{title}</h2>
         </div>
 
-        {/* Grid layout */}
         <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
-          {filteredItems.map((item, idx) => {
+          {shown.map((item, idx) => {
+            const avifSet = buildSrcSet(item.variants, "avif");
             const webpSet = buildSrcSet(item.variants, "webp");
-            const fallback = largestVariantUrl(item.variants, "webp");
+            const fallback = smallestVariantUrl(item.variants, "webp");
+
+            const eager = idx < eagerCount; // usually 0 for below-the-fold sections
 
             return (
               <figure
                 key={item.id}
                 className="overflow-hidden rounded-xl border bg-card"
               >
+                {/* 4:3 aspect guard to prevent CLS */}
                 <div className="relative w-full pt-[75%]">
                   <picture>
+                    {avifSet && (
+                      <source
+                        type="image/avif"
+                        srcSet={avifSet}
+                        sizes={SIZES}
+                      />
+                    )}
                     {webpSet && (
                       <source
                         type="image/webp"
@@ -104,10 +111,11 @@ export default function BeforeAfterStrip({
                     <img
                       src={fallback}
                       alt={item.alt}
-                      loading={idx < 2 ? "eager" : "lazy"}
+                      loading={eager ? "eager" : "lazy"}
+                      fetchPriority={eager ? "high" : "low"}
                       decoding="async"
-                      width={1280}
-                      height={960}
+                      width={960}
+                      height={720}
                       className="absolute inset-0 h-full w-full object-cover object-[center_75%]"
                     />
                   </picture>

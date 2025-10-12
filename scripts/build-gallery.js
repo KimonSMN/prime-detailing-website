@@ -14,9 +14,9 @@ import sharp from "sharp";
 // ----------------- CONFIG -----------------
 const SRC_DIR = "src/assets/gallery"; // originals here
 const OUT_DIR = "public/gallery"; // variants + manifest here
-const WIDTHS = [640, 1280, 1920]; // keep 1920 only if needed
-const QUALITY_WEBP = { 640: 75, 1280: 65, 1920: 60 };
-const QUALITY_AVIF = { 640: 55, 1280: 50, 1920: 45 };
+const WIDTHS = [480, 960];
+const QUALITY_WEBP = { 480: 70, 960: 65 };
+const QUALITY_AVIF = { 480: 50, 960: 45 };
 
 const GENERATE_AVIF = process.argv.includes("--avif");
 const FORCE = process.argv.includes("--force");

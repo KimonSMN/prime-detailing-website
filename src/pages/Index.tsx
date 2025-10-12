@@ -106,20 +106,19 @@ const Index = () => {
         locale={locale}
         image={`${BASE_URL}/og-default.webp`}
         jsonLd={businessJsonLd}
-        // ✅ Preload LCP image (see Hero.tsx paths below)
         links={[
           {
             rel: "preload",
             as: "image",
-            href: "/hero/hero-w1280.webp",
+            href: "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp",
             imagesrcset:
-              "/hero/hero-w640.webp 640w, /hero/hero-w1280.webp 1280w, /hero/hero-w1920.webp 1920w",
-            imagesizes:
-              "(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px",
+              "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp 480w, /gallery/detailing-bmw-ix1-cholargos-2-w960.webp 960w",
+            imagesizes: "(max-width:768px) 100vw, 480px",
             crossOrigin: "anonymous",
           },
         ]}
       />
+
       <Hreflang />
 
       <Hero />

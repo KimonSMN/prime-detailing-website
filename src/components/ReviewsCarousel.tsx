@@ -5,10 +5,22 @@ import { useTranslation } from "react-i18next";
 
 const REVIEWS = [
   {
+    author: "Edward Papageorgiou",
+    text: "Γνώση, μεράκι, εργατικότητα, συνέπεια, καλή διάθεση και φροντίδα του οχήματος σαν να ήταν δικό τους! Τους συνιστώ ανεπιφύλακτα, τόσο για τον απλό καθαρισμό όσο και τ..",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/T44NLqJe1VYSj4ja9",
+  },
+  {
     author: "adonis smirlianos",
     text: "Went for a deep clean and he also fixed some paint scratches, amazing",
     rating: 5,
-    authorUrl: "https://maps.app.goo.gl/pf9Np6HUaZqD6hpS6", // replace with real link
+    authorUrl: "https://maps.app.goo.gl/yRER9tgD6ri1iQhs6",
+  },
+  {
+    author: "Edward Papageorgiou",
+    text: "Γνώση, μεράκι, εργατικότητα, συνέπεια, καλή διάθεση και φροντίδα του οχήματος σαν να ήταν δικό τους! Τους συνιστώ ανεπιφύλακτα, τόσο για τον απλό καθαρισμό όσο και τ..",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/T44NLqJe1VYSj4ja9",
   },
   {
     author: "Theophilos Chrysoulis",
@@ -39,6 +51,30 @@ const REVIEWS = [
     text: "Καταπληκτική δουλειά!",
     rating: 5,
     authorUrl: "https://maps.app.goo.gl/9BewizNhoMg93HEp7",
+  },
+  {
+    author: "Petros G",
+    text: "Αν θέλετε να μη μυρίζει το αυτοκινητο, να σιχτιριζετε με τις λεπτομέρειες και τα πλυσιματα ξεπετα, να είστε ευχαριστημένοι και να αμοιβεται δίκαια …",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/hQhBjWBVBewmUvJ76",
+  },
+  {
+    author: "Σοφία Τρεσσου",
+    text: "Άψογη εξυπηρέτηση! Ο Κίμωνας ήταν πολύ επεξηγηματικός και με βοήθησε να κατανοήσω τις ανάγκες του αυτοκινήτου μου. Το αποτέλεσμα ήταν απίστευτο!",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/uosTjMNmNyqxWnjC7",
+  },
+  {
+    author: "ΧΑΡΑΛΑΜΠΟΣ ΛΙΓΚΑΣ",
+    text: "Πολυ καλό παιδί και εξυπηρετικό. Εξαιρετικη δουλειά.",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/48FMGrW1Bc15GzPX9",
+  },
+  {
+    author: "kwstas pnt",
+    text: "Ευγένεια, επαγγελματισμός και άψογα αποτελέσματα. Τι άλλο να ζητήσει κανείς!!",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/zifv5dWf2qapX4Hg9",
   },
 ];
 

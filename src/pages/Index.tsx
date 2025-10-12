@@ -88,7 +88,16 @@ const Index = () => {
 
       {/* <FAQ /> */}
       {/* <ContactBand /> */}
-      <BeforeAfterStrip maxShown={4} galleryUrl="/gallery" />
+      <BeforeAfterStrip
+        heading="Featured Projects"
+        galleryUrl="/gallery"
+        imageIds={[
+          "detailing-bmw-ix1-cholargos-2",
+          "detailing-ford-kuga-cholargos-3",
+          "detailing-renault-clio-cholargos-2",
+          "detailing-opel-mokka-cholargos-3",
+        ]}
+      />
       <Footer />
     </div>
   );

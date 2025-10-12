@@ -1,25 +1,58 @@
-// src/pages/Index.tsx (landing page)
+// src/pages/Index.tsx
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Seo } from "@/components/SEO";
 import { Hreflang } from "@/components/Hreflang";
 import { buildCanonical, localeFor, BASE_URL } from "@/lib/seo";
 
 import Hero from "@/components/Hero";
-import USPIntro from "@/components/USPIntro";
-import GoogleReviewsEmbed from "@/components/GoogleReviewsEmbed";
 import Footer from "@/components/Footer";
-import ReviewsCarousel from "@/components/ReviewsCarousel";
-import ContactBand from "@/components/ContactBand";
-import FAQ from "@/components/FAQ";
 import BeforeAfterStrip from "@/components/BeforeAfterStrip";
-import TopNavbar from "@/components/TopNavbar";
+
+// ✅ Lazy import heavy components so they don't hurt LCP
+const ReviewsCarousel = React.lazy(
+  () => import("@/components/ReviewsCarousel")
+);
+const GoogleReviewsEmbed = React.lazy(
+  () => import("@/components/GoogleReviewsEmbed")
+);
+
+/* Mount children only when near viewport */
+function LazyWhenVisible({
+  children,
+  rootMargin = "300px",
+}: {
+  children: React.ReactNode;
+  rootMargin?: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!ref.current || visible) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            setVisible(true);
+            io.disconnect();
+          }
+        });
+      },
+      { root: null, rootMargin, threshold: 0.01 }
+    );
+    io.observe(ref.current);
+    return () => io.disconnect();
+  }, [visible]);
+
+  return <div ref={ref}>{visible ? children : null}</div>;
+}
 
 const Index = () => {
   const { t, i18n } = useTranslation();
   const canonical = buildCanonical();
   const locale = localeFor(i18n.resolvedLanguage);
 
-  // Localized Business JSON-LD (kept constant data, EL-first address)
   const businessJsonLd = {
     "@context": "https://schema.org",
     "@type": "AutomotiveBusiness",
@@ -73,21 +106,39 @@ const Index = () => {
         locale={locale}
         image={`${BASE_URL}/og-default.webp`}
         jsonLd={businessJsonLd}
+        // ✅ Preload LCP image (see Hero.tsx paths below)
+        links={[
+          {
+            rel: "preload",
+            as: "image",
+            href: "/hero/hero-w1280.webp",
+            imagesrcset:
+              "/hero/hero-w640.webp 640w, /hero/hero-w1280.webp 1280w, /hero/hero-w1920.webp 1920w",
+            imagesizes:
+              "(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px",
+          },
+        ]}
       />
       <Hreflang />
 
-      {/* <TopNavbar /> */}
       <Hero />
-      {/* <USPIntro /> */}
-      <ReviewsCarousel />
 
-      <GoogleReviewsEmbed
-        embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.049742905001!2d23.794233977768958!3d37.99930019919164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1993446e8c7eb%3A0x299bfe2c72a90cd6!2zUHJpbWUgRGV0YWlsaW5nIC0gz4DOu8-Fzr3PhM6uz4HOuc6_IM6xz4XPhM6_zrrOuc69zq7PhM-Jzr0gzqfOv867zrHPgc6zz4zPgg!5e0!3m2!1sen!2sgr!4v1758733703425!5m2!1sen!2sgr"
-        reviewsLink="https://www.google.com/maps/place/?q=place_id:ChIJ68foRjSZoRQR1gypciz-myk"
-      />
+      {/* Below-the-fold content is lazy to protect LCP */}
+      <LazyWhenVisible>
+        <Suspense fallback={null}>
+          <ReviewsCarousel />
+        </Suspense>
+      </LazyWhenVisible>
 
-      {/* <FAQ /> */}
-      {/* <ContactBand /> */}
+      <LazyWhenVisible>
+        <Suspense fallback={null}>
+          <GoogleReviewsEmbed
+            embedSrc="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3144.049742905001!2d23.794233977768958!3d37.99930019919164!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14a1993446e8c7eb%3A0x299bfe2c72a90cd6!2zUHJpbWUgRGV0YWlsaW5nIC0gz4DOu8-Fzr3PhM6uz4HOuc6_IM6xz4XPhM6_zrrOuc69zq7PhM-Jzr0gzqfOv867zrHPgc6zz4zPgg!5e0!3m2!1sen!2sgr!4v1758733703425!5m2!1sen!2sgr"
+            reviewsLink="https://www.google.com/maps/place/?q=place_id:ChIJ68foRjSZoRQR1gypciz-myk"
+          />
+        </Suspense>
+      </LazyWhenVisible>
+
       <BeforeAfterStrip
         heading="Featured Projects"
         galleryUrl="/gallery"
@@ -98,6 +149,7 @@ const Index = () => {
           "detailing-opel-mokka-cholargos-3",
         ]}
       />
+
       <Footer />
     </div>
   );

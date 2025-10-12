@@ -1,5 +1,14 @@
 import { Helmet } from "react-helmet-async";
 
+type LinkTag = {
+  rel: string;
+  href: string;
+  as?: string;
+  imagesrcset?: string;
+  imagesizes?: string;
+  crossOrigin?: "anonymous" | "use-credentials";
+};
+
 type Props = {
   title: string;
   description: string;
@@ -9,6 +18,7 @@ type Props = {
   robots?: string;
   jsonLd?: object | object[];
   siteName?: string;
+  links?: LinkTag[];
 };
 
 export function Seo({
@@ -20,6 +30,7 @@ export function Seo({
   robots = "index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1",
   jsonLd,
   siteName = "Prime Detailing Cholargos",
+  links = [],
 }: Props) {
   return (
     <>
@@ -45,6 +56,11 @@ export function Seo({
         <meta name="twitter:title" content={title} />
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={image} />
+
+        {/* ✅ Correctly typed link preload entries */}
+        {links.map((link, i) => (
+          <link key={i} {...link} />
+        ))}
       </Helmet>
 
       {jsonLd && (

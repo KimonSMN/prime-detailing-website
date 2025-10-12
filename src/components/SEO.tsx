@@ -32,9 +32,27 @@ export function Seo({
   siteName = "Prime Detailing Cholargos",
   links = [],
 }: Props) {
+  // derive site origin for preconnect/dns-prefetch
+  let origin: string | undefined;
+  try {
+    origin = new URL(canonical).origin;
+  } catch {
+    try {
+      origin = new URL(image).origin;
+    } catch {}
+  }
+
   return (
     <>
       <Helmet prioritizeSeoTags>
+        {/* Preconnect to your own origin (and dns-prefetch) */}
+        {origin && (
+          <>
+            <link rel="preconnect" href={origin} />
+            <link rel="dns-prefetch" href={origin} />
+          </>
+        )}
+
         <title>{title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={canonical} />
@@ -57,7 +75,7 @@ export function Seo({
         <meta name="twitter:description" content={description} />
         <meta name="twitter:image" content={image} />
 
-        {/* ✅ Correctly typed link preload entries */}
+        {/* Extra link tags (e.g., hero preload) */}
         {links.map((link, i) => (
           <link key={i} {...link} />
         ))}

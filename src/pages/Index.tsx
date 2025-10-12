@@ -116,6 +116,7 @@ const Index = () => {
               "/hero/hero-w640.webp 640w, /hero/hero-w1280.webp 1280w, /hero/hero-w1920.webp 1920w",
             imagesizes:
               "(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px",
+            crossOrigin: "anonymous",
           },
         ]}
       />

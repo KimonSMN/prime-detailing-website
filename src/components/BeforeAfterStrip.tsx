@@ -42,7 +42,7 @@ function largestVariantUrl(variants: Variant[], prefFormat = "webp"): string {
   return any.length ? any[0].url : "";
 }
 
-const SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 640px";
+const SIZES = "(max-width: 480px) 100vw, (max-width: 1024px) 45vw, 480px";
 
 export default function BeforeAfterStrip({
   maxShown = 4,

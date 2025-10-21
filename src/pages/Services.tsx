@@ -53,7 +53,7 @@ const serviceCopyFallback: Record<
   { title: string; description: string; features: string[]; defaultIcon: any }
 > = {
   basicWash: {
-    title: "Mh",
+    title: "Maintenance wash",
     description:
       "Maintenance wash for a clean look without decontamination or deep interior extraction.",
     features: [

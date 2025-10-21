@@ -17,6 +17,7 @@ import {
   Settings,
   Wrench,
   Lightbulb,
+  Flame,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
@@ -44,13 +45,15 @@ type AddonRow = {
 /* ---------------- Local service ids used by i18n ---------------- */
 type ServiceId = "basicWash" | "fullDetail" | "paintCorrection";
 
+const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "ceramicSpray";
+
 /* Fallback copy if i18n keys are missing */
 const serviceCopyFallback: Record<
   ServiceId,
   { title: string; description: string; features: string[]; defaultIcon: any }
 > = {
   basicWash: {
-    title: "Basic Exterior & Interior Wash",
+    title: "Mh",
     description:
       "Maintenance wash for a clean look without decontamination or deep interior extraction.",
     features: [
@@ -429,7 +432,8 @@ const Services = () => {
             return (
               <Card
                 key={addon.id}
-                className="w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
+                className={`relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col
+                ${addon.slug === "ceramicSpray" ? "animate-flameBurst" : ""}`}
                 style={{ animationDelay: `${index * 0.15}s` }}
               >
                 <CardHeader className="text-center pb-4">
@@ -441,12 +445,29 @@ const Services = () => {
                     {addon.title}
                   </CardTitle>
 
-                  {/* NEW: badge + subtitle for pickupDropoff */}
+                  {/* EXISTING: pickupDropoff free-range badge */}
                   {addon.slug === "pickupDropoff" && (
                     <div className="mt-1 flex flex-col items-center gap-1">
                       <span className="inline-flex items-center rounded-full border border-primary/30 px-2.5 py-0.5 text-s text-primary">
                         Free within 3 km
                       </span>
+                    </div>
+                  )}
+
+                  {addon.slug === "ceramicSpray" && (
+                    <div className="absolute top-3 right-3 z-20 pointer-events-none">
+                      <div
+                        className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold px-3 py-1 shadow-md
+                        transform rotate-6"
+                      >
+                        <Flame className="w-3.5 h-3.5" />
+                        <span>
+                          {t(
+                            "services.socialProof.popular",
+                            "Popular among clients"
+                          )}
+                        </span>
+                      </div>
                     </div>
                   )}
 

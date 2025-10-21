@@ -119,3 +119,30 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* --- Cartoon flame background for the card --- */
+@keyframes flameRise {
+  0% {
+    transform: translateY(10%) scale(0.8);
+    opacity: 0;
+    filter: blur(3px);
+  }
+  15% {
+    opacity: 0.85;
+  }
+  40% {
+    transform: translateY(-30%) scale(1.05);
+    opacity: 0.9;
+    filter: blur(1.2px);
+  }
+  70% {
+    transform: translateY(-80%) scale(1.02);
+    opacity: 0.55;
+    filter: blur(2px);
+  }
+  100% {
+    transform: translateY(-120%) scale(0.95);
+    opacity: 0;
+    filter: blur(3px);
+  }
+}

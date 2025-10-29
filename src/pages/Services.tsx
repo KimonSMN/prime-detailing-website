@@ -120,6 +120,8 @@ function addonIconBySlug(slug?: string | null) {
       return Shield;
     case "proCeramic":
       return Crown;
+    case "pickupDropoff":
+      return Car;
     case "engineBay":
       return Wrench;
     case "headlightRestoration":
@@ -146,6 +148,7 @@ const PROTECTION_SLUGS = new Set([
 ]);
 
 const EXTRA_ADDON_SLUGS = new Set([
+  "pickupDropoff",
   "engineBay",
   "headlightRestoration", // headlight polishing/restoration
 ]);
@@ -540,7 +543,7 @@ const Services = () => {
           </>
         )}
 
-        {/* ---------- 3) ADD-ONS (Engine Bay & Headlight Polishing) ---------- */}
+        {/* ---------- 3) ADD-ONS  ---------- */}
         {extraAddons.length > 0 && (
           <>
             <div className="text-center mt-20 mb-12">

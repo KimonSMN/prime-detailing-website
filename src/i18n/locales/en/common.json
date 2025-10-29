@@ -115,6 +115,7 @@
           "Recommended: add nano sealant or ceramic coating to lock in the finish"
         ]
       },
+
       "addons": {
         "title": "Protection Options",
         "subtitle": "Upgrade longevity, gloss, and hydrophobic performance with wax, nano sealant, or ceramic coating.",
@@ -135,18 +136,8 @@
               "Natural carnauba wax blended with polymers for a deep, warm shine",
               "Enhanced hydrophobic effect",
               "Great for dark/metallic colors",
-              "Durability: 2–3 months",
-              "Reapply: every 2–3 months"
-            ]
-          },
-          "ceramicSpray": {
-            "title": "Ceramic Spray Protection (SiO₂)",
-            "features": [
-              "SiO₂ ceramic spray coating",
-              "Slick, smooth finish with enhanced gloss",
-              "Advanced hydrophobic effect",
-              "Durability: 3–4 months",
-              "Reapply: quarterly"
+              "Durability: 4–6 months",
+              "Reapply: every 4–6 months"
             ]
           },
           "nanoSealant": {
@@ -254,5 +245,7 @@
       "title": "Contact & Booking | Prime Detailing",
       "description": "Address, phone, hours. Book your detailing appointment online."
     }
-  }
+  },
+  "services.extras.title": "Add-ons",
+  "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas."
 }

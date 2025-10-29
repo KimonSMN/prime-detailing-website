@@ -14,7 +14,6 @@ import {
   Sparkles,
   Droplets,
   Crown,
-  Settings,
   Wrench,
   Lightbulb,
   Flame,
@@ -45,7 +44,7 @@ type AddonRow = {
 /* ---------------- Local service ids used by i18n ---------------- */
 type ServiceId = "basicWash" | "fullDetail" | "paintCorrection";
 
-const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "ceramicSpray";
+const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "sprayWax";
 
 /* Fallback copy if i18n keys are missing */
 const serviceCopyFallback: Record<
@@ -117,16 +116,12 @@ function addonIconBySlug(slug?: string | null) {
       return Droplets;
     case "premiumWax":
       return Palette;
-    case "ceramicSpray":
-      return Settings;
     case "nanoSealant":
       return Shield;
     case "proCeramic":
       return Crown;
     case "engineBay":
       return Wrench;
-    case "pickupDropoff":
-      return Car;
     case "headlightRestoration":
       return Lightbulb;
     default:
@@ -141,6 +136,19 @@ function minutesToHoursLabel(min?: number | null) {
   const pretty = Number.isInteger(hours) ? `${hours}` : `${hours}`;
   return `${pretty}`;
 }
+
+/* --- NEW: grouping for add-ons --- */
+const PROTECTION_SLUGS = new Set([
+  "sprayWax",
+  "premiumWax",
+  "nanoSealant",
+  "proCeramic",
+]);
+
+const EXTRA_ADDON_SLUGS = new Set([
+  "engineBay",
+  "headlightRestoration", // headlight polishing/restoration
+]);
 
 const Services = () => {
   const { t } = useTranslation();
@@ -175,12 +183,7 @@ const Services = () => {
   const dynamicServices = useMemo(() => {
     const base: Record<
       ServiceId,
-      {
-        id: ServiceId;
-        priceFrom?: number;
-        durationMin?: number;
-        icon: any;
-      }
+      { id: ServiceId; priceFrom?: number; durationMin?: number; icon: any }
     > = {
       basicWash: {
         id: "basicWash",
@@ -243,7 +246,7 @@ const Services = () => {
       };
     });
 
-    // --- sort by price ascending (null/undefined -> last), name tiebreaker ---
+    // sort by price ascending (null/undefined -> last), name tiebreaker
     arr.sort((a, b) => {
       const ap = a.priceFrom ?? Number.POSITIVE_INFINITY;
       const bp = b.priceFrom ?? Number.POSITIVE_INFINITY;
@@ -253,6 +256,16 @@ const Services = () => {
 
     return arr;
   }, [dbAddons, t]);
+
+  /* --- split into two groups --- */
+  const protectionAddons = useMemo(
+    () => addonCards.filter((a) => PROTECTION_SLUGS.has(a.slug ?? "")),
+    [addonCards]
+  );
+  const extraAddons = useMemo(
+    () => addonCards.filter((a) => EXTRA_ADDON_SLUGS.has(a.slug ?? "")),
+    [addonCards]
+  );
 
   if (loading) {
     return (
@@ -267,7 +280,7 @@ const Services = () => {
   return (
     <section id="services" className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* Services */}
+        {/* ---------- 1) SERVICES (kept first) ---------- */}
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             {t("services.title.prefix", "Our")}{" "}
@@ -283,7 +296,6 @@ const Services = () => {
           </p>
         </div>
 
-        {/* 3 service cards, with dynamic price/duration */}
         <div className="flex flex-wrap justify-center gap-8">
           {(Object.keys(serviceCopyFallback) as ServiceId[]).map(
             (svcId, index) => {
@@ -398,134 +410,254 @@ const Services = () => {
           )}
         </div>
 
-        {/* Add-ons (sorted by price asc) */}
-        <div className="text-center mt-20 mb-12">
-          <h3 className="text-3xl font-bold">
-            {t("services.items.addons.title", "Protection Options")}
-          </h3>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            {t(
-              "services.items.addons.subtitle",
-              "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating."
-            )}
-          </p>
-        </div>
+        {/* ---------- 2) PROTECTION OPTIONS ---------- */}
+        {protectionAddons.length > 0 && (
+          <>
+            <div className="text-center mt-20 mb-12">
+              <h3 className="text-3xl font-bold">
+                {t("services.items.addons.title", "Protection Options")}
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {t(
+                  "services.items.addons.subtitle",
+                  "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating."
+                )}
+              </p>
+            </div>
 
-        <div className="flex flex-wrap justify-center gap-8">
-          {addonCards.map((addon, index) => {
-            const TitleIcon = addon.Icon;
-            const durationH = addon.durationMin
-              ? minutesToHoursLabel(addon.durationMin)
-              : undefined;
+            <div className="flex flex-wrap justify-center gap-8">
+              {protectionAddons.map((addon, index) => {
+                const TitleIcon = addon.Icon;
+                const durationH = addon.durationMin
+                  ? minutesToHoursLabel(addon.durationMin)
+                  : undefined;
 
-            const features =
-              addon.features && addon.features.length > 0
-                ? addon.features
-                : [
-                    t("services.addon.quickApply", "Quick application"),
-                    t(
-                      "services.addon.hydrophobic",
-                      "Improves hydrophobic performance"
-                    ),
-                  ];
+                const features =
+                  addon.features && addon.features.length > 0
+                    ? addon.features
+                    : [
+                        t("services.addon.quickApply", "Quick application"),
+                        t(
+                          "services.addon.hydrophobic",
+                          "Improves hydrophobic performance"
+                        ),
+                      ];
 
-            return (
-              <Card
-                key={addon.id}
-                className={`relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col
-                ${addon.slug === "ceramicSpray" ? "animate-flameBurst" : ""}`}
-                style={{ animationDelay: `${index * 0.15}s` }}
-              >
-                <CardHeader className="text-center pb-4">
-                  <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                    <TitleIcon className="w-8 h-8 text-primary-foreground" />
-                  </div>
-
-                  <CardTitle className="text-xl font-bold text-foreground">
-                    {addon.title}
-                  </CardTitle>
-
-                  {/* EXISTING: pickupDropoff free-range badge */}
-                  {addon.slug === "pickupDropoff" && (
-                    <div className="mt-1 flex flex-col items-center gap-1">
-                      <span className="inline-flex items-center rounded-full border border-primary/30 px-2.5 py-0.5 text-s text-primary">
-                        Free within 3 km
-                      </span>
-                    </div>
-                  )}
-
-                  {addon.slug === "ceramicSpray" && (
-                    <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                      <div
-                        className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold px-3 py-1 shadow-md
-                        transform rotate-6"
-                      >
-                        <Flame className="w-3.5 h-3.5" />
-                        <span>
-                          {t(
-                            "services.socialProof.popular",
-                            "Popular among clients"
-                          )}
-                        </span>
+                return (
+                  <Card
+                    key={addon.id}
+                    className={`relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col
+                    ${
+                      addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG
+                        ? "animate-flameBurst"
+                        : ""
+                    }`}
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    <CardHeader className="text-center pb-4">
+                      <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
+                        <TitleIcon className="w-8 h-8 text-primary-foreground" />
                       </div>
-                    </div>
-                  )}
 
-                  {(addon.priceFrom != null || durationH) && (
-                    <div className="mt-3 flex items-center justify-center gap-4">
-                      {addon.priceFrom != null && (
-                        <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                          {t("services.fromPrice", {
-                            price: `${addon.priceFrom}€`,
-                          })}
-                        </p>
-                      )}
-                      {durationH && (
-                        <p className="text-sm text-muted-foreground">
-                          {t("services.durationHours", { hours: durationH })}
-                        </p>
-                      )}
-                    </div>
-                  )}
-                </CardHeader>
+                      <CardTitle className="text-xl font-bold text-foreground">
+                        {addon.title}
+                      </CardTitle>
 
-                <CardContent className="space-y-6 flex flex-col flex-grow">
-                  <div className="space-y-2 flex-grow">
-                    <h4 className="font-semibold text-foreground flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      {t("services.whatsIncluded", "What’s included")}
-                    </h4>
-                    <ul className="space-y-1">
-                      {features.map((feature, idx) => (
-                        <li
-                          key={idx}
-                          className="text-muted-foreground flex gap-2"
+                      {addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG && (
+                        <div className="absolute top-3 right-3 z-20 pointer-events-none">
+                          <div
+                            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold px-3 py-1 shadow-md
+                            transform rotate-6"
+                          >
+                            <Flame className="w-3.5 h-3.5" />
+                            <span>
+                              {t(
+                                "services.socialProof.popular",
+                                "Popular among clients"
+                              )}
+                            </span>
+                          </div>
+                        </div>
+                      )}
+
+                      {(addon.priceFrom != null || durationH) && (
+                        <div className="mt-3 flex items-center justify-center gap-4">
+                          {addon.priceFrom != null && (
+                            <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                              {t("services.fromPrice", {
+                                price: `${addon.priceFrom}€`,
+                              })}
+                            </p>
+                          )}
+                          {durationH && (
+                            <p className="text-sm text-muted-foreground">
+                              {t("services.durationHours", {
+                                hours: durationH,
+                              })}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </CardHeader>
+
+                    <CardContent className="space-y-6 flex flex-col flex-grow">
+                      <div className="space-y-2 flex-grow">
+                        <h4 className="font-semibold text-foreground flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          {t("services.whatsIncluded", "What’s included")}
+                        </h4>
+                        <ul className="space-y-1">
+                          {features.map((feature, idx) => (
+                            <li
+                              key={idx}
+                              className="text-muted-foreground flex gap-2"
+                            >
+                              <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                              <span className="flex-1">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="mt-auto">
+                        <NavLink
+                          to={`/booking?${
+                            addon.slug
+                              ? `addonSlug=${addon.slug}`
+                              : `addonId=${addon.id}`
+                          }`}
                         >
-                          <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                          <span className="flex-1">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                          <Button variant="secondary" className="w-full">
+                            {t("services.bookThis", "Add to booking")}
+                          </Button>
+                        </NavLink>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
+        )}
 
-                  <div className="mt-auto">
-                    <NavLink
-                      to={`/booking?${
-                        addon.slug
-                          ? `addonSlug=${addon.slug}`
-                          : `addonId=${addon.id}`
-                      }`}
-                    >
-                      <Button variant="secondary" className="w-full">
-                        {t("services.bookThis", "Add to booking")}
-                      </Button>
-                    </NavLink>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
+        {/* ---------- 3) ADD-ONS (Engine Bay & Headlight Polishing) ---------- */}
+        {extraAddons.length > 0 && (
+          <>
+            <div className="text-center mt-20 mb-12">
+              <h3 className="text-3xl font-bold">
+                {t("services.extras.title")}
+              </h3>
+              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                {t("services.extras.subtitle")}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap justify-center gap-8">
+              {extraAddons.map((addon, index) => {
+                const TitleIcon = addon.Icon;
+                const durationH = addon.durationMin
+                  ? minutesToHoursLabel(addon.durationMin)
+                  : undefined;
+
+                const fallbackFeatures =
+                  addon.slug === "engineBay"
+                    ? [
+                        t("services.addon.degrease", "Degrease & rinse"),
+                        t(
+                          "services.addon.dressPlastics",
+                          "Dress engine plastics"
+                        ),
+                      ]
+                    : [
+                        t(
+                          "services.addon.restoreClarity",
+                          "Restore lens clarity"
+                        ),
+                        t(
+                          "services.addon.uvProtection",
+                          "UV protection applied"
+                        ),
+                      ];
+
+                const features =
+                  addon.features && addon.features.length > 0
+                    ? addon.features
+                    : fallbackFeatures;
+
+                return (
+                  <Card
+                    key={addon.id}
+                    className="relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
+                    style={{ animationDelay: `${index * 0.15}s` }}
+                  >
+                    <CardHeader className="text-center pb-4">
+                      <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
+                        <TitleIcon className="w-8 h-8 text-primary-foreground" />
+                      </div>
+
+                      <CardTitle className="text-xl font-bold text-foreground">
+                        {addon.title}
+                      </CardTitle>
+
+                      {(addon.priceFrom != null || durationH) && (
+                        <div className="mt-3 flex items-center justify-center gap-4">
+                          {addon.priceFrom != null && (
+                            <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                              {t("services.fromPrice", {
+                                price: `${addon.priceFrom}€`,
+                              })}
+                            </p>
+                          )}
+                          {durationH && (
+                            <p className="text-sm text-muted-foreground">
+                              {t("services.durationHours", {
+                                hours: durationH,
+                              })}
+                            </p>
+                          )}
+                        </div>
+                      )}
+                    </CardHeader>
+
+                    <CardContent className="space-y-6 flex flex-col flex-grow">
+                      <div className="space-y-2 flex-grow">
+                        <h4 className="font-semibold text-foreground flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          {t("services.whatsIncluded", "What’s included")}
+                        </h4>
+                        <ul className="space-y-1">
+                          {features.map((feature, idx) => (
+                            <li
+                              key={idx}
+                              className="text-muted-foreground flex gap-2"
+                            >
+                              <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                              <span className="flex-1">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      <div className="mt-auto">
+                        <NavLink
+                          to={`/booking?${
+                            addon.slug
+                              ? `addonSlug=${addon.slug}`
+                              : `addonId=${addon.id}`
+                          }`}
+                        >
+                          <Button variant="secondary" className="w-full">
+                            {t("services.bookThis", "Add to booking")}
+                          </Button>
+                        </NavLink>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </>
+        )}
       </div>
     </section>
   );

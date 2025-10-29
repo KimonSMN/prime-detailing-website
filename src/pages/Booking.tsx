@@ -150,6 +150,30 @@ const Booking = () => {
     [serviceMinutes, totalAddonMinutes]
   );
 
+  // --- price helpers ---
+  const servicePrice = useMemo(
+    () => Number(selectedService?.base_price ?? 0) || 0,
+    [selectedService]
+  );
+
+  const addonsTotalPrice = useMemo(
+    () =>
+      selectedAddons.reduce(
+        (sum, a) => sum + (Number(a.base_price ?? 0) || 0),
+        0
+      ),
+    [selectedAddons]
+  );
+
+  const totalSelectedPrice = servicePrice + addonsTotalPrice;
+
+  const formatPrice = (val: number) =>
+    new Intl.NumberFormat(i18n.language, {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
+    }).format(val);
+
   // localized date label
   const fmtDate = (d?: Date) =>
     d
@@ -444,9 +468,6 @@ const Booking = () => {
               {t("booking.titleAccent")}
             </span>
           </h2>
-          <p className="text-xl text-muted-foreground">
-            {t("booking.subtitle")}
-          </p>
         </div>
 
         <Card className="bg-card border-border shadow-elegant animate-slide-up">
@@ -658,34 +679,19 @@ const Booking = () => {
                     );
                   })()}
 
-                  {(selectedAddons.length > 0 || serviceMinutes > 0) && (
-                    <div className="text-sm text-muted-foreground">
-                      {t("booking.estimatedTotal", "Estimated total time")}:{" "}
-                      <strong>
-                        {(totalSelectedMinutes / 60).toFixed(1)}{" "}
-                        {t("booking.hours", "hours")}
-                      </strong>
-                      <br />
-                      <span>
-                        {selectedService
-                          ? `${selectedService.name}: ${(
-                              serviceMinutes / 60
-                            ).toFixed(1)}h`
-                          : "Base service"}{" "}
-                        {selectedAddons.length > 0 && (
-                          <>
-                            {" + "}
-                            {selectedAddons
-                              .map(
-                                (a) =>
-                                  `${a.name}: ${(
-                                    Number(a.duration_min ?? 0) / 60
-                                  ).toFixed(1)}h`
-                              )
-                              .join(", ")}
-                          </>
-                        )}
-                      </span>
+                  {(serviceMinutes > 0 || selectedAddons.length > 0) && (
+                    <div className="rounded-lg border p-3 bg-secondary/10 text-left">
+                      <div className="text-sm text-muted-foreground">
+                        {t("booking.estimatedTotal", "Estimated total time")}:{" "}
+                        <strong>
+                          {(totalSelectedMinutes / 60).toFixed(1)}{" "}
+                          {t("booking.hours", "hours")}
+                        </strong>
+                      </div>
+                      <div className="text-sm text-muted-foreground mt-1">
+                        {t("booking.estimatedPrice", "Estimated price")}:{" "}
+                        <strong>{formatPrice(totalSelectedPrice)}</strong>
+                      </div>
                     </div>
                   )}
                 </div>

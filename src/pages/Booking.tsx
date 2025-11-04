@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,7 +54,7 @@ type ServiceRow = {
   id: string;
   name: string;
   base_price: string | number | null;
-  duration_min: number | null; // NEW
+  duration_min: number | null;
 };
 
 type AddonRow = {
@@ -86,6 +86,8 @@ const TIMES = [
   "15:00",
   "16:00",
 ];
+
+/* ============================ Component ============================ */
 
 const Booking = () => {
   const { t, i18n } = useTranslation();
@@ -197,7 +199,7 @@ const Booking = () => {
     (async () => {
       const { data, error } = await supabase
         .from("service")
-        .select("id,name,base_price,duration_min") // CHANGED
+        .select("id,name,base_price,duration_min")
         .eq("active", true)
         .order("name");
 
@@ -237,15 +239,15 @@ const Booking = () => {
   const handleInputChange = (field: string, value: string) =>
     setFormData((p) => ({ ...p, [field]: value }));
 
-  /* ---------------- availability (bookings + admin blocks) ---------------- */
-  useEffect(() => {
-    (async () => {
-      if (!formData.date) {
+  /* ---------------- availability loader (reusable) ---------------- */
+  const loadAvailabilityForDate = useCallback(
+    async (yyyyMmDd: string) => {
+      if (!yyyyMmDd) {
         setUnavailableTimes(new Set());
         return;
       }
 
-      const { start, end } = localDayRange(formData.date);
+      const { start, end } = localDayRange(yyyyMmDd);
 
       // 1) Load bookings for that local day from availability view
       const { data: avail, error: availErr } = await supabase
@@ -314,13 +316,22 @@ const Booking = () => {
 
       setUnavailableTimes(blocked);
 
-      // Clear chosen time if it became blocked
+      // If currently selected time became blocked, clear it
       if (formData.time && blocked.has(formData.time)) {
         setFormData((p) => ({ ...p, time: "" }));
       }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.date]);
+    },
+    [toast, t, formData.time]
+  );
+
+  /* ---------------- availability (load when date changes) ---------------- */
+  useEffect(() => {
+    if (!formData.date) {
+      setUnavailableTimes(new Set());
+      return;
+    }
+    loadAvailabilityForDate(formData.date);
+  }, [formData.date, loadAvailabilityForDate]);
 
   /* ---------------- Add-on toggle helper ---------------- */
   const toggleAddon = (id: string, checked: boolean) => {
@@ -420,24 +431,29 @@ const Booking = () => {
         throw new Error(j?.error || "Booking failed");
       }
 
+      // Immediately refresh availability for the same date so the slot appears as booked
+      await loadAvailabilityForDate(date);
+
       toast({
         title: t("booking.toast.ok.title"),
         description: t("booking.toast.ok.desc"),
       });
 
-      setFormData({
+      // Clear user fields but KEEP the chosen date (and dateObj) so the user sees the updated day
+      setFormData((p) => ({
+        ...p,
         name: "",
         email: "",
         phone: "",
         serviceId: "",
-        date: "",
         time: "",
         vehicleInfo: "",
         notes: "",
-      });
+        // keep date as-is
+      }));
       setSelectedAddonIds(new Set());
-      setDateObj(undefined);
-      setUnavailableTimes(new Set());
+      // keep dateObj as-is
+      // keep unavailableTimes as refreshed
     } catch (err: any) {
       toast({
         title: t("booking.toast.fail.title"),
@@ -755,7 +771,6 @@ const Booking = () => {
                   <Select
                     value={formData.time}
                     onValueChange={(v) => {
-                      // guard in case user changes service/addons after opening
                       if (wouldOverlap(v)) {
                         toast({
                           title: t("booking.toast.unavailable.title"),

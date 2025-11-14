@@ -121,7 +121,8 @@ const serviceCopyFallback: Record<
 /* Map DB services by fuzzy name → our i18n service ids */
 function mapServiceIdByName(name: string): ServiceId | null {
   const n = name.toLowerCase();
-  if (/(maintenance).*(wash)/i.test(name) || n.includes("maintenance wash")) return "maintenanceWash";
+  if (/(maintenance).*(wash)/i.test(name) || n.includes("maintenance wash"))
+    return "maintenanceWash";
   if (/(full).*(detail)/i.test(name) || n.includes("interior detail"))
     return "fullDetail";
   if (n.includes("paint correction")) return "paintCorrection";
@@ -222,7 +223,6 @@ const Services = () => {
         id: "paintCorrection",
         icon: serviceCopyFallback.paintCorrection.defaultIcon,
       },
-     
     };
 
     for (const s of dbServices) {
@@ -323,8 +323,9 @@ const Services = () => {
         </div>
 
         <div className="flex flex-wrap justify-center gap-8">
-          {(Object.keys(serviceCopyFallback) as ServiceId[]).map(
-            (svcId, index) => {
+          {(Object.keys(serviceCopyFallback) as ServiceId[])
+            .filter((svcId) => svcId !== "mobileDetail") // TEMP: hide Mobile Detailing
+            .map((svcId, index) => {
               const copy = serviceCopyFallback[svcId];
               const dyn = dynamicServices[svcId];
               const IconComponent = dyn.icon || Sparkles;
@@ -412,7 +413,8 @@ const Services = () => {
                       <ul className="space-y-1">
                         {features.map((feature, idx) => {
                           const isRequirement =
-                            svcId === "mobileDetail" && idx === features.length - 1;
+                            svcId === "mobileDetail" &&
+                            idx === features.length - 1;
 
                           return (
                             <li
@@ -438,7 +440,6 @@ const Services = () => {
                           );
                         })}
                       </ul>
-
                     </div>
 
                     <div className="mt-auto">
@@ -451,8 +452,7 @@ const Services = () => {
                   </CardContent>
                 </Card>
               );
-            }
-          )}
+            })}
         </div>
 
         {/* ---------- 2) PROTECTION OPTIONS ---------- */}

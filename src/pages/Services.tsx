@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { TriangleAlert } from "lucide-react";
 
 /* ---------------- Types from DB ---------------- */
 type ServiceRow = {
@@ -42,7 +43,11 @@ type AddonRow = {
 };
 
 /* ---------------- Local service ids used by i18n ---------------- */
-type ServiceId = "basicWash" | "fullDetail" | "paintCorrection";
+type ServiceId =
+  | "maintenanceWash"
+  | "fullDetail"
+  | "paintCorrection"
+  | "mobileDetail";
 
 const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "sprayWax";
 
@@ -51,7 +56,7 @@ const serviceCopyFallback: Record<
   ServiceId,
   { title: string; description: string; features: string[]; defaultIcon: any }
 > = {
-  basicWash: {
+  maintenanceWash: {
     title: "Maintenance wash",
     description:
       "Maintenance wash for a clean look without decontamination or deep interior extraction.",
@@ -83,6 +88,20 @@ const serviceCopyFallback: Record<
     ],
     defaultIcon: Car,
   },
+  mobileDetail: {
+    title: "Mobile Detailing",
+    description:
+      "We come to your location for a full professional detailing session. The client must provide water access and electricity.",
+    features: [
+      "Professional on-site detailing at your location",
+      "Full exterior wash & decontamination",
+      "Interior vacuuming & surface cleaning",
+      "Glass cleaning (inside & out)",
+      "Wheels & tires cleaned and dressed",
+      "Client must provide: water supply & electricity access (20–30m cable)",
+    ],
+    defaultIcon: Car,
+  },
   paintCorrection: {
     title: "Paint Correction",
     description:
@@ -102,10 +121,12 @@ const serviceCopyFallback: Record<
 /* Map DB services by fuzzy name → our i18n service ids */
 function mapServiceIdByName(name: string): ServiceId | null {
   const n = name.toLowerCase();
-  if (/(basic).*(wash)/i.test(name) || n.includes("basic")) return "basicWash";
+  if (/(maintenance).*(wash)/i.test(name) || n.includes("maintenance wash")) return "maintenanceWash";
   if (/(full).*(detail)/i.test(name) || n.includes("interior detail"))
     return "fullDetail";
   if (n.includes("paint correction")) return "paintCorrection";
+  if (n.includes("mobile detailing") || n.includes("mobile detail"))
+    return "mobileDetail";
   return null;
 }
 
@@ -120,8 +141,6 @@ function addonIconBySlug(slug?: string | null) {
       return Shield;
     case "proCeramic":
       return Crown;
-    case "pickupDropoff":
-      return Car;
     case "engineBay":
       return Wrench;
     case "headlightRestoration":
@@ -148,7 +167,6 @@ const PROTECTION_SLUGS = new Set([
 ]);
 
 const EXTRA_ADDON_SLUGS = new Set([
-  "pickupDropoff",
   "engineBay",
   "headlightRestoration", // headlight polishing/restoration
 ]);
@@ -182,24 +200,29 @@ const Services = () => {
     })();
   }, []);
 
-  /* Build a map of dynamic price/duration for our three services */
+  /* Build a map of dynamic price/duration for our services */
   const dynamicServices = useMemo(() => {
     const base: Record<
       ServiceId,
       { id: ServiceId; priceFrom?: number; durationMin?: number; icon: any }
     > = {
-      basicWash: {
-        id: "basicWash",
-        icon: serviceCopyFallback.basicWash.defaultIcon,
+      maintenanceWash: {
+        id: "maintenanceWash",
+        icon: serviceCopyFallback.maintenanceWash.defaultIcon,
       },
       fullDetail: {
         id: "fullDetail",
         icon: serviceCopyFallback.fullDetail.defaultIcon,
       },
+      mobileDetail: {
+        id: "mobileDetail",
+        icon: serviceCopyFallback.mobileDetail.defaultIcon,
+      },
       paintCorrection: {
         id: "paintCorrection",
         icon: serviceCopyFallback.paintCorrection.defaultIcon,
       },
+     
     };
 
     for (const s of dbServices) {
@@ -387,16 +410,35 @@ const Services = () => {
                         {t("services.whatsIncluded", "What’s included")}
                       </h4>
                       <ul className="space-y-1">
-                        {features.map((feature, idx) => (
-                          <li
-                            key={idx}
-                            className="text-muted-foreground flex gap-2"
-                          >
-                            <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                            <span className="flex-1">{feature}</span>
-                          </li>
-                        ))}
+                        {features.map((feature, idx) => {
+                          const isRequirement =
+                            svcId === "mobileDetail" && idx === features.length - 1;
+
+                          return (
+                            <li
+                              key={idx}
+                              className={`flex gap-2 ${
+                                isRequirement
+                                  ? "text-amber-300 font-semibold"
+                                  : "text-muted-foreground"
+                              }`}
+                            >
+                              {isRequirement ? (
+                                <>
+                                  <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" />
+                                  <span className="flex-1">{feature}</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                                  <span className="flex-1">{feature}</span>
+                                </>
+                              )}
+                            </li>
+                          );
+                        })}
                       </ul>
+
                     </div>
 
                     <div className="mt-auto">

@@ -75,7 +75,7 @@
     "bookThis": "Book This Service",
     "requestQuote": "Currently unavailable",
     "items": {
-      "basicWash": {
+      "maintenanceWash": {
         "title": "Maintenance Wash",
         "description": "Quick and efficient refresh for both exterior and interior.",
         "features": [
@@ -113,6 +113,22 @@
           "Improves gloss, clarity, and color depth",
           "Panel wipe to prepare the surface for protection",
           "Recommended: add nano sealant or ceramic coating to lock in the finish"
+        ]
+      },
+      "mobileDetail": {
+        "title": "Mobile Detailing",
+        "description": "We come to your location for a full professional detailing session. The client must provide water access and electricity.",
+        "features": [
+          "Contactless pre-wash & hand wash using safe techniques",
+          "Tar/sap removal",
+          "Wheel & tire deep clean and application of professional tire dressing",
+          "Crystal-clear glass cleaning (inside & out)",
+          "Full vacuuming and specialized carpet cleaning for stubborn dirt",
+          "Cleaning of air vents, plastics & trims with UV protection",
+          "Thorough cleaning of door jambs and trunk crevices",
+          "Leather cleaning & conditioning",
+          "Deep cleaning of fabric seats with extraction machine (wet-vac)",
+          "Client must provide: water supply & electricity access"
         ]
       },
 

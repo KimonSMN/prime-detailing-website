@@ -777,23 +777,6 @@ const Services = () => {
           </>
         )}
       </div>
-      <div
-        className="
-    pointer-events-none absolute inset-0 overflow-hidden z-[5]
-    christmas:flex hidden
-  "
-      >
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-        <div className="snowflake" />
-      </div>
     </section>
   );
 };

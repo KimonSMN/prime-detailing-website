@@ -33,6 +33,7 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import Footer from "../components/Footer";
 /* ---------------- helpers (Safari-safe local time) ---------------- */
 
 function localDayRange(yyyyMmDd: string) {
@@ -468,402 +469,419 @@ const Booking = () => {
 
   /* ---------------- UI ---------------- */
   return (
-    <section id="booking" className="py-20 px-4 bg-secondary/20">
-      <Helmet>
-        <title>Book an Appointment | Prime Detailing Cholargos</title>
-        <meta
-          name="description"
-          content="Book your car detailing appointment in Cholargos — choose service, add-ons, date, and time online."
-        />
-      </Helmet>
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            {t("booking.titlePrefix")}{" "}
-            <span className="bg-gold-gradient bg-clip-text text-transparent">
-              {t("booking.titleAccent")}
-            </span>
-          </h2>
-        </div>
+    <section
+      id="booking"
+      className="min-h-screen flex flex-col bg-secondary/20"
+    >
+      <div className="flex-grow py-20 px-4 max-w-6xl mx-auto">
+        <Helmet>
+          <title>Book an Appointment | Prime Detailing Cholargos</title>
+          <meta
+            name="description"
+            content="Book your car detailing appointment in Cholargos — choose service, add-ons, date, and time online."
+          />
+        </Helmet>
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-12 animate-fade-in">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {t("booking.titlePrefix")}{" "}
+              <span className="bg-gold-gradient bg-clip-text text-transparent">
+                {t("booking.titleAccent")}
+              </span>
+            </h2>
+          </div>
 
-        <Card className="bg-card border-border shadow-elegant animate-slide-up">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-foreground">
-              {t("booking.card.title")}
-            </CardTitle>
-          </CardHeader>
+          <Card className="bg-card border-border shadow-elegant animate-slide-up">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl font-bold text-foreground">
+                {t("booking.card.title")}
+              </CardTitle>
+            </CardHeader>
 
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Personal Info */}
-              <div className="grid md:grid-cols-2 gap-4">
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Personal Info */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-primary" />{" "}
+                      {t("booking.fullName")} *
+                    </Label>
+                    <Input
+                      id="name"
+                      placeholder={t("booking.ph.fullName")}
+                      value={formData.name}
+                      onChange={(e) =>
+                        handleInputChange("name", e.target.value)
+                      }
+                      className="bg-background border-border"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="phone" className="flex items-center gap-2">
+                      <Phone className="w-4 h-4 text-primary" />{" "}
+                      {t("booking.phone")} *
+                    </Label>
+                    <Input
+                      id="phone"
+                      placeholder={t("booking.ph.phone")}
+                      value={formData.phone}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
+                      className="bg-background border-border"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="name" className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-primary" />{" "}
-                    {t("booking.fullName")} *
+                  <Label htmlFor="email" className="flex items-center gap-2">
+                    <Mail className="w-4 h-4 text-primary" />{" "}
+                    {t("booking.email")} *
                   </Label>
                   <Input
-                    id="name"
-                    placeholder={t("booking.ph.fullName")}
-                    value={formData.name}
-                    onChange={(e) => handleInputChange("name", e.target.value)}
+                    id="email"
+                    type="email"
+                    placeholder={t("booking.ph.email")}
+                    value={formData.email}
+                    onChange={(e) => handleInputChange("email", e.target.value)}
                     className="bg-background border-border"
                   />
                 </div>
+
+                {/* Service */}
                 <div className="space-y-2">
-                  <Label htmlFor="phone" className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-primary" />{" "}
-                    {t("booking.phone")} *
-                  </Label>
-                  <Input
-                    id="phone"
-                    placeholder={t("booking.ph.phone")}
-                    value={formData.phone}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
-                    className="bg-background border-border"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="email" className="flex items-center gap-2">
-                  <Mail className="w-4 h-4 text-primary" /> {t("booking.email")}{" "}
-                  *
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder={t("booking.ph.email")}
-                  value={formData.email}
-                  onChange={(e) => handleInputChange("email", e.target.value)}
-                  className="bg-background border-border"
-                />
-              </div>
-
-              {/* Service */}
-              <div className="space-y-2">
-                <Label
-                  htmlFor="service-select"
-                  className="flex items-center gap-2"
-                >
-                  <CarIcon className="w-4 h-4 text-primary" />{" "}
-                  {t("booking.selectService")} *
-                </Label>
-                <Select
-                  value={formData.serviceId}
-                  onValueChange={(v) => handleInputChange("serviceId", v)}
-                >
-                  <SelectTrigger
-                    id="service-select"
-                    className="bg-background border-border"
+                  <Label
+                    htmlFor="service-select"
+                    className="flex items-center gap-2"
                   >
-                    <SelectValue placeholder={t("booking.ph.chooseService")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-popover border-border">
-                    {services.map((s) => (
-                      <SelectItem key={s.id} value={s.id}>
-                        {s.name}
-                        {s.base_price
-                          ? ` — ${t("booking.fromPrice", {
-                              price: s.base_price,
-                            })}`
-                          : ""}
-                        {s.duration_min
-                          ? ` • ~${s.duration_min} ${t(
-                              "booking.minutes",
-                              "min"
-                            )}`
-                          : ""}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Add-ons */}
-              {addons.length > 0 && (
-                <div className="space-y-4">
-                  <Label className="flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    {t(
-                      "booking.selectAddons",
-                      "Add-ons (optional): protection & extras"
-                    )}
-                  </Label>
-
-                  {(() => {
-                    const prot = addons
-                      .filter(
-                        (a) =>
-                          a.name.toLowerCase().includes("protect") ||
-                          a.name.toLowerCase().includes("coating") ||
-                          a.name.toLowerCase().includes("wax")
-                      )
-                      .sort(
-                        (a, b) =>
-                          Number(a.base_price ?? 0) - Number(b.base_price ?? 0)
-                      );
-
-                    const extras = addons
-                      .filter((a) => !prot.includes(a))
-                      .sort(
-                        (a, b) =>
-                          Number(a.base_price ?? 0) - Number(b.base_price ?? 0)
-                      );
-
-                    const renderAddon = (a: AddonRow) => {
-                      const checked = selectedAddonIds.has(a.id);
-                      const checkboxId = `addon-${a.id}`;
-                      const minutes = Number(a.duration_min ?? 0) || 0;
-                      return (
-                        <div
-                          key={a.id}
-                          className={`rounded-xl border p-3 bg-background transition ${
-                            checked
-                              ? "border-primary/70 ring-1 ring-primary/40"
-                              : "border-border hover:border-primary/30"
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <Checkbox
-                              id={checkboxId}
-                              checked={checked}
-                              onCheckedChange={(val) =>
-                                toggleAddon(a.id, val === true)
-                              }
-                            />
-                            <div className="flex-1">
-                              <label
-                                htmlFor={checkboxId}
-                                className="font-medium cursor-pointer"
-                              >
-                                {a.name}
-                              </label>
-
-                              <div className="flex flex-wrap items-center gap-2 mt-1">
-                                {a.base_price != null && (
-                                  <div className="text-sm text-muted-foreground">
-                                    {t("booking.fromPrice", {
-                                      price: a.base_price,
-                                    })}
-                                  </div>
-                                )}
-                                {minutes > 0 && (
-                                  <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
-                                    ≈ {minutes} {t("booking.minutes", "min")}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      );
-                    };
-
-                    return (
-                      <div className="grid sm:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <h4 className="font-semibold text-lg">Protection</h4>
-                          <p className="text-sm text-muted-foreground italic">
-                            Great to lock in the look of your freshly detailed
-                            car.
-                          </p>
-                          {prot.length > 0 ? (
-                            prot.map(renderAddon)
-                          ) : (
-                            <p className="text-sm text-muted-foreground">
-                              None available
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <h4 className="font-semibold text-lg">Extras</h4>
-                          <p className="text-sm text-muted-foreground italic">
-                            Optional upgrades to take your detail to the next
-                            level.
-                          </p>
-                          {extras.length > 0 ? (
-                            extras.map(renderAddon)
-                          ) : (
-                            <p className="text-sm text-muted-foreground">
-                              None available
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })()}
-
-                  {(serviceMinutes > 0 || selectedAddons.length > 0) && (
-                    <div className="rounded-lg border p-3 bg-secondary/10 text-left">
-                      <div className="text-sm text-muted-foreground">
-                        {t("booking.estimatedTotal", "Estimated total time")}:{" "}
-                        <strong>
-                          {(totalSelectedMinutes / 60).toFixed(1)}{" "}
-                          {t("booking.hours", "hours")}
-                        </strong>
-                      </div>
-                      <div className="text-sm text-muted-foreground mt-1">
-                        {t("booking.estimatedPrice", "Estimated price")}:{" "}
-                        <strong>{formatPrice(totalSelectedPrice)}</strong>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Date & Time */}
-              <div className="grid md:grid-cols-2 gap-4">
-                {/* Date */}
-                <div className="space-y-2">
-                  <Label className="flex items-center gap-2">
-                    <CalendarIcon className="w-4 h-4 text-primary" />{" "}
-                    {t("booking.preferredDate")} *
-                  </Label>
-                  <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="justify-start w-full bg-background border-border"
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
-                        {dateObj ? (
-                          fmtDate(dateObj)
-                        ) : (
-                          <span>{t("booking.ph.pickDate")}</span>
-                        )}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent
-                      className="w-auto p-0 bg-popover border-border"
-                      align="start"
-                    >
-                      <DatePicker
-                        mode="single"
-                        selected={dateObj}
-                        onSelect={(d) => {
-                          if (!d) return;
-                          setDateObj(d);
-                          handleInputChange("date", format(d, "yyyy-MM-dd"));
-                          setIsCalOpen(false);
-                        }}
-                        disabled={(d) => d.getDay() === 0 || d < today}
-                        initialFocus
-                        classNames={{
-                          day_today: "bg-primary/15 text-primary font-semibold",
-                          day_selected:
-                            "bg-transparent text-foreground hover:bg-transparent focus:bg-transparent",
-                          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-primary/10",
-                        }}
-                      />
-                    </PopoverContent>
-                  </Popover>
-                </div>
-
-                {/* Time */}
-                <div className="space-y-2">
-                  <Label htmlFor="time" className="flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-primary" />{" "}
-                    {t("booking.preferredTime")} *
+                    <CarIcon className="w-4 h-4 text-primary" />{" "}
+                    {t("booking.selectService")} *
                   </Label>
                   <Select
-                    value={formData.time}
-                    onValueChange={(v) => {
-                      if (wouldOverlap(v)) {
-                        toast({
-                          title: t("booking.toast.unavailable.title"),
-                          description: t(
-                            "booking.toast.unavailable.descFull",
-                            "The selected start time overlaps with another booking."
-                          ),
-                          variant: "destructive",
-                        });
-                        return;
-                      }
-                      handleInputChange("time", v);
-                    }}
-                    disabled={!formData.date}
+                    value={formData.serviceId}
+                    onValueChange={(v) => handleInputChange("serviceId", v)}
                   >
-                    <SelectTrigger className="bg-background border-border">
+                    <SelectTrigger
+                      id="service-select"
+                      className="bg-background border-border"
+                    >
                       <SelectValue
-                        placeholder={
-                          formData.date
-                            ? t("booking.ph.selectTime")
-                            : t("booking.ph.pickDateFirst")
-                        }
+                        placeholder={t("booking.ph.chooseService")}
                       />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      {TIMES.map((tm) => {
-                        const takenByStart = unavailableTimes.has(tm);
-                        const overlap = !takenByStart && wouldOverlap(tm);
-                        const disabled = takenByStart || overlap;
-                        return (
-                          <SelectItem
-                            key={tm}
-                            value={tm}
-                            disabled={disabled}
-                            className={disabled ? "opacity-50" : ""}
-                          >
-                            {tm}{" "}
-                            {takenByStart
-                              ? `— ${t("booking.booked")}`
-                              : overlap
-                              ? `— ${t(
-                                  "booking.notEnoughRoom",
-                                  "not enough room"
-                                )}`
-                              : ""}
-                          </SelectItem>
-                        );
-                      })}
+                      {services.map((s) => (
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.name}
+                          {s.base_price
+                            ? ` — ${t("booking.fromPrice", {
+                                price: s.base_price,
+                              })}`
+                            : ""}
+                          {s.duration_min
+                            ? ` • ~${s.duration_min} ${t(
+                                "booking.minutes",
+                                "min"
+                              )}`
+                            : ""}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
-              </div>
 
-              {/* Vehicle / Notes */}
-              <div className="space-y-2">
-                <Label htmlFor="vehicle">{t("booking.vehicleInfo")}</Label>
-                <Input
-                  id="vehicle"
-                  placeholder={t("booking.ph.vehicle")}
-                  value={formData.vehicleInfo}
-                  onChange={(e) =>
-                    handleInputChange("vehicleInfo", e.target.value)
-                  }
-                  className="bg-background border-border"
-                />
-              </div>
+                {/* Add-ons */}
+                {addons.length > 0 && (
+                  <div className="space-y-4">
+                    <Label className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary" />
+                      {t(
+                        "booking.selectAddons",
+                        "Add-ons (optional): protection & extras"
+                      )}
+                    </Label>
 
-              <div className="space-y-2">
-                <Label htmlFor="notes">{t("booking.notes")}</Label>
-                <Textarea
-                  id="notes"
-                  placeholder={t("booking.ph.notes")}
-                  value={formData.notes}
-                  onChange={(e) => handleInputChange("notes", e.target.value)}
-                  className="bg-background border-border min-h-[100px]"
-                />
-              </div>
+                    {(() => {
+                      const prot = addons
+                        .filter(
+                          (a) =>
+                            a.name.toLowerCase().includes("protect") ||
+                            a.name.toLowerCase().includes("coating") ||
+                            a.name.toLowerCase().includes("wax")
+                        )
+                        .sort(
+                          (a, b) =>
+                            Number(a.base_price ?? 0) -
+                            Number(b.base_price ?? 0)
+                        );
 
-              <Button
-                type="submit"
-                variant="hero"
-                size="lg"
-                className="w-full text-lg py-6 h-auto"
-                disabled={loading}
-              >
-                {loading
-                  ? t("booking.btn.submitting")
-                  : t("booking.btn.submit")}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+                      const extras = addons
+                        .filter((a) => !prot.includes(a))
+                        .sort(
+                          (a, b) =>
+                            Number(a.base_price ?? 0) -
+                            Number(b.base_price ?? 0)
+                        );
+
+                      const renderAddon = (a: AddonRow) => {
+                        const checked = selectedAddonIds.has(a.id);
+                        const checkboxId = `addon-${a.id}`;
+                        const minutes = Number(a.duration_min ?? 0) || 0;
+                        return (
+                          <div
+                            key={a.id}
+                            className={`rounded-xl border p-3 bg-background transition ${
+                              checked
+                                ? "border-primary/70 ring-1 ring-primary/40"
+                                : "border-border hover:border-primary/30"
+                            }`}
+                          >
+                            <div className="flex items-start gap-3">
+                              <Checkbox
+                                id={checkboxId}
+                                checked={checked}
+                                onCheckedChange={(val) =>
+                                  toggleAddon(a.id, val === true)
+                                }
+                              />
+                              <div className="flex-1">
+                                <label
+                                  htmlFor={checkboxId}
+                                  className="font-medium cursor-pointer"
+                                >
+                                  {a.name}
+                                </label>
+
+                                <div className="flex flex-wrap items-center gap-2 mt-1">
+                                  {a.base_price != null && (
+                                    <div className="text-sm text-muted-foreground">
+                                      {t("booking.fromPrice", {
+                                        price: a.base_price,
+                                      })}
+                                    </div>
+                                  )}
+                                  {minutes > 0 && (
+                                    <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
+                                      ≈ {minutes} {t("booking.minutes", "min")}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      };
+
+                      return (
+                        <div className="grid sm:grid-cols-2 gap-6">
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-lg">
+                              Protection
+                            </h4>
+                            <p className="text-sm text-muted-foreground italic">
+                              Great to lock in the look of your freshly detailed
+                              car.
+                            </p>
+                            {prot.length > 0 ? (
+                              prot.map(renderAddon)
+                            ) : (
+                              <p className="text-sm text-muted-foreground">
+                                None available
+                              </p>
+                            )}
+                          </div>
+
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-lg">Extras</h4>
+                            <p className="text-sm text-muted-foreground italic">
+                              Optional upgrades to take your detail to the next
+                              level.
+                            </p>
+                            {extras.length > 0 ? (
+                              extras.map(renderAddon)
+                            ) : (
+                              <p className="text-sm text-muted-foreground">
+                                None available
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })()}
+
+                    {(serviceMinutes > 0 || selectedAddons.length > 0) && (
+                      <div className="rounded-lg border p-3 bg-secondary/10 text-left">
+                        <div className="text-sm text-muted-foreground">
+                          {t("booking.estimatedTotal", "Estimated total time")}:{" "}
+                          <strong>
+                            {(totalSelectedMinutes / 60).toFixed(1)}{" "}
+                            {t("booking.hours", "hours")}
+                          </strong>
+                        </div>
+                        <div className="text-sm text-muted-foreground mt-1">
+                          {t("booking.estimatedPrice", "Estimated price")}:{" "}
+                          <strong>{formatPrice(totalSelectedPrice)}</strong>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Date & Time */}
+                <div className="grid md:grid-cols-2 gap-4">
+                  {/* Date */}
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <CalendarIcon className="w-4 h-4 text-primary" />{" "}
+                      {t("booking.preferredDate")} *
+                    </Label>
+                    <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          className="justify-start w-full bg-background border-border"
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
+                          {dateObj ? (
+                            fmtDate(dateObj)
+                          ) : (
+                            <span>{t("booking.ph.pickDate")}</span>
+                          )}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto p-0 bg-popover border-border"
+                        align="start"
+                      >
+                        <DatePicker
+                          mode="single"
+                          selected={dateObj}
+                          onSelect={(d) => {
+                            if (!d) return;
+                            setDateObj(d);
+                            handleInputChange("date", format(d, "yyyy-MM-dd"));
+                            setIsCalOpen(false);
+                          }}
+                          disabled={(d) => d.getDay() === 0 || d < today}
+                          initialFocus
+                          classNames={{
+                            day_today:
+                              "bg-primary/15 text-primary font-semibold",
+                            day_selected:
+                              "bg-transparent text-foreground hover:bg-transparent focus:bg-transparent",
+                            day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-primary/10",
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Time */}
+                  <div className="space-y-2">
+                    <Label htmlFor="time" className="flex items-center gap-2">
+                      <Clock className="w-4 h-4 text-primary" />{" "}
+                      {t("booking.preferredTime")} *
+                    </Label>
+                    <Select
+                      value={formData.time}
+                      onValueChange={(v) => {
+                        if (wouldOverlap(v)) {
+                          toast({
+                            title: t("booking.toast.unavailable.title"),
+                            description: t(
+                              "booking.toast.unavailable.descFull",
+                              "The selected start time overlaps with another booking."
+                            ),
+                            variant: "destructive",
+                          });
+                          return;
+                        }
+                        handleInputChange("time", v);
+                      }}
+                      disabled={!formData.date}
+                    >
+                      <SelectTrigger className="bg-background border-border">
+                        <SelectValue
+                          placeholder={
+                            formData.date
+                              ? t("booking.ph.selectTime")
+                              : t("booking.ph.pickDateFirst")
+                          }
+                        />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover border-border">
+                        {TIMES.map((tm) => {
+                          const takenByStart = unavailableTimes.has(tm);
+                          const overlap = !takenByStart && wouldOverlap(tm);
+                          const disabled = takenByStart || overlap;
+                          return (
+                            <SelectItem
+                              key={tm}
+                              value={tm}
+                              disabled={disabled}
+                              className={disabled ? "opacity-50" : ""}
+                            >
+                              {tm}{" "}
+                              {takenByStart
+                                ? `— ${t("booking.booked")}`
+                                : overlap
+                                  ? `— ${t(
+                                      "booking.notEnoughRoom",
+                                      "not enough room"
+                                    )}`
+                                  : ""}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Vehicle / Notes */}
+                <div className="space-y-2">
+                  <Label htmlFor="vehicle">{t("booking.vehicleInfo")}</Label>
+                  <Input
+                    id="vehicle"
+                    placeholder={t("booking.ph.vehicle")}
+                    value={formData.vehicleInfo}
+                    onChange={(e) =>
+                      handleInputChange("vehicleInfo", e.target.value)
+                    }
+                    className="bg-background border-border"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="notes">{t("booking.notes")}</Label>
+                  <Textarea
+                    id="notes"
+                    placeholder={t("booking.ph.notes")}
+                    value={formData.notes}
+                    onChange={(e) => handleInputChange("notes", e.target.value)}
+                    className="bg-background border-border min-h-[100px]"
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  variant="hero"
+                  size="lg"
+                  className="w-full text-lg py-6 h-auto"
+                  disabled={loading}
+                >
+                  {loading
+                    ? t("booking.btn.submitting")
+                    : t("booking.btn.submit")}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
       </div>
+      <Footer />
     </section>
   );
 };

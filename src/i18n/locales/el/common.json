@@ -56,8 +56,9 @@
   "footer.emailAria": "Διεύθυνση email",
   "footer.phone": "(+30) 6939949788",
   "footer.email": "kimonsmirlianos@gmail.com",
-  "footer.address": "Κλειούς 39, Χολαργός 15561",
-  "footer.copyright": "© {{year}} Prime Detailing. Με επιφύλαξη παντός δικαιώματος.",
+  "footer.address": "Αετιδέων 46, Χολαργός 15561",
+  "footer.copyright": "© {{year}} Prime Detailing. All rights reserved.",
+  "footer.instagram": "",
 
   "services": {
     "title": {

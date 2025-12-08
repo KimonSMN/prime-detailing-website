@@ -15,7 +15,7 @@ import Services from "./pages/Services";
 import TopNavbar from "./components/TopNavbar";
 import Booking from "./pages/Booking";
 import Gallery from "./pages/Gallery";
-
+import Footer from "./components/Footer";
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -36,6 +36,7 @@ const App = () => {
         <Hreflang />
         <Toaster />
         <Sonner />
+
         <BrowserRouter>
           <TopNavbar />
 
@@ -51,6 +52,7 @@ const App = () => {
             {/* 404 fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          {/* <Footer /> */}
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

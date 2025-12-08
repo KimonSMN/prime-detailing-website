@@ -23,7 +23,7 @@ import { NavLink } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { TriangleAlert } from "lucide-react";
-
+import Footer from "../components/Footer";
 /* ---------------- Types from DB ---------------- */
 type ServiceRow = {
   id: string;
@@ -308,64 +308,65 @@ const Services = () => {
   }
 
   return (
-    <section id="services" className="py-20 px-4">
-      <div className="max-w-6xl mx-auto">
-        {/* ---------- SERVICES ---------- */}
-        <div className="text-center mb-16 animate-fade-in">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">
-            {t("services.title.prefix", "Our")}{" "}
-            <span className="bg-gold-gradient bg-clip-text text-transparent">
-              {t("services.title.accent", "Services")}
-            </span>
-          </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            {t(
-              "services.subtitle",
-              "Choose your core detailing package, then add the protection that suits your goals."
-            )}
-          </p>
-        </div>
+    <section id="services" className="min-h-screen flex flex-col">
+      <div className="flex-grow py-20 px-4 max-w-6xl mx-auto">
+        <div className="max-w-6xl mx-auto">
+          {/* ---------- SERVICES ---------- */}
+          <div className="text-center mb-16 animate-fade-in">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              {t("services.title.prefix", "Our")}{" "}
+              <span className="bg-gold-gradient bg-clip-text text-transparent">
+                {t("services.title.accent", "Services")}
+              </span>
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              {t(
+                "services.subtitle",
+                "Choose your core detailing package, then add the protection that suits your goals."
+              )}
+            </p>
+          </div>
 
-        <div className="flex flex-wrap justify-center gap-8">
-          {(Object.keys(serviceCopyFallback) as ServiceId[])
-            .filter((svcId) => svcId !== "mobileDetail") // TEMP: hide Mobile Detailing
-            .map((svcId, index) => {
-              const copy = serviceCopyFallback[svcId];
-              const dyn = dynamicServices[svcId];
-              const IconComponent = dyn.icon || Sparkles;
+          <div className="flex flex-wrap justify-center gap-8">
+            {(Object.keys(serviceCopyFallback) as ServiceId[])
+              .filter((svcId) => svcId !== "mobileDetail") // TEMP: hide Mobile Detailing
+              .map((svcId, index) => {
+                const copy = serviceCopyFallback[svcId];
+                const dyn = dynamicServices[svcId];
+                const IconComponent = dyn.icon || Sparkles;
 
-              const title = t(`services.items.${svcId}.title`) || copy.title;
-              const description =
-                t(`services.items.${svcId}.description`) || copy.description;
+                const title = t(`services.items.${svcId}.title`) || copy.title;
+                const description =
+                  t(`services.items.${svcId}.description`) || copy.description;
 
-              let features =
-                (t(`services.items.${svcId}.features`, {
-                  returnObjects: true,
-                }) as unknown as string[]) || copy.features;
-              if (!Array.isArray(features) || features.length === 0) {
-                features = copy.features;
-              }
+                let features =
+                  (t(`services.items.${svcId}.features`, {
+                    returnObjects: true,
+                  }) as unknown as string[]) || copy.features;
+                if (!Array.isArray(features) || features.length === 0) {
+                  features = copy.features;
+                }
 
-              const priceFrom = dyn.priceFrom;
-              const durationH = dyn.durationMin
-                ? minutesToHoursLabel(dyn.durationMin)
-                : undefined;
+                const priceFrom = dyn.priceFrom;
+                const durationH = dyn.durationMin
+                  ? minutesToHoursLabel(dyn.durationMin)
+                  : undefined;
 
-              /* 🎄 CHRISTMAS DISCOUNT */
-              const isChristmas =
-                document.documentElement.classList.contains("christmas");
-              const discountPrice =
-                isChristmas && priceFrom != null
-                  ? Math.round(priceFrom * 0.8)
-                  : null;
+                /* 🎄 CHRISTMAS DISCOUNT */
+                const isChristmas =
+                  document.documentElement.classList.contains("christmas");
+                const discountPrice =
+                  isChristmas && priceFrom != null
+                    ? Math.round(priceFrom * 0.8)
+                    : null;
 
-              // unavailable
-              const isUnavailable = UNAVAILABLE_SERVICES.has(svcId);
+                // unavailable
+                const isUnavailable = UNAVAILABLE_SERVICES.has(svcId);
 
-              return (
-                <Card
-                  key={svcId}
-                  className={`
+                return (
+                  <Card
+                    key={svcId}
+                    className={`
                     relative w-full md:w-[45%] lg:w-[30%] bg-card border-border 
                     transition-all duration-300 flex flex-col
                     ${
@@ -374,409 +375,411 @@ const Services = () => {
                         : "hover:bg-card-hover hover:shadow-elegant"
                     }
                   `}
-                  style={{ animationDelay: `${index * 0.2}s` }}
-                >
-                  <CardHeader className="text-center pb-4">
-                    {/* 🎄 CHRISTMAS BADGE */}
-                    {isChristmas && (
-                      <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                        <div className="flex items-center gap-1 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-                          -20% Christmas Offer
+                    style={{ animationDelay: `${index * 0.2}s` }}
+                  >
+                    <CardHeader className="text-center pb-4">
+                      {/* 🎄 CHRISTMAS BADGE */}
+                      {isChristmas && (
+                        <div className="absolute top-3 right-3 z-20 pointer-events-none">
+                          <div className="flex items-center gap-1 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                            -20% Christmas Offer
+                          </div>
                         </div>
-                      </div>
-                    )}
-                    <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                      <copy.defaultIcon className="w-8 h-8 text-primary-foreground" />
-                    </div>
-                    <CardTitle className="text-2xl font-bold text-foreground">
-                      {title}
-                    </CardTitle>
-                    <CardDescription className="text-lg text-muted-foreground">
-                      {description}
-                    </CardDescription>
-                  </CardHeader>
-
-                  {/* PRICE BLOCK */}
-                  <CardContent className="space-y-6 flex flex-col flex-grow">
-                    {(priceFrom != null || durationH) && (
-                      <div className="flex justify-between items-center text-center">
-                        <div>
-                          {priceFrom != null && (
-                            <>
-                              {priceFrom != null && (
-                                <div className="text-left">
-                                  {/* CHRISTMAS MODE */}
-                                  {discountPrice != null ? (
-                                    <>
-                                      <p className="text-3xl font-semibold color-primary ">
-                                        {t("services.labels.start", "From")}{" "}
-                                        <span className="line-through text-muted-foreground">
-                                          {priceFrom}€
-                                        </span>{" "}
-                                        <span className="text-3xl font-bold text-red-400">
-                                          {discountPrice}€
-                                        </span>
-                                      </p>
-                                      <p className="text-sm text-white text-center">
-                                        {" "}
-                                        {t(
-                                          "services.labels.startingPrice",
-                                          "Starting price"
-                                        )}{" "}
-                                      </p>
-                                    </>
-                                  ) : (
-                                    /* NORMAL PRICE (non-Christmas) */
-                                    <>
-                                      <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                                        {t("services.fromPrice", {
-                                          price: `${priceFrom}€`,
-                                        })}
-                                      </p>
-                                      <p className="text-sm text-white text-center">
-                                        {t(
-                                          "services.labels.startingPrice",
-                                          "Starting price"
-                                        )}
-                                      </p>
-                                    </>
-                                  )}
-                                </div>
-                              )}
-                            </>
-                          )}
-                        </div>
-
-                        {/* duration  */}
-                        <div>
-                          {durationH && (
-                            <>
-                              <p className="text-lg font-semibold text-foreground">
-                                {t("services.durationHours", {
-                                  hours: durationH,
-                                })}
-                              </p>
-                              <p className="text-sm text-muted-foreground">
-                                {t(
-                                  "services.labels.duration",
-                                  "Estimated hours"
-                                )}
-                              </p>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    )}
-
-                    <div className="space-y-2 flex-grow">
-                      <h4 className="font-semibold text-foreground flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-primary" />
-                        {t("services.whatsIncluded", "What’s included")}
-                      </h4>
-                      <ul className="space-y-1">
-                        {features.map((feature, idx) => {
-                          const isRequirement =
-                            svcId === "mobileDetail" &&
-                            idx === features.length - 1;
-
-                          return (
-                            <li
-                              key={idx}
-                              className={`flex gap-2 ${
-                                isRequirement
-                                  ? "text-amber-300 font-semibold"
-                                  : "text-muted-foreground"
-                              }`}
-                            >
-                              {isRequirement ? (
-                                <>
-                                  <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" />
-                                  <span className="flex-1">{feature}</span>
-                                </>
-                              ) : (
-                                <>
-                                  <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                                  <span className="flex-1">{feature}</span>
-                                </>
-                              )}
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-
-                    <div className="mt-auto">
-                      {isUnavailable ? (
-                        <Button
-                          variant="secondary"
-                          className="w-full opacity-50 cursor-not-allowed"
-                          disabled
-                        >
-                          {t("services.unavailable", "Unavailable")}
-                        </Button>
-                      ) : (
-                        <NavLink to={`/booking?serviceId=${svcId}`}>
-                          <Button variant="hero" className="w-full">
-                            {t("services.bookThis", "Book this")}
-                          </Button>
-                        </NavLink>
                       )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-        </div>
+                      <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                        <copy.defaultIcon className="w-8 h-8 text-primary-foreground" />
+                      </div>
+                      <CardTitle className="text-2xl font-bold text-foreground">
+                        {title}
+                      </CardTitle>
+                      <CardDescription className="text-lg text-muted-foreground">
+                        {description}
+                      </CardDescription>
+                    </CardHeader>
 
-        {/* ---------- 2) PROTECTION OPTIONS ---------- */}
-        {protectionAddons.length > 0 && (
-          <>
-            <div className="text-center mt-20 mb-12">
-              <h3 className="text-3xl font-bold">
-                {t("services.items.addons.title", "Protection Options")}
-              </h3>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t(
-                  "services.items.addons.subtitle",
-                  "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating."
-                )}
-              </p>
-            </div>
+                    {/* PRICE BLOCK */}
+                    <CardContent className="space-y-6 flex flex-col flex-grow">
+                      {(priceFrom != null || durationH) && (
+                        <div className="flex justify-between items-center text-center">
+                          <div>
+                            {priceFrom != null && (
+                              <>
+                                {priceFrom != null && (
+                                  <div className="text-left">
+                                    {/* CHRISTMAS MODE */}
+                                    {discountPrice != null ? (
+                                      <>
+                                        <p className="text-3xl font-semibold color-primary ">
+                                          {t("services.labels.start", "From")}{" "}
+                                          <span className="line-through text-muted-foreground">
+                                            {priceFrom}€
+                                          </span>{" "}
+                                          <span className="text-3xl font-bold text-red-400">
+                                            {discountPrice}€
+                                          </span>
+                                        </p>
+                                        <p className="text-sm text-white text-center">
+                                          {" "}
+                                          {t(
+                                            "services.labels.startingPrice",
+                                            "Starting price"
+                                          )}{" "}
+                                        </p>
+                                      </>
+                                    ) : (
+                                      /* NORMAL PRICE (non-Christmas) */
+                                      <>
+                                        <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                                          {t("services.fromPrice", {
+                                            price: `${priceFrom}€`,
+                                          })}
+                                        </p>
+                                        <p className="text-sm text-white text-center">
+                                          {t(
+                                            "services.labels.startingPrice",
+                                            "Starting price"
+                                          )}
+                                        </p>
+                                      </>
+                                    )}
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
 
-            <div className="flex flex-wrap justify-center gap-8">
-              {protectionAddons.map((addon, index) => {
-                const TitleIcon = addon.Icon;
-                const durationH = addon.durationMin
-                  ? minutesToHoursLabel(addon.durationMin)
-                  : undefined;
+                          {/* duration  */}
+                          <div>
+                            {durationH && (
+                              <>
+                                <p className="text-lg font-semibold text-foreground">
+                                  {t("services.durationHours", {
+                                    hours: durationH,
+                                  })}
+                                </p>
+                                <p className="text-sm text-muted-foreground">
+                                  {t(
+                                    "services.labels.duration",
+                                    "Estimated hours"
+                                  )}
+                                </p>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      )}
 
-                const features =
-                  addon.features && addon.features.length > 0
-                    ? addon.features
-                    : [
-                        t("services.addon.quickApply", "Quick application"),
-                        t(
-                          "services.addon.hydrophobic",
-                          "Improves hydrophobic performance"
-                        ),
-                      ];
+                      <div className="space-y-2 flex-grow">
+                        <h4 className="font-semibold text-foreground flex items-center gap-2">
+                          <Sparkles className="w-4 h-4 text-primary" />
+                          {t("services.whatsIncluded", "What’s included")}
+                        </h4>
+                        <ul className="space-y-1">
+                          {features.map((feature, idx) => {
+                            const isRequirement =
+                              svcId === "mobileDetail" &&
+                              idx === features.length - 1;
 
-                return (
-                  <Card
-                    key={addon.id}
-                    className={`relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col
+                            return (
+                              <li
+                                key={idx}
+                                className={`flex gap-2 ${
+                                  isRequirement
+                                    ? "text-amber-300 font-semibold"
+                                    : "text-muted-foreground"
+                                }`}
+                              >
+                                {isRequirement ? (
+                                  <>
+                                    <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" />
+                                    <span className="flex-1">{feature}</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                                    <span className="flex-1">{feature}</span>
+                                  </>
+                                )}
+                              </li>
+                            );
+                          })}
+                        </ul>
+                      </div>
+
+                      <div className="mt-auto">
+                        {isUnavailable ? (
+                          <Button
+                            variant="secondary"
+                            className="w-full opacity-50 cursor-not-allowed"
+                            disabled
+                          >
+                            {t("services.unavailable", "Unavailable")}
+                          </Button>
+                        ) : (
+                          <NavLink to={`/booking?serviceId=${svcId}`}>
+                            <Button variant="hero" className="w-full">
+                              {t("services.bookThis", "Book this")}
+                            </Button>
+                          </NavLink>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+          </div>
+
+          {/* ---------- 2) PROTECTION OPTIONS ---------- */}
+          {protectionAddons.length > 0 && (
+            <>
+              <div className="text-center mt-20 mb-12">
+                <h3 className="text-3xl font-bold">
+                  {t("services.items.addons.title", "Protection Options")}
+                </h3>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {t(
+                    "services.items.addons.subtitle",
+                    "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating."
+                  )}
+                </p>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-8">
+                {protectionAddons.map((addon, index) => {
+                  const TitleIcon = addon.Icon;
+                  const durationH = addon.durationMin
+                    ? minutesToHoursLabel(addon.durationMin)
+                    : undefined;
+
+                  const features =
+                    addon.features && addon.features.length > 0
+                      ? addon.features
+                      : [
+                          t("services.addon.quickApply", "Quick application"),
+                          t(
+                            "services.addon.hydrophobic",
+                            "Improves hydrophobic performance"
+                          ),
+                        ];
+
+                  return (
+                    <Card
+                      key={addon.id}
+                      className={`relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col
                     ${
                       addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG
                         ? "animate-flameBurst"
                         : ""
                     }`}
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                  >
-                    <CardHeader className="text-center pb-4">
-                      <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                        <TitleIcon className="w-8 h-8 text-primary-foreground" />
-                      </div>
+                      style={{ animationDelay: `${index * 0.15}s` }}
+                    >
+                      <CardHeader className="text-center pb-4">
+                        <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
+                          <TitleIcon className="w-8 h-8 text-primary-foreground" />
+                        </div>
 
-                      <CardTitle className="text-xl font-bold text-foreground">
-                        {addon.title}
-                      </CardTitle>
+                        <CardTitle className="text-xl font-bold text-foreground">
+                          {addon.title}
+                        </CardTitle>
 
-                      {addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG && (
-                        <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                          <div
-                            className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold px-3 py-1 shadow-md
+                        {addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG && (
+                          <div className="absolute top-3 right-3 z-20 pointer-events-none">
+                            <div
+                              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold px-3 py-1 shadow-md
                             transform rotate-6"
-                          >
-                            <Flame className="w-3.5 h-3.5" />
-                            <span>
-                              {t(
-                                "services.socialProof.popular",
-                                "Popular among clients"
-                              )}
-                            </span>
+                            >
+                              <Flame className="w-3.5 h-3.5" />
+                              <span>
+                                {t(
+                                  "services.socialProof.popular",
+                                  "Popular among clients"
+                                )}
+                              </span>
+                            </div>
                           </div>
+                        )}
+
+                        {(addon.priceFrom != null || durationH) && (
+                          <div className="mt-3 flex items-center justify-center gap-4">
+                            {addon.priceFrom != null && (
+                              <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                                {t("services.fromPrice", {
+                                  price: `${addon.priceFrom}€`,
+                                })}
+                              </p>
+                            )}
+                            {durationH && (
+                              <p className="text-sm text-muted-foreground">
+                                {t("services.durationHours", {
+                                  hours: durationH,
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </CardHeader>
+
+                      <CardContent className="space-y-6 flex flex-col flex-grow">
+                        <div className="space-y-2 flex-grow">
+                          <h4 className="font-semibold text-foreground flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            {t("services.whatsIncluded", "What’s included")}
+                          </h4>
+                          <ul className="space-y-1">
+                            {features.map((feature, idx) => (
+                              <li
+                                key={idx}
+                                className="text-muted-foreground flex gap-2"
+                              >
+                                <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                                <span className="flex-1">{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                      )}
 
-                      {(addon.priceFrom != null || durationH) && (
-                        <div className="mt-3 flex items-center justify-center gap-4">
-                          {addon.priceFrom != null && (
-                            <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                              {t("services.fromPrice", {
-                                price: `${addon.priceFrom}€`,
-                              })}
-                            </p>
-                          )}
-                          {durationH && (
-                            <p className="text-sm text-muted-foreground">
-                              {t("services.durationHours", {
-                                hours: durationH,
-                              })}
-                            </p>
-                          )}
+                        <div className="mt-auto">
+                          <NavLink
+                            to={`/booking?${
+                              addon.slug
+                                ? `addonSlug=${addon.slug}`
+                                : `addonId=${addon.id}`
+                            }`}
+                          >
+                            <Button variant="secondary" className="w-full">
+                              {t("services.bookThis", "Add to booking")}
+                            </Button>
+                          </NavLink>
                         </div>
-                      )}
-                    </CardHeader>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          )}
 
-                    <CardContent className="space-y-6 flex flex-col flex-grow">
-                      <div className="space-y-2 flex-grow">
-                        <h4 className="font-semibold text-foreground flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-primary" />
-                          {t("services.whatsIncluded", "What’s included")}
-                        </h4>
-                        <ul className="space-y-1">
-                          {features.map((feature, idx) => (
-                            <li
-                              key={idx}
-                              className="text-muted-foreground flex gap-2"
-                            >
-                              <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                              <span className="flex-1">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+          {/* ---------- 3) ADD-ONS  ---------- */}
+          {extraAddons.length > 0 && (
+            <>
+              <div className="text-center mt-20 mb-12">
+                <h3 className="text-3xl font-bold">
+                  {t("services.extras.title")}
+                </h3>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  {t("services.extras.subtitle")}
+                </p>
+              </div>
 
-                      <div className="mt-auto">
-                        <NavLink
-                          to={`/booking?${
-                            addon.slug
-                              ? `addonSlug=${addon.slug}`
-                              : `addonId=${addon.id}`
-                          }`}
-                        >
-                          <Button variant="secondary" className="w-full">
-                            {t("services.bookThis", "Add to booking")}
-                          </Button>
-                        </NavLink>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </>
-        )}
+              <div className="flex flex-wrap justify-center gap-8">
+                {extraAddons.map((addon, index) => {
+                  const TitleIcon = addon.Icon;
+                  const durationH = addon.durationMin
+                    ? minutesToHoursLabel(addon.durationMin)
+                    : undefined;
 
-        {/* ---------- 3) ADD-ONS  ---------- */}
-        {extraAddons.length > 0 && (
-          <>
-            <div className="text-center mt-20 mb-12">
-              <h3 className="text-3xl font-bold">
-                {t("services.extras.title")}
-              </h3>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                {t("services.extras.subtitle")}
-              </p>
-            </div>
+                  const fallbackFeatures =
+                    addon.slug === "engineBay"
+                      ? [
+                          t("services.addon.degrease", "Degrease & rinse"),
+                          t(
+                            "services.addon.dressPlastics",
+                            "Dress engine plastics"
+                          ),
+                        ]
+                      : [
+                          t(
+                            "services.addon.restoreClarity",
+                            "Restore lens clarity"
+                          ),
+                          t(
+                            "services.addon.uvProtection",
+                            "UV protection applied"
+                          ),
+                        ];
 
-            <div className="flex flex-wrap justify-center gap-8">
-              {extraAddons.map((addon, index) => {
-                const TitleIcon = addon.Icon;
-                const durationH = addon.durationMin
-                  ? minutesToHoursLabel(addon.durationMin)
-                  : undefined;
+                  const features =
+                    addon.features && addon.features.length > 0
+                      ? addon.features
+                      : fallbackFeatures;
 
-                const fallbackFeatures =
-                  addon.slug === "engineBay"
-                    ? [
-                        t("services.addon.degrease", "Degrease & rinse"),
-                        t(
-                          "services.addon.dressPlastics",
-                          "Dress engine plastics"
-                        ),
-                      ]
-                    : [
-                        t(
-                          "services.addon.restoreClarity",
-                          "Restore lens clarity"
-                        ),
-                        t(
-                          "services.addon.uvProtection",
-                          "UV protection applied"
-                        ),
-                      ];
-
-                const features =
-                  addon.features && addon.features.length > 0
-                    ? addon.features
-                    : fallbackFeatures;
-
-                return (
-                  <Card
-                    key={addon.id}
-                    className="relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
-                    style={{ animationDelay: `${index * 0.15}s` }}
-                  >
-                    <CardHeader className="text-center pb-4">
-                      <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                        <TitleIcon className="w-8 h-8 text-primary-foreground" />
-                      </div>
-
-                      <CardTitle className="text-xl font-bold text-foreground">
-                        {addon.title}
-                      </CardTitle>
-
-                      {(addon.priceFrom != null || durationH) && (
-                        <div className="mt-3 flex items-center justify-center gap-4">
-                          {addon.priceFrom != null && (
-                            <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                              {t("services.fromPrice", {
-                                price: `${addon.priceFrom}€`,
-                              })}
-                            </p>
-                          )}
-                          {durationH && (
-                            <p className="text-sm text-muted-foreground">
-                              {t("services.durationHours", {
-                                hours: durationH,
-                              })}
-                            </p>
-                          )}
+                  return (
+                    <Card
+                      key={addon.id}
+                      className="relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
+                      style={{ animationDelay: `${index * 0.15}s` }}
+                    >
+                      <CardHeader className="text-center pb-4">
+                        <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
+                          <TitleIcon className="w-8 h-8 text-primary-foreground" />
                         </div>
-                      )}
-                    </CardHeader>
 
-                    <CardContent className="space-y-6 flex flex-col flex-grow">
-                      <div className="space-y-2 flex-grow">
-                        <h4 className="font-semibold text-foreground flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-primary" />
-                          {t("services.whatsIncluded", "What’s included")}
-                        </h4>
-                        <ul className="space-y-1">
-                          {features.map((feature, idx) => (
-                            <li
-                              key={idx}
-                              className="text-muted-foreground flex gap-2"
-                            >
-                              <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                              <span className="flex-1">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
+                        <CardTitle className="text-xl font-bold text-foreground">
+                          {addon.title}
+                        </CardTitle>
 
-                      <div className="mt-auto">
-                        <NavLink
-                          to={`/booking?${
-                            addon.slug
-                              ? `addonSlug=${addon.slug}`
-                              : `addonId=${addon.id}`
-                          }`}
-                        >
-                          <Button variant="secondary" className="w-full">
-                            {t("services.bookThis", "Add to booking")}
-                          </Button>
-                        </NavLink>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </>
-        )}
+                        {(addon.priceFrom != null || durationH) && (
+                          <div className="mt-3 flex items-center justify-center gap-4">
+                            {addon.priceFrom != null && (
+                              <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                                {t("services.fromPrice", {
+                                  price: `${addon.priceFrom}€`,
+                                })}
+                              </p>
+                            )}
+                            {durationH && (
+                              <p className="text-sm text-muted-foreground">
+                                {t("services.durationHours", {
+                                  hours: durationH,
+                                })}
+                              </p>
+                            )}
+                          </div>
+                        )}
+                      </CardHeader>
+
+                      <CardContent className="space-y-6 flex flex-col flex-grow">
+                        <div className="space-y-2 flex-grow">
+                          <h4 className="font-semibold text-foreground flex items-center gap-2">
+                            <Sparkles className="w-4 h-4 text-primary" />
+                            {t("services.whatsIncluded", "What’s included")}
+                          </h4>
+                          <ul className="space-y-1">
+                            {features.map((feature, idx) => (
+                              <li
+                                key={idx}
+                                className="text-muted-foreground flex gap-2"
+                              >
+                                <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
+                                <span className="flex-1">{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        <div className="mt-auto">
+                          <NavLink
+                            to={`/booking?${
+                              addon.slug
+                                ? `addonSlug=${addon.slug}`
+                                : `addonId=${addon.id}`
+                            }`}
+                          >
+                            <Button variant="secondary" className="w-full">
+                              {t("services.bookThis", "Add to booking")}
+                            </Button>
+                          </NavLink>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
       </div>
+      <Footer />
     </section>
   );
 };

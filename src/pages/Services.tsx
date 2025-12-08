@@ -51,6 +51,10 @@ type ServiceId =
 
 const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "sprayWax";
 
+// UNAVAILABLE CURRENTLY
+const UNAVAILABLE_SERVICES = new Set<ServiceId>(["paintCorrection"]);
+const UNAVAILABLE_ADDONS = new Set(["headlightRestoration"]);
+
 /* Fallback copy if i18n keys are missing */
 const serviceCopyFallback: Record<
   ServiceId,
@@ -306,7 +310,7 @@ const Services = () => {
   return (
     <section id="services" className="py-20 px-4">
       <div className="max-w-6xl mx-auto">
-        {/* ---------- 1) SERVICES (kept first) ---------- */}
+        {/* ---------- SERVICES ---------- */}
         <div className="text-center mb-16 animate-fade-in">
           <h2 className="text-4xl md:text-5xl font-bold mb-6">
             {t("services.title.prefix", "Our")}{" "}
@@ -347,15 +351,42 @@ const Services = () => {
                 ? minutesToHoursLabel(dyn.durationMin)
                 : undefined;
 
+              /* 🎄 CHRISTMAS DISCOUNT */
+              const isChristmas =
+                document.documentElement.classList.contains("christmas");
+              const discountPrice =
+                isChristmas && priceFrom != null
+                  ? Math.round(priceFrom * 0.8)
+                  : null;
+
+              // unavailable
+              const isUnavailable = UNAVAILABLE_SERVICES.has(svcId);
+
               return (
                 <Card
                   key={svcId}
-                  className="w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
+                  className={`
+                    relative w-full md:w-[45%] lg:w-[30%] bg-card border-border 
+                    transition-all duration-300 flex flex-col
+                    ${
+                      isUnavailable
+                        ? "opacity-70 grayscale pointer-events-none"
+                        : "hover:bg-card-hover hover:shadow-elegant"
+                    }
+                  `}
                   style={{ animationDelay: `${index * 0.2}s` }}
                 >
                   <CardHeader className="text-center pb-4">
-                    <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                      <IconComponent className="w-8 h-8 text-primary-foreground" />
+                    {/* 🎄 CHRISTMAS BADGE */}
+                    {isChristmas && (
+                      <div className="absolute top-3 right-3 z-20 pointer-events-none">
+                        <div className="flex items-center gap-1 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
+                          -20% Christmas Offer
+                        </div>
+                      </div>
+                    )}
+                    <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                      <copy.defaultIcon className="w-8 h-8 text-primary-foreground" />
                     </div>
                     <CardTitle className="text-2xl font-bold text-foreground">
                       {title}
@@ -365,26 +396,58 @@ const Services = () => {
                     </CardDescription>
                   </CardHeader>
 
+                  {/* PRICE BLOCK */}
                   <CardContent className="space-y-6 flex flex-col flex-grow">
                     {(priceFrom != null || durationH) && (
                       <div className="flex justify-between items-center text-center">
                         <div>
                           {priceFrom != null && (
                             <>
-                              <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                                {t("services.fromPrice", {
-                                  price: `${priceFrom}€`,
-                                })}
-                              </p>
-                              <p className="text-sm text-white">
-                                {t(
-                                  "services.labels.startingPrice",
-                                  "Starting price"
-                                )}
-                              </p>
+                              {priceFrom != null && (
+                                <div className="text-left">
+                                  {/* CHRISTMAS MODE */}
+                                  {discountPrice != null ? (
+                                    <>
+                                      <p className="text-3xl font-semibold color-primary ">
+                                        {t("services.labels.start", "From")}{" "}
+                                        <span className="line-through text-muted-foreground">
+                                          {priceFrom}€
+                                        </span>{" "}
+                                        <span className="text-3xl font-bold text-red-400">
+                                          {discountPrice}€
+                                        </span>
+                                      </p>
+                                      <p className="text-sm text-white text-center">
+                                        {" "}
+                                        {t(
+                                          "services.labels.startingPrice",
+                                          "Starting price"
+                                        )}{" "}
+                                      </p>
+                                    </>
+                                  ) : (
+                                    /* NORMAL PRICE (non-Christmas) */
+                                    <>
+                                      <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
+                                        {t("services.fromPrice", {
+                                          price: `${priceFrom}€`,
+                                        })}
+                                      </p>
+                                      <p className="text-sm text-white text-center">
+                                        {t(
+                                          "services.labels.startingPrice",
+                                          "Starting price"
+                                        )}
+                                      </p>
+                                    </>
+                                  )}
+                                </div>
+                              )}
                             </>
                           )}
                         </div>
+
+                        {/* duration  */}
                         <div>
                           {durationH && (
                             <>
@@ -443,11 +506,21 @@ const Services = () => {
                     </div>
 
                     <div className="mt-auto">
-                      <NavLink to={`/booking?serviceId=${svcId}`}>
-                        <Button variant="hero" className="w-full">
-                          {t("services.bookThis", "Book this")}
+                      {isUnavailable ? (
+                        <Button
+                          variant="secondary"
+                          className="w-full opacity-50 cursor-not-allowed"
+                          disabled
+                        >
+                          {t("services.unavailable", "Unavailable")}
                         </Button>
-                      </NavLink>
+                      ) : (
+                        <NavLink to={`/booking?serviceId=${svcId}`}>
+                          <Button variant="hero" className="w-full">
+                            {t("services.bookThis", "Book this")}
+                          </Button>
+                        </NavLink>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
@@ -703,6 +776,23 @@ const Services = () => {
             </div>
           </>
         )}
+      </div>
+      <div
+        className="
+    pointer-events-none absolute inset-0 overflow-hidden z-[5]
+    christmas:flex hidden
+  "
+      >
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
+        <div className="snowflake" />
       </div>
     </section>
   );

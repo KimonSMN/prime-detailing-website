@@ -69,7 +69,8 @@
     "durationHours": "{{hours}} hours",
     "labels": {
       "startingPrice": "Starting price",
-      "duration": "Duration"
+      "duration": "Duration",
+      "start": "From"
     },
     "whatsIncluded": "What's Included:",
     "bookThis": "Book This Service",

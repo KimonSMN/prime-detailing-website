@@ -33,14 +33,22 @@ const Hero = () => {
                 alt=""
                 style={{ transform: "scaleX(-1)" }}
                 className="
-                hidden
-                christmas:block
-                christmas:absolute
-                christmas:-top-2
-                christmas:-left-3
-                christmas:w-24
-                pointer-events-none
-                select-none"
+                  hidden
+                  christmas:block
+                  christmas:absolute
+                  pointer-events-none
+                  select-none
+
+                  /* Mobile (default) = hat lower */
+                  christmas:-top-1
+                  christmas:-left-2.5
+
+                  /* Larger screens restore tighter placement */
+                  sm:christmas:-top-1.5
+                  sm:christmas:-left-3.5
+
+                  christmas:w-20    /* slightly smaller on phones */
+                  sm:christmas:w-24 /* full size on desktop */"
               />
             </span>
 

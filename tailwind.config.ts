@@ -116,5 +116,14 @@ export default {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    function ({ addVariant }) {
+      // Applies styles to children when html has class="christmas"
+      addVariant("christmas", ".christmas &");
+
+      // Applies styles to the element itself when it has class="christmas"
+      addVariant("christmas-self", "&.christmas");
+    },
+  ],
 } satisfies Config;

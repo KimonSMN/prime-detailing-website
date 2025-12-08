@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -16,30 +18,42 @@ import Gallery from "./pages/Gallery";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Hreflang />
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <TopNavbar />
+const App = () => {
+  useEffect(() => {
+    const month = new Date().getMonth(); // 11 = December
 
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/admin" element={<AdminBookings />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/gallery" element={<Gallery />} />
+    if (month === 11) {
+      // Enable Christmas mode , snowflakes fall
+      document.documentElement.classList.add("christmas");
+    } else {
+      document.documentElement.classList.remove("christmas");
+    }
+  }, []);
 
-          {/* Services */}
-          <Route path="/services" element={<Services />} />
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Hreflang />
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <TopNavbar />
 
-          {/* 404 fallback */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/admin" element={<AdminBookings />} />
+            <Route path="/booking" element={<Booking />} />
+            <Route path="/gallery" element={<Gallery />} />
 
+            {/* Services */}
+            <Route path="/services" element={<Services />} />
+
+            {/* 404 fallback */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 export default App;

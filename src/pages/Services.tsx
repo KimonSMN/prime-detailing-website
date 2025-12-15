@@ -51,10 +51,6 @@ type ServiceId =
 
 const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "sprayWax";
 
-// UNAVAILABLE CURRENTLY
-const UNAVAILABLE_SERVICES = new Set<ServiceId>(["paintCorrection"]);
-const UNAVAILABLE_ADDONS = new Set(["headlightRestoration"]);
-
 /* Fallback copy if i18n keys are missing */
 const serviceCopyFallback: Record<
   ServiceId,
@@ -360,20 +356,12 @@ const Services = () => {
                     ? Math.round(priceFrom * 0.8)
                     : null;
 
-                // unavailable
-                const isUnavailable = UNAVAILABLE_SERVICES.has(svcId);
-
                 return (
                   <Card
                     key={svcId}
                     className={`
                     relative w-full md:w-[45%] lg:w-[30%] bg-card border-border 
                     transition-all duration-300 flex flex-col
-                    ${
-                      isUnavailable
-                        ? "opacity-70 grayscale pointer-events-none"
-                        : "hover:bg-card-hover hover:shadow-elegant"
-                    }
                   `}
                     style={{ animationDelay: `${index * 0.2}s` }}
                   >
@@ -507,21 +495,11 @@ const Services = () => {
                       </div>
 
                       <div className="mt-auto">
-                        {isUnavailable ? (
-                          <Button
-                            variant="secondary"
-                            className="w-full opacity-50 cursor-not-allowed"
-                            disabled
-                          >
-                            {t("services.unavailable", "Unavailable")}
+                        <NavLink to={`/booking?serviceId=${svcId}`}>
+                          <Button variant="hero" className="w-full">
+                            {t("services.bookThis", "Book this")}
                           </Button>
-                        ) : (
-                          <NavLink to={`/booking?serviceId=${svcId}`}>
-                            <Button variant="hero" className="w-full">
-                              {t("services.bookThis", "Book this")}
-                            </Button>
-                          </NavLink>
-                        )}
+                        </NavLink>
                       </div>
                     </CardContent>
                   </Card>

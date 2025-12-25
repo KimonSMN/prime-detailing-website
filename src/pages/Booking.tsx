@@ -437,7 +437,7 @@ const Booking = () => {
 
       toast({
         title: t("booking.toast.ok.title"),
-        description: t("booking.toast.ok.desc"),
+        // description: t("booking.toast.ok.desc"),
       });
 
       // Clear user fields but KEEP the chosen date (and dateObj) so the user sees the updated day

@@ -14,17 +14,19 @@ function getSeasonalPackage(): SeasonalPackage {
   const month = now.getMonth() + 1;
 
   if (month === 12 || month <= 2) {
+    const endYear = month === 12 ? now.getFullYear() + 1 : now.getFullYear();
+
     return {
       name: "Winter Protection Package",
       price: 120,
-      endsAt: new Date(now.getFullYear(), 2, 1),
+      endsAt: new Date(endYear, 2, 1),
       tagline: "See better. Stay protected. Less cleaning between washes.",
       description:
         "Cold weather brings constant moisture, dirty roads, and reduced visibility. " +
         "The Winter Package focuses on water repellency, safety, and fast protection " +
         "against harsh conditions.",
       items: [
-        "Silver Detailing Package (50$ value)",
+        "Full Exterior & Interior Detailing (50$ value)",
         "FREE Rain-repellent on windshield (20$ value)",
         "FREE Spray Sealant (20$ value)",
       ],
@@ -41,7 +43,7 @@ function getSeasonalPackage(): SeasonalPackage {
         "After winter, your paint is loaded with iron particles, salt residue, and road contamination. " +
         "This package is a deep exterior reset that prepares the car for the sunny months ahead.",
       items: [
-        "Silver Detailing Package (50$ value)",
+        "Full Exterior & Interior Detailing (50$ value)",
         "Iron / Fallout Removal (20$ value)",
         "Protection Wax – Koch PW (20$ value)",
       ],
@@ -59,7 +61,7 @@ function getSeasonalPackage(): SeasonalPackage {
         "This package focuses on UV protection and keeping the car looking newer " +
         "during peak exposure.",
       items: [
-        "Silver Detailing Package (50$ value)",
+        "Full Exterior & Interior Detailing (50$ value)",
         "Exterior Plastics UV Protection (10$ value)",
         "Interior Plastics UV Protection (10$ value)",
         "Protection Wax – Koch PW (20$ value)",
@@ -77,7 +79,7 @@ function getSeasonalPackage(): SeasonalPackage {
       "Autumn is the perfect moment to deep-clean the interior and re-apply protection " +
       "before bad weather returns.",
     items: [
-      "Silver Detailing Package (50$ value)",
+      "Full Exterior & Interior Detailing (50$ value)",
       "Deep Fabric Seat Cleaning (Wet-Vac)",
       "FREE Rain-repellent on windshield (20$ value)",
       "Spray Sealant (S002) (20$ value)",
@@ -148,7 +150,7 @@ export default function SeasonalPackage() {
             Why this package is worth it
           </p>
           <p className="text-sm text-zinc-400">
-            3 Silver Details normally cost{" "}
+            3 Full Exterior & Interior Details normally cost{" "}
             <span className="line-through">$150+</span>. This package is{" "}
             <b className="text-amber-400">${pkg.price}</b> and includes seasonal
             protection services.
@@ -167,14 +169,14 @@ export default function SeasonalPackage() {
           "
         >
           {" "}
-          <div className="text-3xl font-bold text-white">
+          <div className="text-3xl font-bold text-white text-center">
             ${pkg.price}
-            <span className="ml-2 text-sm font-normal text-zinc-400">
+            <span className="ml-2 text-sm font-normal text-zinc-400 ">
               one-time payment
             </span>
           </div>
           <div className="text-center sm:text-right">
-            <p className="text-zinc-400 text-md">Offer ends in</p>
+            <p className="text-amber-400 text-md">Offer ends in</p>
             <p className="font-mono text-amber-400 text-xl md:text-xl font-bold tracking-wider">
               {timer.months}M : {timer.days}D : {timer.hours}H
             </p>

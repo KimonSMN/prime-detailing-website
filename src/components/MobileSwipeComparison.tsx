@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-/* =========================
-   Types
-========================= */
+import { useMemo, useState } from "react";
 
 type PackageKey = "maintenance" | "full_detail" | "ultimate";
 
@@ -18,10 +14,6 @@ type FeatureGroup = {
   rows: FeatureRow[];
 };
 
-/* =========================
-   Data
-========================= */
-
 const groups: FeatureGroup[] = [
   {
     title: "Exterior Cleaning",
@@ -33,13 +25,13 @@ const groups: FeatureGroup[] = [
         ultimate: true,
       },
       {
-        label: "Wheel face cleaning",
+        label: "Wheel face cleaning & tire dressing",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Wheel barrel cleaning",
+        label: "Wheel barrel deep cleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
@@ -50,25 +42,73 @@ const groups: FeatureGroup[] = [
         full_detail: true,
         ultimate: true,
       },
+      {
+        label: "Exterior protection wax (Koch PW)",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
+      {
+        label: "Exterior plastic protection (Koch PSS)",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
     ],
   },
   {
     title: "Interior Cleaning",
     rows: [
       {
-        label: "Interior vacuum",
+        label: "Interior vacuum & quick wipe-down",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Interior surface cleaning",
+        label: "Glass cleaning",
+        maintenance: true,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        label: "Full vacuum & carpet cleaning (stubborn dirt)",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Fabric extraction",
+        label: "Interior surface shampooing & cleaning",
+        maintenance: false,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        label: "Door jambs & trunk crevice cleaning",
+        maintenance: false,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        label: "Leather cleaning",
+        maintenance: false,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        label: "Leather conditioning (Koch Leather-Star)",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
+      {
+        label: "Interior plastic protection (Koch Top-Star)",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
+      {
+        label: "Fabric seat deep extraction (wet-vac)",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -77,9 +117,10 @@ const groups: FeatureGroup[] = [
   },
 ];
 
-/* =========================
-   Helpers
-========================= */
+const swipePackages = [
+  { key: "full_detail", title: "Full Detail" },
+  { key: "ultimate", title: "Ultimate Detail" },
+] as const;
 
 const Check = ({ value }: { value: boolean }) => (
   <span className={value ? "text-amber-400" : "text-zinc-600"}>
@@ -87,25 +128,36 @@ const Check = ({ value }: { value: boolean }) => (
   </span>
 );
 
-const swipePackages: {
-  key: PackageKey;
-  title: string;
-}[] = [
-  { key: "full_detail", title: "Full Detail" },
-  { key: "ultimate", title: "Ultimate Detail" },
-];
-
-/* =========================
-   Component
-========================= */
+type Item = { type: "group"; title: string } | { type: "row"; row: FeatureRow };
 
 export default function MobileSwipeComparison() {
   const [activeIndex, setActiveIndex] = useState(0);
 
+  const items: Item[] = useMemo(() => {
+    const out: Item[] = [];
+    for (const g of groups) {
+      out.push({ type: "group", title: g.title });
+      for (const r of g.rows) out.push({ type: "row", row: r });
+    }
+    return out;
+  }, []);
+
+  // --- sizes / classes ---
+  const ROW_HEIGHT = "h-[48px]";
+  const GROUP_HEIGHT = "h-[28px]";
+  const BORDER = "border-t border-zinc-800";
+
+  const groupCellLeft = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center text-[10px] uppercase text-amber-400`;
+  const groupCellMid = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center`;
+  const groupCellRight = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center`;
+
+  const featureCell = `px-3 ${ROW_HEIGHT} ${BORDER} flex items-center text-xs text-zinc-200`;
+  const checkCell = `px-3 ${ROW_HEIGHT} ${BORDER} flex items-center justify-center`;
+
   return (
     <div className="md:hidden mt-10 border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/50">
       {/* Header */}
-      <div className="grid grid-cols-[1fr_1fr_1fr] border-b border-zinc-800 text-xs font-semibold">
+      <div className="grid grid-cols-[1fr_90px_1fr] border-b border-zinc-800 text-xs font-semibold">
         <div className="p-3 text-zinc-400">Feature</div>
         <div className="p-3 text-center">Maintenance</div>
         <div className="p-3 text-center text-amber-400">
@@ -113,75 +165,76 @@ export default function MobileSwipeComparison() {
         </div>
       </div>
 
-      {/* Body */}
-      <div className="grid grid-cols-[1fr_1fr_1fr]">
-        {/* Feature names */}
+      {/* Body: 3 columns, but rows are rendered in sync */}
+      <div className="grid grid-cols-[1fr_90px_1fr]">
+        {/* Left column (Feature / Group titles) */}
         <div className="border-r border-zinc-800">
-          {groups.map((group) => (
-            <div key={group.title}>
-              <div className="px-3 py-2 text-[10px] uppercase text-zinc-500">
-                {group.title}
+          {items.map((it, idx) =>
+            it.type === "group" ? (
+              <div key={`g-${idx}`} className={groupCellLeft}>
+                {it.title}
               </div>
-              {group.rows.map((row) => (
-                <div
-                  key={row.label}
-                  className="px-3 py-2 text-xs text-zinc-200 border-t border-zinc-800"
-                >
-                  {row.label}
-                </div>
-              ))}
-            </div>
-          ))}
+            ) : (
+              <div key={`r-${idx}`} className={featureCell}>
+                <span className="leading-snug line-clamp-2">
+                  {it.row.label}
+                </span>
+              </div>
+            )
+          )}
         </div>
 
-        {/* Maintenance (STATIC) */}
-        <div className="border-r border-zinc-800 text-center">
-          {groups.map((group) => (
-            <div key={group.title}>
-              <div className="px-3 py-2 text-[10px]">&nbsp;</div>
-              {group.rows.map((row) => (
-                <div
-                  key={row.label}
-                  className="px-3 py-2 border-t border-zinc-800"
-                >
-                  <Check value={row.maintenance} />
-                </div>
-              ))}
-            </div>
-          ))}
+        {/* Middle column (Maintenance) */}
+        <div className="border-r border-zinc-800">
+          {items.map((it, idx) =>
+            it.type === "group" ? (
+              <div key={`gm-${idx}`} className={groupCellMid}>
+                {/* this is the "box next to group.title" */}
+                &nbsp;
+              </div>
+            ) : (
+              <div key={`rm-${idx}`} className={checkCell}>
+                <Check value={it.row.maintenance} />
+              </div>
+            )
+          )}
         </div>
 
-        {/* Swipeable column */}
+        {/* Right column (Swipe packages) */}
         <div
-          className="overflow-x-auto snap-x snap-mandatory flex"
+          className="overflow-x-auto snap-x snap-mandatory"
           onScroll={(e) => {
-            const index = Math.round(
-              e.currentTarget.scrollLeft / e.currentTarget.clientWidth
+            const w = e.currentTarget.clientWidth || 1;
+            const index = Math.round(e.currentTarget.scrollLeft / w);
+            setActiveIndex(
+              Math.max(0, Math.min(index, swipePackages.length - 1))
             );
-            setActiveIndex(index);
           }}
         >
-          {swipePackages.map((pkg) => (
-            <div key={pkg.key} className="min-w-full snap-center text-center">
-              {groups.map((group) => (
-                <div key={group.title}>
-                  <div className="px-3 py-2 text-[10px]">&nbsp;</div>
-                  {group.rows.map((row) => (
+          <div className="flex">
+            {swipePackages.map((pkg) => (
+              <div key={pkg.key} className="min-w-full snap-center">
+                {items.map((it, idx) =>
+                  it.type === "group" ? (
                     <div
-                      key={row.label}
-                      className="px-3 py-2 border-t border-zinc-800"
+                      key={`gs-${pkg.key}-${idx}`}
+                      className={groupCellRight}
                     >
-                      <Check value={row[pkg.key]} />
+                      {/* this is the 2nd "box next to group.title" */}
+                      &nbsp;
                     </div>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ))}
+                  ) : (
+                    <div key={`rs-${pkg.key}-${idx}`} className={checkCell}>
+                      <Check value={it.row[pkg.key]} />
+                    </div>
+                  )
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Swipe hint */}
       <div className="text-center text-xs text-zinc-500 py-2">
         Swipe → to compare packages
       </div>

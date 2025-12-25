@@ -16,6 +16,8 @@ import TopNavbar from "./components/TopNavbar";
 import Booking from "./pages/Booking";
 import Gallery from "./pages/Gallery";
 import Footer from "./components/Footer";
+import ServicesNew from "./pages/ServicesNew";
+
 const queryClient = new QueryClient();
 
 const App = () => {
@@ -48,6 +50,7 @@ const App = () => {
 
             {/* Services */}
             <Route path="/services" element={<Services />} />
+            <Route path="/test" element={<ServicesNew />} />
 
             {/* 404 fallback */}
             <Route path="*" element={<NotFound />} />

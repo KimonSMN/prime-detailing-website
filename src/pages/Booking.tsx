@@ -479,10 +479,12 @@ const Booking = () => {
     )}`;
   };
 
-  // ADDED: sorted services for cards
   const sortedServices = useMemo(() => {
     const copy = [...services];
-    copy.sort((a, b) => a.name.localeCompare(b.name));
+    copy.sort(
+      (a, b) =>
+        (Number(a.base_price ?? 0) || 0) - (Number(b.base_price ?? 0) || 0)
+    );
     return copy;
   }, [services]);
 

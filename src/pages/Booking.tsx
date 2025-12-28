@@ -1,16 +1,7 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { format } from "date-fns";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Popover,
@@ -19,21 +10,22 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as DatePicker } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Calendar as CalendarIcon,
-  Clock,
-  User,
-  Phone,
-  Mail,
-  Car as CarIcon,
-  Sparkles,
-} from "lucide-react";
+import { Calendar as CalendarIcon, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
 import { Checkbox } from "@/components/ui/checkbox";
+import { cn } from "@/lib/utils";
 
-import Footer from "../components/Footer";
+// ADDED: needed for OLD time selection UI
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 /* ---------------- helpers (Safari-safe local time) ---------------- */
 
 function localDayRange(yyyyMmDd: string) {
@@ -112,6 +104,9 @@ const Booking = () => {
     time: "",
     vehicleInfo: "",
     notes: "",
+    // ADDED: UI fields referenced in the new layout
+    vehicleName: "",
+    vehicleType: "",
   });
 
   const [dateObj, setDateObj] = useState<Date | undefined>(undefined);
@@ -334,16 +329,6 @@ const Booking = () => {
     loadAvailabilityForDate(formData.date);
   }, [formData.date, loadAvailabilityForDate]);
 
-  /* ---------------- Add-on toggle helper ---------------- */
-  const toggleAddon = (id: string, checked: boolean) => {
-    setSelectedAddonIds((prev) => {
-      const next = new Set(prev);
-      if (checked) next.add(id);
-      else next.delete(id);
-      return next;
-    });
-  };
-
   /* ---------------- overlap check for the current selection ---------------- */
   const wouldOverlap = (startTimeHHmm: string) => {
     if (!formData.date) return true; // cannot evaluate
@@ -366,8 +351,10 @@ const Booking = () => {
   };
 
   /* ---------------- submit ---------------- */
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.SyntheticEvent) => {
+    // ADDED: allow onClick usage (no <form>) while keeping behavior
+    e?.preventDefault?.();
+
     const { name, email, phone, serviceId, date, time } = formData;
 
     if (!name || !email || !phone || !serviceId || !date || !time) {
@@ -419,10 +406,14 @@ const Booking = () => {
           name,
           email,
           phone,
-          vehicleInfo: formData.vehicleInfo || null,
+          vehicleInfo:
+            formData.vehicleInfo ||
+            formData.vehicleName ||
+            (formData.vehicleType ? formData.vehicleType : null) ||
+            null,
           notes: formData.notes || null,
           preferred_at: preferred_at.toISOString(),
-          serviceId, // backend/view keeps computing authoritative total
+          serviceId,
           addonIds: Array.from(selectedAddonIds),
         }),
       });
@@ -432,15 +423,10 @@ const Booking = () => {
         throw new Error(j?.error || "Booking failed");
       }
 
-      // Immediately refresh availability for the same date so the slot appears as booked
       await loadAvailabilityForDate(date);
 
-      toast({
-        title: t("booking.toast.ok.title"),
-        // description: t("booking.toast.ok.desc"),
-      });
+      toast({ title: t("booking.toast.ok.title") });
 
-      // Clear user fields but KEEP the chosen date (and dateObj) so the user sees the updated day
       setFormData((p) => ({
         ...p,
         name: "",
@@ -450,11 +436,11 @@ const Booking = () => {
         time: "",
         vehicleInfo: "",
         notes: "",
+        vehicleName: "",
+        vehicleType: "",
         // keep date as-is
       }));
       setSelectedAddonIds(new Set());
-      // keep dateObj as-is
-      // keep unavailableTimes as refreshed
     } catch (err: any) {
       toast({
         title: t("booking.toast.fail.title"),
@@ -467,421 +453,530 @@ const Booking = () => {
     }
   };
 
-  /* ---------------- UI ---------------- */
+  /* ============================ UI (ADDED) ============================ */
+
+  // ADDED: UI style tokens
+  const pillBase =
+    "rounded-2xl border p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/30";
+  const pillIdle = "border-border hover:border-amber-400/40 bg-card";
+  const pillActive =
+    "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40";
+
+  // ADDED: formatters used by the new layout
+  const formatEuro = (val: string | number | null) =>
+    formatPrice(Number(val ?? 0) || 0);
+
+  const fmtHours = (minutes: number | null) => {
+    const m = Math.max(0, Number(minutes ?? 0) || 0);
+    if (!m) return "—";
+    const h = Math.floor(m / 60);
+    const r = m % 60;
+    if (h <= 0) return `${m} ${t("booking.minutes", "min")}`;
+    if (r === 0) return `${h}${t("booking.hoursShort", "h")}`;
+    return `${h}${t("booking.hoursShort", "h")} ${r}${t(
+      "booking.minutesShort",
+      "m"
+    )}`;
+  };
+
+  // ADDED: sorted services for cards
+  const sortedServices = useMemo(() => {
+    const copy = [...services];
+    copy.sort((a, b) => a.name.localeCompare(b.name));
+    return copy;
+  }, [services]);
+
+  // ADDED: step gating flags (minimal)
+  const step1Done = !!formData.serviceId;
+  const step2Done = step1Done; // add-ons optional
+  const step3Done = !!formData.date && !!formData.time;
+  const step4Done = step3Done;
+  const step5Done = step4Done && !!formData.vehicleName.trim();
+  const canSubmit =
+    !!formData.name &&
+    !!formData.email &&
+    !!formData.phone &&
+    !!formData.serviceId &&
+    !!formData.date &&
+    !!formData.time;
+  const step6Done = canSubmit;
+
+  // ADDED: totals for summary
+  const totalMinutes = totalSelectedMinutes;
+  const totalPrice = totalSelectedPrice;
+
+  // ADDED: StepHeader component
+  const StepHeader = ({
+    num,
+    title,
+    done,
+    hint,
+  }: {
+    num: number;
+    title: string;
+    done: boolean;
+    hint?: string;
+  }) => (
+    <div className="flex items-start justify-between gap-4">
+      <div className="flex items-start gap-3">
+        <div
+          className={cn(
+            "mt-0.5 h-8 w-8 rounded-full border flex items-center justify-center text-sm",
+            done
+              ? "border-amber-400/60 bg-amber-400/10 text-amber-200"
+              : "border-border text-muted-foreground"
+          )}
+        >
+          {done ? <Check className="h-4 w-4" /> : num}
+        </div>
+        <div>
+          <div className="font-semibold">{title}</div>
+          {hint ? (
+            <div className="text-sm text-muted-foreground mt-1">{hint}</div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  );
+
+  // ADDED: AmberButton (simple wrapper)
+  const AmberButton = Button;
+
   return (
-    <section
-      id="booking"
-      className="min-h-screen flex flex-col bg-secondary/20"
-    >
-      <div className="flex-grow py-20 px-4 max-w-6xl mx-auto">
-        <Helmet>
-          <title>Book an Appointment | Prime Detailing Cholargos</title>
-          <meta
-            name="description"
-            content="Book your car detailing appointment in Cholargos — choose service, add-ons, date, and time online."
-          />
-        </Helmet>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              {t("booking.titlePrefix")}{" "}
-              <span className="bg-gold-gradient bg-clip-text text-transparent">
-                {t("booking.titleAccent")}
-              </span>
-            </h2>
+    <section className="min-h-screen bg-secondary/20">
+      <Helmet>
+        <title>{t("seo.booking.title")}</title>
+        <meta name="description" content={t("seo.booking.description")} />
+      </Helmet>
+
+      <div className="max-w-6xl mx-auto px-4 py-20 grid lg:grid-cols-[1fr_360px] gap-12">
+        {/* MAIN FLOW */}
+        <div className="space-y-14">
+          {/* STEP 1 */}
+          <div className="space-y-6">
+            <StepHeader
+              num={1}
+              title={t("booking.steps.package.title")}
+              done={step1Done}
+              hint={t("booking.steps.package.hint")}
+            />
+
+            <div className="grid md:grid-cols-3 gap-4">
+              {sortedServices.map((s) => {
+                const active = s.id === formData.serviceId;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => {
+                      setFormData((p) => ({
+                        ...p,
+                        serviceId: s.id,
+                        time: "",
+                        date: p.date,
+                      }));
+                    }}
+                    className={cn(pillBase, active ? pillActive : pillIdle)}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 className="font-semibold text-lg">{s.name}</h3>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          {t("booking.meta.from")} {formatEuro(s.base_price)} ·{" "}
+                          {t("booking.meta.approx")} {fmtHours(s.duration_min)}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <Card className="bg-card border-border shadow-elegant animate-slide-up">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold text-foreground">
-                {t("booking.card.title")}
-              </CardTitle>
-            </CardHeader>
+          {/* STEP 2 */}
+          {step1Done && (
+            <div className="space-y-6">
+              <StepHeader
+                num={2}
+                title={t("booking.steps.addons.title")}
+                done={step2Done}
+                hint={t("booking.steps.addons.hint")}
+              />
 
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Personal Info */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2">
-                      <User className="w-4 h-4 text-primary" />{" "}
-                      {t("booking.fullName")} *
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder={t("booking.ph.fullName")}
-                      value={formData.name}
-                      onChange={(e) =>
-                        handleInputChange("name", e.target.value)
-                      }
-                      className="bg-background border-border"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="w-4 h-4 text-primary" />{" "}
-                      {t("booking.phone")} *
-                    </Label>
-                    <Input
-                      id="phone"
-                      placeholder={t("booking.ph.phone")}
-                      value={formData.phone}
-                      onChange={(e) =>
-                        handleInputChange("phone", e.target.value)
-                      }
-                      className="bg-background border-border"
-                    />
-                  </div>
+              {addons.length === 0 ? (
+                <div className="rounded-2xl border p-5 text-sm text-muted-foreground">
+                  {t("booking.addons.empty")}
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-primary" />{" "}
-                    {t("booking.email")} *
-                  </Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder={t("booking.ph.email")}
-                    value={formData.email}
-                    onChange={(e) => handleInputChange("email", e.target.value)}
-                    className="bg-background border-border"
-                  />
+              ) : (
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {addons.map((a) => {
+                    const checked = selectedAddonIds.has(a.id);
+                    return (
+                      <button
+                        key={a.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedAddonIds((prev) => {
+                            const next = new Set(prev);
+                            if (next.has(a.id)) next.delete(a.id);
+                            else next.add(a.id);
+                            return next;
+                          });
+                          setFormData((p) => ({ ...p, time: "" }));
+                        }}
+                        className={cn(
+                          "rounded-2xl border p-4 text-left transition hover:border-amber-400/40",
+                          checked
+                            ? "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40"
+                            : "border-border"
+                        )}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div>
+                            <div className="font-semibold">{a.name}</div>
+                            <div className="text-sm text-muted-foreground mt-1">
+                              {formatEuro(a.base_price)} +{"\u00A0"}
+                              {a.duration_min ?? 0} {t("booking.meta.minutes")}
+                            </div>
+                          </div>
+                          <div className="pt-0.5">
+                            <Checkbox checked={checked} />
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
+              )}
+            </div>
+          )}
 
-                {/* Service */}
+          {/* STEP 3 (KEEP OLD DATE & TIME UI) */}
+          {step1Done && step2Done && (
+            <div className="space-y-6">
+              <StepHeader
+                num={3}
+                title={t("booking.steps.datetime.title")}
+                done={step3Done}
+                hint={t("booking.steps.datetime.hint")}
+              />
+
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Date (OLD) */}
                 <div className="space-y-2">
-                  <Label
-                    htmlFor="service-select"
-                    className="flex items-center gap-2"
-                  >
-                    <CarIcon className="w-4 h-4 text-primary" />{" "}
-                    {t("booking.selectService")} *
-                  </Label>
-                  <Select
-                    value={formData.serviceId}
-                    onValueChange={(v) => handleInputChange("serviceId", v)}
-                  >
-                    <SelectTrigger
-                      id="service-select"
-                      className="bg-background border-border"
+                  <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="justify-start w-full bg-background border-border hover:border-amber-400/40"
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4 text-amber-200" />
+                        {dateObj ? (
+                          fmtDate(dateObj)
+                        ) : (
+                          <span>{t("booking.ph.pickDate")}</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0 bg-popover border-border"
+                      align="start"
                     >
+                      <DatePicker
+                        mode="single"
+                        selected={dateObj}
+                        onSelect={(d) => {
+                          if (!d) return;
+                          setDateObj(d);
+                          // keep old behavior
+                          setFormData((p) => ({
+                            ...p,
+                            date: format(d, "yyyy-MM-dd"),
+                            time: "",
+                          }));
+                          setIsCalOpen(false);
+                        }}
+                        disabled={(d) => d.getDay() === 0 || d < today}
+                        initialFocus
+                        classNames={{
+                          day_today: "bg-primary/15 text-primary font-semibold",
+                          day_selected:
+                            "bg-transparent text-foreground hover:bg-transparent focus:bg-transparent",
+                          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-primary/10",
+                        }}
+                      />
+                    </PopoverContent>
+                  </Popover>
+
+                  <div className="text-sm text-muted-foreground">
+                    {t("booking.meta.estimatedDuration")}{" "}
+                    <span className="text-amber-200 font-medium">
+                      {totalMinutes ? fmtHours(totalMinutes) : "—"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Time (OLD) */}
+                <div className="space-y-2">
+                  <Select
+                    value={formData.time}
+                    onValueChange={(v) => {
+                      if (wouldOverlap(v)) {
+                        toast({
+                          title: t("booking.toast.unavailable.title"),
+                          description: t(
+                            "booking.toast.unavailable.descFull",
+                            "The selected start time overlaps with another booking."
+                          ),
+                          variant: "destructive",
+                        });
+                        return;
+                      }
+                      setFormData((p) => ({ ...p, time: v }));
+                    }}
+                    disabled={!formData.date}
+                  >
+                    <SelectTrigger className="bg-background border-border hover:border-amber-400/40">
                       <SelectValue
-                        placeholder={t("booking.ph.chooseService")}
+                        placeholder={
+                          formData.date
+                            ? t("booking.ph.selectTime")
+                            : t("booking.ph.pickDateFirst")
+                        }
                       />
                     </SelectTrigger>
                     <SelectContent className="bg-popover border-border">
-                      {services.map((s) => (
-                        <SelectItem key={s.id} value={s.id}>
-                          {s.name}
-                          {s.base_price
-                            ? ` — ${t("booking.fromPrice", {
-                                price: s.base_price,
-                              })}`
-                            : ""}
-                          {s.duration_min
-                            ? ` • ~${s.duration_min} ${t(
-                                "booking.minutes",
-                                "min"
-                              )}`
-                            : ""}
-                        </SelectItem>
-                      ))}
+                      {TIMES.map((tm) => {
+                        const takenByStart = unavailableTimes.has(tm);
+                        const overlap = !takenByStart && wouldOverlap(tm);
+                        const disabled = takenByStart || overlap;
+                        return (
+                          <SelectItem
+                            key={tm}
+                            value={tm}
+                            disabled={disabled}
+                            className={disabled ? "opacity-50" : ""}
+                          >
+                            {tm}{" "}
+                            {takenByStart
+                              ? `— ${t("booking.booked")}`
+                              : overlap
+                                ? `— ${t(
+                                    "booking.notEnoughRoom",
+                                    "not enough room"
+                                  )}`
+                                : ""}
+                          </SelectItem>
+                        );
+                      })}
                     </SelectContent>
                   </Select>
                 </div>
+              </div>
+            </div>
+          )}
 
-                {/* Add-ons */}
-                {addons.length > 0 && (
-                  <div className="space-y-4">
-                    <Label className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-primary" />
-                      {t(
-                        "booking.selectAddons",
-                        "Add-ons (optional): protection & extras"
-                      )}
-                    </Label>
+          {/* STEP 4 (Vehicle details) */}
+          {step4Done && (
+            <div className="space-y-6">
+              <StepHeader
+                num={4}
+                title={t("booking.steps.vehicleDetails.title")}
+                done={step5Done}
+                hint={t("booking.steps.vehicleDetails.hint")}
+              />
 
-                    {(() => {
-                      const prot = addons
-                        .filter(
-                          (a) =>
-                            a.name.toLowerCase().includes("protect") ||
-                            a.name.toLowerCase().includes("coating") ||
-                            a.name.toLowerCase().includes("wax")
-                        )
-                        .sort(
-                          (a, b) =>
-                            Number(a.base_price ?? 0) -
-                            Number(b.base_price ?? 0)
-                        );
+              <div className="space-y-3">
+                <Input
+                  placeholder={t("booking.ph.vehicleName")}
+                  value={formData.vehicleName}
+                  onChange={(e) =>
+                    setFormData((p) => ({
+                      ...p,
+                      vehicleName: e.target.value,
+                      vehicleInfo: e.target.value, // ADDED: keep existing payload field populated
+                    }))
+                  }
+                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                />
+                <Textarea
+                  placeholder={t("booking.ph.notes")}
+                  value={formData.notes}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, notes: e.target.value }))
+                  }
+                  className="min-h-[110px] border-amber-400/20 focus-visible:ring-amber-400/30"
+                />
+              </div>
+            </div>
+          )}
 
-                      const extras = addons
-                        .filter((a) => !prot.includes(a))
-                        .sort(
-                          (a, b) =>
-                            Number(a.base_price ?? 0) -
-                            Number(b.base_price ?? 0)
-                        );
+          {/* STEP 5 (Contact) */}
+          {step5Done && (
+            <div className="space-y-6">
+              <StepHeader
+                num={5}
+                title={t("booking.steps.contact.title")}
+                done={step6Done}
+                hint={t("booking.steps.contact.hint")}
+              />
 
-                      const renderAddon = (a: AddonRow) => {
-                        const checked = selectedAddonIds.has(a.id);
-                        const checkboxId = `addon-${a.id}`;
-                        const minutes = Number(a.duration_min ?? 0) || 0;
-                        return (
-                          <div
-                            key={a.id}
-                            className={`rounded-xl border p-3 bg-background transition ${
-                              checked
-                                ? "border-primary/70 ring-1 ring-primary/40"
-                                : "border-border hover:border-primary/30"
-                            }`}
-                          >
-                            <div className="flex items-start gap-3">
-                              <Checkbox
-                                id={checkboxId}
-                                checked={checked}
-                                onCheckedChange={(val) =>
-                                  toggleAddon(a.id, val === true)
-                                }
-                              />
-                              <div className="flex-1">
-                                <label
-                                  htmlFor={checkboxId}
-                                  className="font-medium cursor-pointer"
-                                >
-                                  {a.name}
-                                </label>
+              <div className="space-y-3">
+                <Input
+                  placeholder={t("booking.ph.fullName")}
+                  value={formData.name}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, name: e.target.value }))
+                  }
+                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                />
+                <Input
+                  placeholder={t("booking.ph.phone")}
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, phone: e.target.value }))
+                  }
+                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                />
+                <Input
+                  placeholder={t("booking.ph.email")}
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, email: e.target.value }))
+                  }
+                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                />
 
-                                <div className="flex flex-wrap items-center gap-2 mt-1">
-                                  {a.base_price != null && (
-                                    <div className="text-sm text-muted-foreground">
-                                      {t("booking.fromPrice", {
-                                        price: a.base_price,
-                                      })}
-                                    </div>
-                                  )}
-                                  {minutes > 0 && (
-                                    <span className="text-xs px-2 py-0.5 rounded-full border border-border text-muted-foreground">
-                                      ≈ {minutes} {t("booking.minutes", "min")}
-                                    </span>
-                                  )}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      };
-
-                      return (
-                        <div className="grid sm:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-lg">
-                              Protection
-                            </h4>
-                            <p className="text-sm text-muted-foreground italic">
-                              Great to lock in the look of your freshly detailed
-                              car.
-                            </p>
-                            {prot.length > 0 ? (
-                              prot.map(renderAddon)
-                            ) : (
-                              <p className="text-sm text-muted-foreground">
-                                None available
-                              </p>
-                            )}
-                          </div>
-
-                          <div className="space-y-2">
-                            <h4 className="font-semibold text-lg">Extras</h4>
-                            <p className="text-sm text-muted-foreground italic">
-                              Optional upgrades to take your detail to the next
-                              level.
-                            </p>
-                            {extras.length > 0 ? (
-                              extras.map(renderAddon)
-                            ) : (
-                              <p className="text-sm text-muted-foreground">
-                                None available
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })()}
-
-                    {(serviceMinutes > 0 || selectedAddons.length > 0) && (
-                      <div className="rounded-lg border p-3 bg-secondary/10 text-left">
-                        <div className="text-sm text-muted-foreground">
-                          {t("booking.estimatedTotal", "Estimated total time")}:{" "}
-                          <strong>
-                            {(totalSelectedMinutes / 60).toFixed(1)}{" "}
-                            {t("booking.hours", "hours")}
-                          </strong>
-                        </div>
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {t("booking.estimatedPrice", "Estimated price")}:{" "}
-                          <strong>{formatPrice(totalSelectedPrice)}</strong>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* Date & Time */}
-                <div className="grid md:grid-cols-2 gap-4">
-                  {/* Date */}
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <CalendarIcon className="w-4 h-4 text-primary" />{" "}
-                      {t("booking.preferredDate")} *
-                    </Label>
-                    <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
-                      <PopoverTrigger asChild>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="justify-start w-full bg-background border-border"
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4 opacity-70" />
-                          {dateObj ? (
-                            fmtDate(dateObj)
-                          ) : (
-                            <span>{t("booking.ph.pickDate")}</span>
-                          )}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent
-                        className="w-auto p-0 bg-popover border-border"
-                        align="start"
-                      >
-                        <DatePicker
-                          mode="single"
-                          selected={dateObj}
-                          onSelect={(d) => {
-                            if (!d) return;
-                            setDateObj(d);
-                            handleInputChange("date", format(d, "yyyy-MM-dd"));
-                            setIsCalOpen(false);
-                          }}
-                          disabled={(d) => d.getDay() === 0 || d < today}
-                          initialFocus
-                          classNames={{
-                            day_today:
-                              "bg-primary/15 text-primary font-semibold",
-                            day_selected:
-                              "bg-transparent text-foreground hover:bg-transparent focus:bg-transparent",
-                            day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-primary/10",
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
-
-                  {/* Time */}
-                  <div className="space-y-2">
-                    <Label htmlFor="time" className="flex items-center gap-2">
-                      <Clock className="w-4 h-4 text-primary" />{" "}
-                      {t("booking.preferredTime")} *
-                    </Label>
-                    <Select
-                      value={formData.time}
-                      onValueChange={(v) => {
-                        if (wouldOverlap(v)) {
-                          toast({
-                            title: t("booking.toast.unavailable.title"),
-                            description: t(
-                              "booking.toast.unavailable.descFull",
-                              "The selected start time overlaps with another booking."
-                            ),
-                            variant: "destructive",
-                          });
-                          return;
-                        }
-                        handleInputChange("time", v);
-                      }}
-                      disabled={!formData.date}
-                    >
-                      <SelectTrigger className="bg-background border-border">
-                        <SelectValue
-                          placeholder={
-                            formData.date
-                              ? t("booking.ph.selectTime")
-                              : t("booking.ph.pickDateFirst")
-                          }
-                        />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border">
-                        {TIMES.map((tm) => {
-                          const takenByStart = unavailableTimes.has(tm);
-                          const overlap = !takenByStart && wouldOverlap(tm);
-                          const disabled = takenByStart || overlap;
-                          return (
-                            <SelectItem
-                              key={tm}
-                              value={tm}
-                              disabled={disabled}
-                              className={disabled ? "opacity-50" : ""}
-                            >
-                              {tm}{" "}
-                              {takenByStart
-                                ? `— ${t("booking.booked")}`
-                                : overlap
-                                  ? `— ${t(
-                                      "booking.notEnoughRoom",
-                                      "not enough room"
-                                    )}`
-                                  : ""}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Vehicle / Notes */}
-                <div className="space-y-2">
-                  <Label htmlFor="vehicle">{t("booking.vehicleInfo")}</Label>
-                  <Input
-                    id="vehicle"
-                    placeholder={t("booking.ph.vehicle")}
-                    value={formData.vehicleInfo}
-                    onChange={(e) =>
-                      handleInputChange("vehicleInfo", e.target.value)
-                    }
-                    className="bg-background border-border"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="notes">{t("booking.notes")}</Label>
-                  <Textarea
-                    id="notes"
-                    placeholder={t("booking.ph.notes")}
-                    value={formData.notes}
-                    onChange={(e) => handleInputChange("notes", e.target.value)}
-                    className="bg-background border-border min-h-[100px]"
-                  />
-                </div>
-
-                <Button
-                  type="submit"
-                  variant="hero"
+                <AmberButton
                   size="lg"
-                  className="w-full text-lg py-6 h-auto"
-                  disabled={loading}
+                  className={cn(
+                    "w-full",
+                    "bg-amber-400 text-black hover:bg-amber-300",
+                    !canSubmit && "opacity-60"
+                  )}
+                  disabled={loading || !canSubmit}
+                  onClick={(e) => void handleSubmit(e)}
                 >
                   {loading
                     ? t("booking.btn.submitting")
                     : t("booking.btn.submit")}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+                </AmberButton>
+
+                {!canSubmit && (
+                  <p className="text-xs text-muted-foreground">
+                    {t("booking.validation.completeSteps")}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
+
+        {/* SUMMARY */}
+        {selectedService && (
+          <aside className="sticky top-24 h-fit rounded-2xl border bg-card overflow-hidden">
+            <div className="p-6 border-b">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="font-semibold">{t("booking.summary.title")}</h3>
+                <div className="text-xs px-2 py-1 rounded-full border border-amber-400/40 text-amber-200">
+                  {formatEuro(totalPrice)}
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-2 text-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-muted-foreground">
+                    {t("booking.summary.package")}
+                  </span>
+                  <span className="font-medium text-right">
+                    {selectedService.name}
+                  </span>
+                </div>
+
+                <div className="flex items-start justify-between gap-3">
+                  <span className="text-muted-foreground">
+                    {t("booking.summary.duration")}
+                  </span>
+                  <span className="font-medium">
+                    {totalMinutes ? fmtHours(totalMinutes) : "—"}
+                  </span>
+                </div>
+
+                {selectedAddons.length > 0 && (
+                  <div className="pt-2">
+                    <div className="text-muted-foreground mb-2">
+                      {t("booking.summary.addons")}
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedAddons.map((a) => (
+                        <span
+                          key={a.id}
+                          className="text-xs rounded-full border border-amber-400/30 bg-amber-400/5 px-2 py-1"
+                        >
+                          {a.name}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="p-6 space-y-3 text-sm">
+              <div className="flex items-start justify-between gap-3">
+                <span className="text-muted-foreground">
+                  {t("booking.summary.dateTime")}
+                </span>
+                <span className="font-medium text-right">
+                  {formData.date ? formData.date : "—"}
+                  {formData.time ? ` · ${formData.time}` : ""}
+                </span>
+              </div>
+
+              <div className="flex items-start justify-between gap-3">
+                <span className="text-muted-foreground">
+                  {t("booking.summary.vehicle")}
+                </span>
+                <span className="font-medium text-right">
+                  {formData.vehicleType
+                    ? t(`booking.vehicleTypes.${formData.vehicleType}`)
+                    : "—"}
+                  {formData.vehicleName ? ` · ${formData.vehicleName}` : ""}
+                </span>
+              </div>
+
+              {formData.notes && (
+                <div className="pt-2">
+                  <div className="text-muted-foreground mb-1">
+                    {t("booking.summary.notes")}
+                  </div>
+                  <div className="rounded-xl border p-3 text-muted-foreground">
+                    {formData.notes}
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-2">
+                <div className="text-muted-foreground mb-1">
+                  {t("booking.summary.contact")}
+                </div>
+                <div className="rounded-xl border p-3">
+                  <div className="font-medium">{formData.name || "—"}</div>
+                  <div className="text-muted-foreground">
+                    {formData.phone || "—"}
+                  </div>
+                  <div className="text-muted-foreground">
+                    {formData.email || "—"}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        )}
       </div>
-      <Footer />
+
+      {/* <Footer /> */}
     </section>
   );
 };

@@ -49,8 +49,8 @@ const App = () => {
             <Route path="/gallery" element={<Gallery />} />
 
             {/* Services */}
-            <Route path="/services" element={<Services />} />
-            <Route path="/test" element={<ServicesNew />} />
+            {/* <Route path="/services" element={<Services />} /> */}
+            <Route path="/services" element={<ServicesNew />} />
 
             {/* 404 fallback */}
             <Route path="*" element={<NotFound />} />

@@ -265,6 +265,98 @@
       "description": "Διεύθυνση, τηλέφωνο, ωράριο. Κλείστε ραντεβού online."
     }
   },
+
+  "seo": {
+    "booking": {
+      "title": "Κλείστε Ραντεβού | Prime Detailing",
+      "description": "Προγραμματίστε σήμερα την επαγγελματική υπηρεσία car detailing σας."
+    }
+  },
+  "booking": {
+    "steps": {
+      "package": {
+        "title": "Επιλέξτε πακέτο",
+        "hint": "Διαλέξτε τη βασική υπηρεσία."
+      },
+      "addons": {
+        "title": "Επιλέξτε προστασία & extras",
+        "hint": "Προαιρετικά."
+      },
+      "datetime": {
+        "title": "Επιλέξτε ημερομηνία & ώρα",
+        "hint": " "
+      },
+      "vehicleType": {
+        "title": "Επιλέξτε τύπο οχήματος",
+        "hint": " "
+      },
+      "vehicleDetails": {
+        "title": "Όνομα οχήματος & σημειώσεις",
+        "hint": " "
+      },
+      "contact": {
+        "title": "Στοιχεία επικοινωνίας",
+        "hint": "Θα τα χρησιμοποιήσουμε για επιβεβαίωση."
+      }
+    },
+    "vehicleTypes": {
+      "hatchback": "Hatchback",
+      "sedan": "Sedan",
+      "coupe": "Coupe",
+      "suv": "SUV",
+      "wagon": "Wagon",
+      "pickup": "Pickup",
+      "van": "Van"
+    },
+    "actions": { "selectDate": "Επιλέξτε ημερομηνία" },
+    "meta": {
+      "from": "Από",
+      "approx": "~",
+      "minutes": "λεπτά",
+      "estimatedDuration": "Εκτιμώμενη διάρκεια:",
+      "available": "Διαθέσιμο",
+      "overlaps": "Επικάλυψη με {{slot}}"
+    },
+    "ph": {
+      "fullName": "Εισάγετε το ονοματεπώνυμο σας",
+      "phone": "(+30) 69XXXXXXXXX",
+      "email": "your.email@example.com",
+      "vehicleName": "Πληροφορίες Οχήματος (π.χ., VW Golf, BMW 320i)",
+      "notes": "Σημειώσεις (προαιρετικό)."
+    },
+    "btn": {
+      "submitting": "Γίνεται κράτηση…",
+      "submit": "Επιβεβαίωση κράτησης"
+    },
+    "validation": {
+      "completeSteps": "Ολοκληρώστε όλα τα υποχρεωτικά βήματα για επιβεβαίωση."
+    },
+    "summary": {
+      "title": "Σύνοψη",
+      "package": "Πακέτο",
+      "duration": "Διάρκεια",
+      "addons": "Extras",
+      "dateTime": "Ημερομηνία / Ώρα",
+      "vehicle": "Όχημα",
+      "notes": "Σημειώσεις",
+      "contact": "Επικοινωνία"
+    },
+    "toast": {
+      "overlap": {
+        "title": "Η ώρα επικαλύπτεται με άλλο ραντεβού",
+        "desc": "Αυτό το ραντεβού θα επικαλυφθεί με την ώρα {{slot}}. Παρακαλώ διαλέξτε άλλη ώρα."
+      },
+      "ok": {
+        "title": "Το ραντεβού σας καταχωρήθηκε!",
+        "desc": "Θα επικοινωνήσουμε εντός 24 ωρών για επιβεβαίωση. Παρακαλούμε μην έρθετε χωρίς επιβεβαίωση."
+      },
+      "fail": {
+        "title": "Αποτυχία κράτησης",
+        "desc": "Παρακαλώ δοκιμάστε ξανά."
+      }
+    }
+  },
+
   "services.extras.title": "Έξτρα επιλογές",
   "services.extras.subtitle": "Ολοκληρώστε το Detail σας με έξτρα που αποκαθιστούν και βελτιώνουν την εμφάνιση του αυτοκινήτου σας."
 }

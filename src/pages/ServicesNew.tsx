@@ -40,17 +40,17 @@ const ServicesNew = () => {
             price="From 30$"
             duration="~2h"
             onMoreDetails={scrollToComparison}
-            features={[
-              "Contactless pre-wash & hand wash",
-              "Wheel faces & tires cleaned and dressed",
-              "Glass cleaning",
-              "Quick interior wipe-down & floor vacuum",
-            ]}
-            exclusions={[
-              "No tar / sap removal",
-              "No fabric extraction",
-              "No specialized carpet cleaning",
-            ]}
+            // features={[
+            //   "Contactless pre-wash & hand wash",
+            //   "Wheel faces & tires cleaned and dressed",
+            //   "Glass cleaning",
+            //   "Quick interior wipe-down & floor vacuum",
+            // ]}
+            // exclusions={[
+            //   "No tar / sap removal",
+            //   "No fabric extraction",
+            //   "No specialized carpet cleaning",
+            // ]}
           />
           {/* Silver */}
           <ServiceCard
@@ -58,15 +58,15 @@ const ServicesNew = () => {
             price="From 50$"
             duration="~4h"
             onMoreDetails={scrollToComparison}
-            features={[
-              "Everything in Bronze",
-              "Deep wheel & barrel cleaning",
-              "Tar / sap removal",
-              "Full vacuum & carpet deep cleaning",
-              "Interior shampoo & surface cleaning",
-              "Door jambs & trunk crevices cleaning",
-              "Leather cleaning",
-            ]}
+            // features={[
+            //   "Everything in Bronze",
+            //   "Deep wheel & barrel cleaning",
+            //   "Tar / sap removal",
+            //   "Full vacuum & carpet deep cleaning",
+            //   "Interior shampoo & surface cleaning",
+            //   "Door jambs & trunk crevices cleaning",
+            //   "Leather cleaning",
+            // ]}
           />
           {/* Gold */}
           <ServiceCard
@@ -74,13 +74,13 @@ const ServicesNew = () => {
             price="From 60$"
             duration="~5h"
             onMoreDetails={scrollToComparison}
-            features={[
-              "Everything in Silver",
-              "Leather Conditioning (Koch Leather-Star)",
-              "Exterior plastics protection (Koch PSS)",
-              "Interior plastics protection (Koch Top-Star)",
-              "Protection wax for the Exterior (Koch PW)",
-            ]}
+            // features={[
+            //   "Everything in Silver",
+            //   "Leather Conditioning (Koch Leather-Star)",
+            //   "Exterior plastics protection (Koch PSS)",
+            //   "Interior plastics protection (Koch Top-Star)",
+            //   "Protection wax for the Exterior (Koch PW)",
+            // ]}
           />
         </div>
         {/* Seasonal Package */}

@@ -5,8 +5,8 @@ type ServiceCardProps = {
   title: string;
   price: string;
   duration: string;
-  features: string[];
-  exclusions?: string[];
+  // features: string[];
+  // exclusions?: string[];
   onMoreDetails?: () => void;
 };
 
@@ -14,8 +14,8 @@ const ServiceCard = ({
   title,
   price,
   duration,
-  features,
-  exclusions,
+  // features,
+  // exclusions,
   onMoreDetails,
 }: ServiceCardProps) => {
   return (
@@ -43,7 +43,7 @@ const ServiceCard = ({
       </p>
 
       {/* Features */}
-      <ul className="space-y-2 mb-4 flex-grow">
+      {/* <ul className="space-y-2 mb-4 flex-grow">
         {features.map((f) => (
           <li
             key={f}
@@ -52,10 +52,10 @@ const ServiceCard = ({
             ✓ {f}
           </li>
         ))}
-      </ul>
+      </ul> */}
 
       {/* Exclusions */}
-      {exclusions && (
+      {/* {exclusions && (
         <ul className="space-y-1 text-xs text-zinc-500 mb-4">
           {exclusions.map((e) => (
             <li key={e} className="break-words">
@@ -63,7 +63,7 @@ const ServiceCard = ({
             </li>
           ))}
         </ul>
-      )}
+      )} */}
 
       {/* Actions */}
       <div className="mt-4 flex flex-col gap-3">

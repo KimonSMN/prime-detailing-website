@@ -263,6 +263,94 @@
       "description": "Address, phone, hours. Book your detailing appointment online."
     }
   },
+  "seo": {
+    "booking": {
+      "title": "Book Appointment | Prime Detailing",
+      "description": "Schedule your professional car detailing service today."
+    }
+  },
+  "booking": {
+    "steps": {
+      "package": {
+        "title": "Choose package",
+        "hint": "Pick the main service."
+      },
+      "addons": {
+        "title": "Choose protection & addons",
+        "hint": "Optional extras."
+      },
+      "datetime": {
+        "title": "Choose date & time",
+        "hint": " "
+      },
+      "vehicleType": {
+        "title": "Choose vehicle type",
+        "hint": " "
+      },
+      "vehicleDetails": {
+        "title": "Vehicle name & notes",
+        "hint": " "
+      },
+      "contact": {
+        "title": "Your details",
+        "hint": "We’ll use these to confirm the booking."
+      }
+    },
+    "vehicleTypes": {
+      "hatchback": "Hatchback",
+      "sedan": "Sedan",
+      "coupe": "Coupe",
+      "suv": "SUV",
+      "wagon": "Wagon",
+      "pickup": "Pickup",
+      "van": "Van"
+    },
+    "actions": { "selectDate": "Select date" },
+    "meta": {
+      "from": "From",
+      "approx": "~",
+      "minutes": "min",
+      "estimatedDuration": "Estimated duration:",
+      "available": "Available",
+      "overlaps": "Overlaps {{slot}}"
+    },
+    "ph": {
+      "fullName": "Enter your full name",
+      "phone": "(+30) 69XXXXXXXXX",
+      "email": "your.email@example.com",
+      "vehicleName": "Vehicle information (e.g., VW Golf, BMW 320i)",
+      "notes": "Notes (optional) — stains, pet hair, tight schedule, etc."
+    },
+    "btn": { "submitting": "Booking…", "submit": "Confirm booking" },
+    "validation": {
+      "completeSteps": "Complete all required steps to confirm."
+    },
+    "summary": {
+      "title": "Summary",
+      "package": "Package",
+      "duration": "Duration",
+      "addons": "Addons",
+      "dateTime": "Date / Time",
+      "vehicle": "Vehicle",
+      "notes": "Notes",
+      "contact": "Contact"
+    },
+    "toast": {
+      "overlap": {
+        "title": "Time overlaps another booking",
+        "desc": "This booking would overlap the {{slot}} slot. Please choose another time."
+      },
+      "ok": {
+        "title": "Appointment booked!",
+        "desc": "We’ll contact you within 24 hours to confirm. Please do not come without confirmation."
+      },
+      "fail": {
+        "title": "Booking failed",
+        "desc": "Please try again."
+      }
+    }
+  },
+
   "services.extras.title": "Add-ons",
   "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas."
 }

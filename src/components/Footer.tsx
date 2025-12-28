@@ -13,7 +13,7 @@ const Footer = () => {
           <div className="space-y-4 w-full max-w-xs text-center">
             <h3 className="text-2xl font-bold">
               <span className="text-foreground">{t("footer.title.prime")}</span>
-              <span className="bg-gold-gradient bg-clip-text text-transparent ml-2">
+              <span className="text-amber-400 ml-2">
                 {t("footer.title.detailing")}
               </span>
             </h3>
@@ -27,7 +27,7 @@ const Footer = () => {
             </h4>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-muted-foreground justify-center md:justify-start">
-                <Phone className="w-5 h-5 text-primary" />
+                <Phone className="w-5 h-5 text-amber-400" />
                 <a
                   href="tel:+306939949788"
                   className="hover:underline"
@@ -36,8 +36,8 @@ const Footer = () => {
                   {t("footer.phone")}
                 </a>
               </div>
-              <div className="flex items-center gap-3 text-muted-foreground justify-center md:justify-start">
-                <Mail className="w-5 h-5 text-primary" />
+              <div className="flex items-center gap-3 text-zinc-400 justify-center md:justify-start">
+                <Mail className="w-5 h-5 text-amber-400" />
                 <a
                   href="mailto:kimonsmirlianos@gmail.com"
                   className="hover:underline break-all"
@@ -46,8 +46,8 @@ const Footer = () => {
                   {t("footer.email")}
                 </a>
               </div>
-              <div className="flex items-center gap-3 text-muted-foreground justify-center md:justify-start">
-                <MapPin className="w-5 h-5 text-primary" />
+              <div className="flex items-center gap-3 text-zinc-400 justify-center md:justify-start">
+                <MapPin className="w-5 h-5 text-amber-400" />
                 <a
                   href="https://maps.app.goo.gl/spdExjQ9h5NxUgze8"
                   target="_blank"
@@ -60,7 +60,7 @@ const Footer = () => {
               <div className="flex items-center gap-3 text-muted-foreground justify-center md:justify-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5 text-primary"
+                  className="w-5 h-5 text-amber-400"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >

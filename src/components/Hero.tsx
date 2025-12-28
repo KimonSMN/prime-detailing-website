@@ -10,11 +10,11 @@ const Hero = () => {
       className="relative h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden "
       aria-label={t("hero.sectionLabel", "Prime Detailing hero")}
     >
-      {/* LCP Image as real <img> for SEO/perf */}
+      {/* Background */}
       <div className="absolute inset-0 -z-10">
-        {/* Brand gradient overlay */}
+        {/* Subtle amber-tinted overlay */}
         <div
-          className="absolute inset-0 bg-hero-gradient opacity-80"
+          className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-950/90 to-zinc-900"
           aria-hidden="true"
         />
       </div>
@@ -24,7 +24,7 @@ const Hero = () => {
         {/* ⭐ UPDATED TITLE WITH SANTA HAT ⭐ */}
         <h1 className="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight">
           {/* Prime with Christmas Hat */}
-          <span className="text-foreground relative inline-block">
+          <span className="text-zinc-100 relative inline-block ">
             {/* P with hat */}
             <span className="relative inline-block christmas:hat-wrapper">
               P
@@ -52,33 +52,35 @@ const Hero = () => {
               />
             </span>
 
-            {/* Rest of the word */}
+            {/* "Prime" title */}
             {t("hero.title.prime").slice(1)}
           </span>
 
-          {/* Detailing stays the same */}
-          <span className="bg-gold-gradient bg-clip-text text-transparent ml-3">
+          {/*  "Detailing" title  */}
+          <span className="text-amber-400 ml-3">
             {t("hero.title.detailing")}
           </span>
         </h1>
 
-        <p className="text-xl md:text-2xl font-semibold mb-6">
+        <p className="text-xl md:text-2xl text-zinc-100 font-semibold mb-6">
           {t("hero.h1", "Car Detailing in Cholargos")}
         </p>
 
-        <p className="text-lg md:text-2xl text-muted-foreground mb-8 leading-relaxed max-w-2xl mx-auto">
+        <p className="text-lg md:text-2xl text-zinc-400 mb-10 leading-relaxed max-w-2xl mx-auto">
           {t(
             "hero.tagline",
             "Transform your vehicle with premium detailing — paint correction, ceramic coating, and deep interior care."
           )}
         </p>
 
+        {/* CTAs */}
+
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
           <Button
             asChild
             variant="hero"
             size="lg"
-            className="text-lg px-8 py-6 h-auto"
+            className="text-lg px-8 py-6 h-auto hover:bg-amber-300 bg-amber-400 text-black"
           >
             <Link
               to="/services"
@@ -93,9 +95,14 @@ const Hero = () => {
 
           <Button
             asChild
-            variant="premium"
+            variant="outline"
             size="lg"
-            className="text-lg px-8 py-6 h-auto"
+            className="
+              border-zinc-700 text-zinc-200
+              hover:bg-zinc-800 
+              hover:text-zinc-200
+              px-8 py-6 h-auto text-lg
+            "
           >
             <Link
               to="/booking"
@@ -112,11 +119,15 @@ const Hero = () => {
 
       {/* Scroll Indicator — optional on landing */}
       <div
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce"
+        className="
+          hidden md:block
+          absolute bottom-6 left-1/2 -translate-x-1/2
+          animate-bounce
+        "
         aria-hidden="true"
       >
-        <div className="w-6 h-10 border-2 rounded-full flex justify-center border-[#99CCFF]">
-          <div className="w-1 h-3 rounded-full mt-2 animate-pulse bg-[#99CCFF]"></div>
+        <div className="w-6 h-10 border-2 rounded-full flex justify-center border-amber-400">
+          <div className="w-1 h-3 rounded-full mt-2 animate-pulse bg-amber-400"></div>
         </div>
       </div>
 

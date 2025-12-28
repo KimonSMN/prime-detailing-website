@@ -63,7 +63,7 @@ const GoogleReviewsEmbed = ({ embedSrc, reviewsLink }: Props) => {
               href={reviewsLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border bg-primary px-5 py-3 text-primary-foreground font-medium hover:opacity-95"
+              className="inline-flex items-center gap-2 rounded-xl border bg-amber-400 text-black px-5 py-3 font-medium hover:opacity-95"
             >
               {t("reviews.cta", "Read all reviews on Google")}
               <ExternalLink className="h-4 w-4" aria-hidden="true" />

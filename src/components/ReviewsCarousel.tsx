@@ -96,7 +96,7 @@ const ReviewsCarousel = () => {
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
             {t("reviews.heading", "What Clients Say on Google")}
           </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 text-sm text-zinc-400">
             {t("reviews.subheading", "Verified feedback from real customers")}
           </p>
         </div>
@@ -133,7 +133,7 @@ const ReviewsCarousel = () => {
                     href={r.authorUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-block text-sm text-primary underline"
+                    className="mt-3 inline-block text-sm text-zinc-400 underline"
                   >
                     {t("reviews.viewOnGoogle", "View on Google")}
                   </a>
@@ -143,7 +143,7 @@ const ReviewsCarousel = () => {
           </ul>
         </div>
 
-        <p className="mt-4 text-center text-xs text-muted-foreground">
+        <p className="mt-4 text-center text-xs text-zinc-400">
           {t(
             "reviews.attribution",
             "These reviews are taken from our Google Business Profile"

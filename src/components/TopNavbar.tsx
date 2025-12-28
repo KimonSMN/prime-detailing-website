@@ -9,7 +9,7 @@ const TopNavbar = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b border-border">
-      <div className="mr-8 mx-auto flex items-center justify-end gap-6 px-4 py-3 md:py-4">
+      <div className="mx-auto flex items-center justify-end gap-6 px-4 py-3 md:py-4">
         {/* Desktop menu */}
         <nav className="hidden md:flex items-center gap-8">
           <NavLink
@@ -17,7 +17,7 @@ const TopNavbar = () => {
             className={({ isActive }) =>
               `text-base font-medium ${
                 isActive
-                  ? "text-primary"
+                  ? "text-amber-400"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
@@ -30,7 +30,7 @@ const TopNavbar = () => {
             className={({ isActive }) =>
               `text-base font-medium ${
                 isActive
-                  ? "text-primary"
+                  ? "text-amber-400"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
@@ -43,7 +43,7 @@ const TopNavbar = () => {
             className={({ isActive }) =>
               `text-base font-medium ${
                 isActive
-                  ? "text-primary"
+                  ? "text-amber-400"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
@@ -58,7 +58,15 @@ const TopNavbar = () => {
 
           <Link
             to="/booking"
-            className="rounded-full bg-primary text-primary-foreground px-5 py-2 text-base font-semibold hover:opacity-90 transition"
+            className="
+              rounded-full
+              bg-amber-400
+              text-black
+              px-5 py-2
+              text-base font-semibold
+              hover:bg-amber-300
+              transition
+            "
           >
             Book an Appointment
           </Link>
@@ -75,7 +83,7 @@ const TopNavbar = () => {
         </button>
       </div>
 
-      {/* Mobile dropdown (floating, right-aligned) */}
+      {/* Mobile dropdown */}
       {open && (
         <div className="absolute right-4 mt-2 w-56 rounded-lg border border-border bg-background shadow-lg md:hidden">
           {/* Language selector row */}
@@ -88,7 +96,7 @@ const TopNavbar = () => {
             <NavLink
               to="/"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
             >
               Home
             </NavLink>
@@ -96,16 +104,15 @@ const TopNavbar = () => {
             <NavLink
               to="/services"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
             >
               Services
             </NavLink>
 
-            {/* NEW: Gallery on mobile */}
             <NavLink
               to="/gallery"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-primary"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
             >
               Gallery
             </NavLink>
@@ -113,7 +120,16 @@ const TopNavbar = () => {
             <NavLink
               to="/booking"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 rounded-md bg-primary text-primary-foreground text-base font-semibold hover:opacity-90 text-right"
+              className="
+                block px-3 py-2
+                rounded-md
+                bg-amber-400
+                text-black
+                text-base font-semibold
+                hover:bg-amber-300
+              
+                text-center
+              "
             >
               Book an Appointment
             </NavLink>

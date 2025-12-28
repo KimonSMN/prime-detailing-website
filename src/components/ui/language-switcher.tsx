@@ -64,7 +64,7 @@ export function LanguageSwitcher() {
       <div className="relative flex items-center gap-1 rounded-full bg-background/70 backdrop-blur px-1 py-1 border border-border shadow-sm">
         {/* Animated pill */}
         <div
-          className={`absolute top-1 bottom-1 w-[50%] rounded-full bg-primary/10 transition-all duration-300 ${
+          className={`absolute top-1 bottom-1 w-[50%] rounded-full bg-zinc-200/10 transition-all duration-300 ${
             isEL ? "right-1" : "left-1"
           }`}
           aria-hidden="true"
@@ -73,7 +73,9 @@ export function LanguageSwitcher() {
           type="button"
           onClick={() => setLang("en")}
           className={`relative z-10 flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
-            !isEL ? "text-primary" : "text-foreground/70 hover:text-foreground"
+            !isEL
+              ? "text-amber-400"
+              : "text-foreground/70 hover:text-foreground"
           }`}
           aria-pressed={!isEL}
         >
@@ -84,7 +86,7 @@ export function LanguageSwitcher() {
           type="button"
           onClick={() => setLang("el")}
           className={`relative z-10 flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
-            isEL ? "text-primary" : "text-foreground/70 hover:text-foreground"
+            isEL ? "text-amber-400" : "text-foreground/70 hover:text-foreground"
           }`}
           aria-pressed={isEL}
         >

@@ -1,26 +1,32 @@
 import ServiceCard from "@/components/ServiceCard";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback } from "react";
 import Footer from "../components/Footer";
 import SeasonalPackage from "@/components/SeasonalPackage";
 import ComparisonTable from "@/components/ComparisonTable";
 import MobileSwipeComparison from "@/components/MobileSwipeComparison";
+import { useTranslation } from "react-i18next";
 
 // ------------------ Component ------------------ //
 const ServicesNew = () => {
-  const scrollToComparison = () => {
+  const { t } = useTranslation();
+
+  const scrollToComparison = useCallback(() => {
     document
       .getElementById("comparison-table")
       ?.scrollIntoView({ behavior: "smooth" });
-  };
+  }, []);
 
   return (
     <section id="services" className="min-h-screen flex flex-col">
       <div className="flex-grow py-20 px-4 max-w-6xl mx-auto">
         {/* Header */}
         <div className="max-w-6xl mx-auto mb-14 text-center">
-          <h1 className="text-4xl font-bold mb-4">Detailing Packages</h1>
-          <p className="text-zinc-400">Clear pricing. Honest work.</p>
+          <h1 className="text-4xl font-bold mb-4">
+            {t("servicesNew.heading")}
+          </h1>
+          <p className="text-zinc-400">{t("servicesNew.subheading")}</p>
         </div>
+
         {/* Packages Grid */}
         <div
           className="
@@ -33,56 +39,31 @@ const ServicesNew = () => {
             mx-auto
           "
         >
-          {" "}
           {/* Bronze */}
           <ServiceCard
-            title="Maintenance Wash"
-            price="From 30$"
-            duration="~2h"
+            title={t("servicesNew.cards.maintenance.title")}
+            price={t("servicesNew.cards.maintenance.price")}
+            duration={t("servicesNew.cards.maintenance.duration")}
             onMoreDetails={scrollToComparison}
-            // features={[
-            //   "Contactless pre-wash & hand wash",
-            //   "Wheel faces & tires cleaned and dressed",
-            //   "Glass cleaning",
-            //   "Quick interior wipe-down & floor vacuum",
-            // ]}
-            // exclusions={[
-            //   "No tar / sap removal",
-            //   "No fabric extraction",
-            //   "No specialized carpet cleaning",
-            // ]}
           />
+
           {/* Silver */}
           <ServiceCard
-            title="Full Exterior & Interior Detail"
-            price="From 50$"
-            duration="~4h"
+            title={t("servicesNew.cards.fullDetail.title")}
+            price={t("servicesNew.cards.fullDetail.price")}
+            duration={t("servicesNew.cards.fullDetail.duration")}
             onMoreDetails={scrollToComparison}
-            // features={[
-            //   "Everything in Bronze",
-            //   "Deep wheel & barrel cleaning",
-            //   "Tar / sap removal",
-            //   "Full vacuum & carpet deep cleaning",
-            //   "Interior shampoo & surface cleaning",
-            //   "Door jambs & trunk crevices cleaning",
-            //   "Leather cleaning",
-            // ]}
           />
+
           {/* Gold */}
           <ServiceCard
-            title="Ultimate Detail"
-            price="From 60$"
-            duration="~5h"
+            title={t("servicesNew.cards.ultimate.title")}
+            price={t("servicesNew.cards.ultimate.price")}
+            duration={t("servicesNew.cards.ultimate.duration")}
             onMoreDetails={scrollToComparison}
-            // features={[
-            //   "Everything in Silver",
-            //   "Leather Conditioning (Koch Leather-Star)",
-            //   "Exterior plastics protection (Koch PSS)",
-            //   "Interior plastics protection (Koch Top-Star)",
-            //   "Protection wax for the Exterior (Koch PW)",
-            // ]}
           />
         </div>
+
         {/* Seasonal Package */}
         <div>
           <SeasonalPackage />
@@ -100,8 +81,10 @@ const ServicesNew = () => {
           </div>
         </div>
       </div>
+
       <Footer />
     </section>
   );
 };
+
 export default ServicesNew;

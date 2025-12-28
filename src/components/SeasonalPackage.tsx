@@ -26,9 +26,9 @@ function getSeasonalPackage(): SeasonalPackage {
         "The Winter Package focuses on water repellency, safety, and fast protection " +
         "against harsh conditions.",
       items: [
-        "Full Exterior & Interior Detailing (50$ value)",
-        "FREE Rain-repellent on windshield (20$ value)",
-        "FREE Spray Sealant (20$ value)",
+        "Full Exterior & Interior Detailing (50€ value)",
+        "FREE Rain-repellent on windshield (20€ value)",
+        "FREE Spray Sealant (20€ value)",
       ],
     };
   }
@@ -43,9 +43,9 @@ function getSeasonalPackage(): SeasonalPackage {
         "After winter, your paint is loaded with iron particles, salt residue, and road contamination. " +
         "This package is a deep exterior reset that prepares the car for the sunny months ahead.",
       items: [
-        "Full Exterior & Interior Detailing (50$ value)",
-        "Iron / Fallout Removal (20$ value)",
-        "Protection Wax – Koch PW (20$ value)",
+        "Full Exterior & Interior Detailing (50€ value)",
+        "Iron / Fallout Removal (20€ value)",
+        "Protection Wax – Koch PW (20€ value)",
       ],
     };
   }
@@ -61,10 +61,10 @@ function getSeasonalPackage(): SeasonalPackage {
         "This package focuses on UV protection and keeping the car looking newer " +
         "during peak exposure.",
       items: [
-        "Full Exterior & Interior Detailing (50$ value)",
-        "Exterior Plastics UV Protection (10$ value)",
-        "Interior Plastics UV Protection (10$ value)",
-        "Protection Wax – Koch PW (20$ value)",
+        "Full Exterior & Interior Detailing (50€ value)",
+        "Exterior Plastics UV Protection (10€ value)",
+        "Interior Plastics UV Protection (10€ value)",
+        "Protection Wax – Koch PW (20€ value)",
       ],
     };
   }
@@ -79,10 +79,10 @@ function getSeasonalPackage(): SeasonalPackage {
       "Autumn is the perfect moment to deep-clean the interior and re-apply protection " +
       "before bad weather returns.",
     items: [
-      "Full Exterior & Interior Detailing (50$ value)",
+      "Full Exterior & Interior Detailing (50€ value)",
       "Deep Fabric Seat Cleaning (Wet-Vac)",
-      "FREE Rain-repellent on windshield (20$ value)",
-      "Spray Sealant (S002) (20$ value)",
+      "FREE Rain-repellent on windshield (20€ value)",
+      "Spray Sealant (S002) (20€ value)",
     ],
   };
 }
@@ -151,8 +151,8 @@ export default function SeasonalPackage() {
           </p>
           <p className="text-sm text-zinc-400">
             3 Full Exterior & Interior Details normally cost{" "}
-            <span className="line-through">$150+</span>. This package is{" "}
-            <b className="text-amber-400">${pkg.price}</b> and includes seasonal
+            <span className="line-through">150€+</span>. This package is{" "}
+            <b className="text-amber-400">{pkg.price}€</b> and includes seasonal
             protection services.
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function SeasonalPackage() {
         >
           {" "}
           <div className="text-3xl font-bold text-white text-center">
-            ${pkg.price}
+            {pkg.price}€
             <span className="ml-2 text-sm font-normal text-zinc-400 ">
               one-time payment
             </span>

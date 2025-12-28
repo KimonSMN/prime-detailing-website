@@ -356,7 +356,27 @@
       }
     }
   },
-
+  "servicesNew": {
+    "heading": "Detailing Packages",
+    "subheading": "Clear pricing. Honest work.",
+    "cards": {
+      "maintenance": {
+        "title": "Πλύσιμο Συντήρησης",
+        "price": "Απο 30€",
+        "duration": "~2h"
+      },
+      "fullDetail": {
+        "title": "Full Exterior & Interior Detail",
+        "price": "Απο 50€",
+        "duration": "~4h"
+      },
+      "ultimate": {
+        "title": "Ultimate Detail",
+        "price": "Απο 60€",
+        "duration": "~5h"
+      }
+    }
+  },
   "services.extras.title": "Έξτρα επιλογές",
   "services.extras.subtitle": "Ολοκληρώστε το Detail σας με έξτρα που αποκαθιστούν και βελτιώνουν την εμφάνιση του αυτοκινήτου σας."
 }

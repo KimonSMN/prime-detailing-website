@@ -350,7 +350,27 @@
       }
     }
   },
-
+  "servicesNew": {
+    "heading": "Detailing Packages",
+    "subheading": "Clear pricing. Honest work.",
+    "cards": {
+      "maintenance": {
+        "title": "Maintenance Wash",
+        "price": "From 30€",
+        "duration": "~2h"
+      },
+      "fullDetail": {
+        "title": "Full Exterior & Interior Detail",
+        "price": "From 50€",
+        "duration": "~4h"
+      },
+      "ultimate": {
+        "title": "Ultimate Detail",
+        "price": "From 60€",
+        "duration": "~5h"
+      }
+    }
+  },
   "services.extras.title": "Add-ons",
   "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas."
 }

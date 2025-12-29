@@ -263,13 +263,9 @@
       "description": "Address, phone, hours. Book your detailing appointment online."
     }
   },
-  "seo": {
-    "booking": {
-      "title": "Book Appointment | Prime Detailing",
-      "description": "Schedule your professional car detailing service today."
-    }
-  },
   "booking": {
+    "title": "Book Appointment | Prime Detailing",
+    "description": "Schedule your professional car detailing service today.",
     "steps": {
       "package": {
         "title": "Choose package",

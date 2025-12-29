@@ -69,9 +69,12 @@ const ServicesNew = () => {
           <SeasonalPackage />
         </div>
 
-        <div id="comparison-table" className="mt-16">
+        <div id="comparison-table" className="mt-16 scroll-mt-24">
           {/* Mobile */}
           <div className="md:hidden">
+            <div className="text-center text-xs text-zinc-200">
+              Swipe → to compare packages
+            </div>
             <MobileSwipeComparison />
           </div>
 

@@ -24,15 +24,10 @@ const groups: FeatureGroup[] = [
         full_detail: true,
         ultimate: true,
       },
+
       {
         label: "Wheel face cleaning & tire dressing",
         maintenance: true,
-        full_detail: true,
-        ultimate: true,
-      },
-      {
-        label: "Wheel barrel deep cleaning",
-        maintenance: false,
         full_detail: true,
         ultimate: true,
       },
@@ -43,13 +38,19 @@ const groups: FeatureGroup[] = [
         ultimate: true,
       },
       {
-        label: "Exterior protection wax (Koch PW)",
+        label: "Wheel barrel deep cleaning",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Exterior plastic protection (Koch PSS)",
+        label: "Exterior protection wax",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
+      {
+        label: "Exterior plastic protection",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -60,7 +61,7 @@ const groups: FeatureGroup[] = [
     title: "Interior Cleaning",
     rows: [
       {
-        label: "Interior vacuum & quick wipe-down",
+        label: "Interior vacuum & wipe-down",
         maintenance: true,
         full_detail: true,
         ultimate: true,
@@ -72,19 +73,19 @@ const groups: FeatureGroup[] = [
         ultimate: true,
       },
       {
-        label: "Full vacuum & carpet cleaning (stubborn dirt)",
+        label: "Full vacuum & carpet cleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Interior surface shampooing & cleaning",
+        label: "Interior surface shampooing",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Door jambs & trunk crevice cleaning",
+        label: "Door jambs & trunk cleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
@@ -96,19 +97,19 @@ const groups: FeatureGroup[] = [
         ultimate: true,
       },
       {
-        label: "Leather conditioning (Koch Leather-Star)",
+        label: "Leather conditioning",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Interior plastic protection (Koch Top-Star)",
+        label: "Interior plastic protection",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Fabric seat deep extraction (wet-vac)",
+        label: "Fabric seat deep extraction",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -155,7 +156,7 @@ export default function MobileSwipeComparison() {
   const checkCell = `px-3 ${ROW_HEIGHT} ${BORDER} flex items-center justify-center`;
 
   return (
-    <div className="md:hidden mt-10 border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/50">
+    <div className="md:hidden mt-2 border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/50">
       {/* Header */}
       <div className="grid grid-cols-[1fr_90px_1fr] border-b border-zinc-800 text-xs font-semibold">
         <div className="p-3 text-zinc-400">Feature</div>
@@ -233,10 +234,6 @@ export default function MobileSwipeComparison() {
             ))}
           </div>
         </div>
-      </div>
-
-      <div className="text-center text-xs text-zinc-500 py-2">
-        Swipe → to compare packages
       </div>
     </div>
   );

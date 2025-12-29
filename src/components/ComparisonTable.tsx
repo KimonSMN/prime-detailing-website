@@ -22,15 +22,10 @@ const groups: FeatureGroup[] = [
         full_detail: true,
         ultimate: true,
       },
+
       {
-        label: "Wheel face cleaning",
+        label: "Wheel face cleaning & tire dressing",
         maintenance: true,
-        full_detail: true,
-        ultimate: true,
-      },
-      {
-        label: "Wheel barrel cleaning",
-        maintenance: false,
         full_detail: true,
         ultimate: true,
       },
@@ -40,39 +35,57 @@ const groups: FeatureGroup[] = [
         full_detail: true,
         ultimate: true,
       },
+      {
+        label: "Wheel barrel deep cleaning",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
     ],
   },
   {
     title: "Interior Cleaning",
     rows: [
       {
-        label: "Interior vacuum",
+        label: "Interior vacuum & wipe-down",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Interior surface cleaning",
+        label: "Glass cleaning",
+        maintenance: true,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        label: "Full vacuum & carpet cleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Interior shampoo",
+        label: "Interior surface shampooing",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Fabric extraction",
+        label: "Door jambs & trunk cleaning",
         maintenance: false,
-        full_detail: false,
+        full_detail: true,
         ultimate: true,
       },
       {
         label: "Leather cleaning",
         maintenance: false,
         full_detail: true,
+        ultimate: true,
+      },
+      {
+        label: "Fabric seat deep extraction",
+        maintenance: false,
+        full_detail: false,
         ultimate: true,
       },
     ],
@@ -88,6 +101,12 @@ const groups: FeatureGroup[] = [
       },
       {
         label: "Interior plastics protection",
+        maintenance: false,
+        full_detail: false,
+        ultimate: true,
+      },
+      {
+        label: "Exterior plastics protection",
         maintenance: false,
         full_detail: false,
         ultimate: true,

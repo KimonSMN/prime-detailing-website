@@ -266,13 +266,9 @@
     }
   },
 
-  "seo": {
-    "booking": {
-      "title": "Κλείστε Ραντεβού | Prime Detailing",
-      "description": "Προγραμματίστε σήμερα την επαγγελματική υπηρεσία car detailing σας."
-    }
-  },
   "booking": {
+    "title": "Κλείστε Ραντεβού | Prime Detailing",
+    "description": "Προγραμματίστε σήμερα την επαγγελματική υπηρεσία car detailing σας.",
     "steps": {
       "package": {
         "title": "Επιλέξτε πακέτο",

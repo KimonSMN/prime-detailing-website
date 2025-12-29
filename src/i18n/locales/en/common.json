@@ -371,6 +371,63 @@
       }
     }
   },
+  "seasonalPackage": {
+    "badge": "SEASONAL · LIMITED",
+    "whatYouGet": "What you get - {{count}}× per season",
+    "offerEnds": "Offer ends in",
+    "price": {
+      "oneTime": "one-time payment"
+    },
+    "value": {
+      "title": "Why this package is worth it",
+      "desc": "{{count}} Full Exterior & Interior Details normally cost <s>{{normalPrice}}</s>. This package is <b>{{packagePrice}}</b> and includes seasonal protection services."
+    },
+    "rules": "* One-time payment. Includes <b>{{tickets}} service tickets</b>. Only <b>{{perMonth}} ticket</b> may be redeemed per month. Tickets are valid <b>only during the current season</b> and expire when the season ends.",
+    "packages": {
+      "winter": {
+        "name": "Winter Protection Package",
+        "tagline": "See better. Stay protected. Less cleaning between washes.",
+        "description": "Cold weather brings constant moisture, dirty roads, and reduced visibility. The Winter Package focuses on water repellency, safety, and fast protection against harsh conditions.",
+        "items": [
+          "Full Exterior & Interior Detailing (50€ value)",
+          "FREE Rain-repellent on windshield (20€ value)",
+          "FREE Spray Sealant (20€ value)"
+        ]
+      },
+      "spring": {
+        "name": "Spring Decontamination Package",
+        "tagline": "Remove winter damage. Start the season clean.",
+        "description": "After winter, your paint is loaded with iron particles, salt residue, and road contamination. This package is a deep exterior reset that prepares the car for the sunny months ahead.",
+        "items": [
+          "Full Exterior & Interior Detailing (50€ value)",
+          "Iron / Fallout Removal (20€ value)",
+          "Protection Wax – Koch PW (20€ value)"
+        ]
+      },
+      "summer": {
+        "name": "Summer UV Shield Package",
+        "tagline": "Protect your interior from sun damage and fading.",
+        "description": "Summer sun is brutal on plastics, dashboards, and trim. This package focuses on UV protection and keeping the car looking newer during peak exposure.",
+        "items": [
+          "Full Exterior & Interior Detailing (50€ value)",
+          "Exterior Plastics UV Protection (10€ value)",
+          "Interior Plastics UV Protection (10€ value)",
+          "Protection Wax – Koch PW (20€ value)"
+        ]
+      },
+      "autumn": {
+        "name": "Autumn Reset Package",
+        "tagline": "Clean the inside. Prepare for winter.",
+        "description": "Summer leaves behind salt, sweat, sand, and fabric stains. Autumn is the perfect moment to deep-clean the interior and re-apply protection before bad weather returns.",
+        "items": [
+          "Full Exterior & Interior Detailing (50€ value)",
+          "Deep Fabric Seat Cleaning (Wet-Vac)",
+          "FREE Rain-repellent on windshield (20€ value)",
+          "Spray Sealant (S002) (20€ value)"
+        ]
+      }
+    }
+  },
   "services.extras.title": "Add-ons",
   "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas."
 }

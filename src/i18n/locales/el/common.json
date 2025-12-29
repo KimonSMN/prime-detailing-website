@@ -377,6 +377,63 @@
       }
     }
   },
+  "seasonalPackage": {
+    "badge": "ΕΠΟΧΙΑΚΟ · ΠΕΡΙΟΡΙΣΜΕΝΟ",
+    "whatYouGet": "Τι κερδίζετε - {{count}}× ανά σεζόν",
+    "offerEnds": "Η προσφορά λήγει σε",
+    "price": {
+      "oneTime": "one-time payment"
+    },
+    "value": {
+      "title": "Γιατί αξίζει",
+      "desc": "{{count}} Full Exterior & Interior Details συνήθως κοστίζουν <s>{{normalPrice}}</s>. Αυτό το πακέτο είναι <b>{{packagePrice}}</b> και περιλαμβάνει έξτρα εποχιακές υπηρεσίες προστασίας."
+    },
+    "rules": "*One-time payment. Περιλαμβάνει <b>{{tickets}} service tickets</b>. Επιτρέπεται μόνο <b>{{perMonth}} ticket</b> ανά μήνα. Τα tickets ισχύουν <b>μόνο για την τρέχουσα σεζόν</b> και λήγουν με το τέλος της.",
+    "packages": {
+      "winter": {
+        "name": "Winter Protection Package",
+        "tagline": "Δείτε καλύτερα. Μείνετε προστατευμένοι. Λιγότερη βρωμιά ανάμεσα στα πλυσίματα.",
+        "description": "Το κρύο φέρνει υγρασία, βρωμιά στους δρόμους και μειωμένη ορατότητα. Το Winter Package εστιάζει στην υδροφοβικότητα, την ασφάλεια και την προστασία.",
+        "items": [
+          "Full Exterior & Interior Detailing (αξία 50€)",
+          "ΔΩΡΕΑΝ Rain-repellent στο παρμπρίζ (αξία 20€)",
+          "ΔΩΡΕΑΝ Spray Sealant (αξία 20€)"
+        ]
+      },
+      "spring": {
+        "name": "Spring Decontamination Package",
+        "tagline": "Αφαίρεση χειμερινής φθοράς. Ξεκινήστε τη σεζόν καθαρά.",
+        "description": "Μετά τον χειμώνα, η βαφή γεμίζει σιδηρούχα σωματίδια, άλατα και ρύπους. Αυτό το πακέτο είναι ένα βαθύ exterior reset πριν τους ηλιόλουστους μήνες.",
+        "items": [
+          "Full Exterior & Interior Detailing (αξία 50€)",
+          "Iron / Fallout Removal (αξία 20€)",
+          "Protection Wax – Koch PW (αξία 20€)"
+        ]
+      },
+      "summer": {
+        "name": "Summer UV Shield Package",
+        "tagline": "Προστατέψτε το εσωτερικό από ήλιο, ξεθώριασμα και φθορά.",
+        "description": "Ο καλοκαιρινός ήλιος ταλαιπωρεί πλαστικά, ταμπλό και trims. Το πακέτο εστιάζει σε UV προστασία και διατήρηση «σαν καινούργιο» σε περίοδο έντονης έκθεσης.",
+        "items": [
+          "Full Exterior & Interior Detailing (αξία 50€)",
+          "Exterior Plastics UV Protection (αξία 10€)",
+          "Interior Plastics UV Protection (αξία 10€)",
+          "Protection Wax – Koch PW (αξία 20€)"
+        ]
+      },
+      "autumn": {
+        "name": "Autumn Reset Package",
+        "tagline": "Καθάρισμα μέσα. Προετοιμασία για χειμώνα.",
+        "description": "Το καλοκαίρι αφήνει αλάτι, ιδρώτα, άμμο και λεκέδες. Το φθινόπωρο είναι ιδανικό για βαθύ καθαρισμό εσωτερικού και επαναφορά προστασίας πριν τον κακό καιρό.",
+        "items": [
+          "Full Exterior & Interior Detailing (αξία 50€)",
+          "Βαθύς καθαρισμός υφασμάτινων καθισμάτων (Wet-Vac)",
+          "ΔΩΡΕΑΝ Rain-repellent στο παρμπρίζ (αξία 20€)",
+          "Spray Sealant (S002) (αξία 20€)"
+        ]
+      }
+    }
+  },
   "services.extras.title": "Έξτρα επιλογές",
   "services.extras.subtitle": "Ολοκληρώστε το Detail σας με έξτρα που αποκαθιστούν και βελτιώνουν την εμφάνιση του αυτοκινήτου σας."
 }

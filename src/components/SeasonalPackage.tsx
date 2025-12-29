@@ -1,89 +1,51 @@
 import { useEffect, useMemo, useState } from "react";
+import { Trans, useTranslation } from "react-i18next";
 
-type SeasonalPackage = {
-  name: string;
+type SeasonId = "winter" | "spring" | "summer" | "autumn";
+
+type SeasonalPackageMeta = {
+  id: SeasonId;
   price: number;
   endsAt: Date;
-  items: string[];
-  tagline: string;
-  description: string;
 };
 
-function getSeasonalPackage(): SeasonalPackage {
+function getSeasonalPackageMeta(): SeasonalPackageMeta {
   const now = new Date();
   const month = now.getMonth() + 1;
 
+  // Winter: Dec–Feb (end Mar 1)
   if (month === 12 || month <= 2) {
     const endYear = month === 12 ? now.getFullYear() + 1 : now.getFullYear();
-
     return {
-      name: "Winter Protection Package",
+      id: "winter",
       price: 120,
       endsAt: new Date(endYear, 2, 1),
-      tagline: "See better. Stay protected. Less cleaning between washes.",
-      description:
-        "Cold weather brings constant moisture, dirty roads, and reduced visibility. " +
-        "The Winter Package focuses on water repellency, safety, and fast protection " +
-        "against harsh conditions.",
-      items: [
-        "Full Exterior & Interior Detailing (50€ value)",
-        "FREE Rain-repellent on windshield (20€ value)",
-        "FREE Spray Sealant (20€ value)",
-      ],
     };
   }
 
+  // Spring: Mar–May (end Jun 1)
   if (month >= 3 && month <= 5) {
     return {
-      name: "Spring Decontamination Package",
+      id: "spring",
       price: 120,
       endsAt: new Date(now.getFullYear(), 5, 1),
-      tagline: "Remove winter damage. Start the season clean.",
-      description:
-        "After winter, your paint is loaded with iron particles, salt residue, and road contamination. " +
-        "This package is a deep exterior reset that prepares the car for the sunny months ahead.",
-      items: [
-        "Full Exterior & Interior Detailing (50€ value)",
-        "Iron / Fallout Removal (20€ value)",
-        "Protection Wax – Koch PW (20€ value)",
-      ],
     };
   }
 
+  // Summer: Jun–Aug (end Sep 1)
   if (month >= 6 && month <= 8) {
     return {
-      name: "Summer UV Shield Package",
+      id: "summer",
       price: 120,
       endsAt: new Date(now.getFullYear(), 8, 1),
-      tagline: "Protect your interior from sun damage and fading.",
-      description:
-        "Summer sun is brutal on plastics, dashboards, and trim. " +
-        "This package focuses on UV protection and keeping the car looking newer " +
-        "during peak exposure.",
-      items: [
-        "Full Exterior & Interior Detailing (50€ value)",
-        "Exterior Plastics UV Protection (10€ value)",
-        "Interior Plastics UV Protection (10€ value)",
-        "Protection Wax – Koch PW (20€ value)",
-      ],
     };
   }
 
+  // Autumn: Sep–Nov (end Dec 1)
   return {
-    name: "Autumn Reset Package",
+    id: "autumn",
     price: 120,
     endsAt: new Date(now.getFullYear(), 11, 1),
-    tagline: "Clean the inside. Prepare for winter.",
-    description:
-      "Summer leaves behind salt, sweat, sand, and fabric stains. " +
-      "Autumn is the perfect moment to deep-clean the interior and re-apply protection " +
-      "before bad weather returns.",
-    items: [
-      "Full Exterior & Interior Detailing (50€ value)",
-      "Deep Fabric Seat Cleaning (Wet-Vac)",
-      "FREE Rain-repellent on windshield (20€ value)",
-      "Spray Sealant (S002) (20€ value)",
-    ],
   };
 }
 
@@ -99,20 +61,36 @@ function getCountdown(target: Date) {
 }
 
 export default function SeasonalPackage() {
-  const pkg = useMemo(() => getSeasonalPackage(), []);
-  const [timer, setTimer] = useState(getCountdown(pkg.endsAt));
+  const { t } = useTranslation();
+
+  const meta = useMemo(() => getSeasonalPackageMeta(), []);
+  const [timer, setTimer] = useState(getCountdown(meta.endsAt));
 
   useEffect(() => {
-    const i = setInterval(() => setTimer(getCountdown(pkg.endsAt)), 60_000);
+    const i = setInterval(() => setTimer(getCountdown(meta.endsAt)), 60_000);
     return () => clearInterval(i);
-  }, [pkg.endsAt]);
+  }, [meta.endsAt]);
+
+  const pkg = useMemo(() => {
+    const baseKey = `seasonalPackage.packages.${meta.id}`;
+    const items = t(`${baseKey}.items`, { returnObjects: true }) as string[];
+
+    return {
+      name: t(`${baseKey}.name`),
+      tagline: t(`${baseKey}.tagline`),
+      description: t(`${baseKey}.description`),
+      items: Array.isArray(items) ? items : [],
+    };
+  }, [meta.id, t]);
+
+  const normalPrice = "150€+";
 
   return (
     <div className="max-w-xl sm:max-w-2xl mx-auto mt-20 px-2">
       <div className="relative border border-amber-400/60 bg-gradient-to-br from-amber-500/10 via-zinc-900 to-zinc-900 rounded-xl p-10 md:p-8 overflow-hidden">
         {/* Badge */}
         <span className="absolute top-3 right-3 bg-amber-500 text-black px-2 py-0.5 pt-1 text-xs font-bold rounded tracking-wide">
-          SEASONAL · LIMITED
+          {t("seasonalPackage.badge")}
         </span>
 
         {/* Title */}
@@ -131,10 +109,10 @@ export default function SeasonalPackage() {
         </p>
 
         <p className="text-sm font-semibold text-amber-400 mb-4 text-center">
-          What you get - 3× per season
+          {t("seasonalPackage.whatYouGet", { count: 3 })}
         </p>
 
-        {/* Items – vertical */}
+        {/* Items */}
         <ul className="space-y-2 mb-6">
           {pkg.items.map((item) => (
             <li key={item} className="text-sm text-zinc-200 flex gap-2">
@@ -147,47 +125,51 @@ export default function SeasonalPackage() {
         {/* Value */}
         <div className="bg-zinc-900/60 border border-zinc-700/50 rounded-lg p-4 mb-6">
           <p className="text-sm text-zinc-200 font-medium mb-1">
-            Why this package is worth it
+            {t("seasonalPackage.value.title")}
           </p>
+
           <p className="text-sm text-zinc-400">
-            3 Full Exterior & Interior Details normally cost{" "}
-            <span className="line-through">150€+</span>. This package is{" "}
-            <b className="text-amber-400">{pkg.price}€</b> and includes seasonal
-            protection services.
+            <Trans
+              i18nKey="seasonalPackage.value.desc"
+              values={{
+                count: 3,
+                normalPrice,
+                packagePrice: `${meta.price}€`,
+              }}
+              components={{
+                s: <span className="line-through" />,
+                b: <b className="text-amber-400" />,
+              }}
+            />
           </p>
         </div>
 
         {/* Footer */}
-        <div
-          className="
-            flex flex-col
-            gap-4
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-            mb-6
-          "
-        >
-          {" "}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
           <div className="text-3xl font-bold text-white text-center">
-            {pkg.price}€
-            <span className="ml-2 text-sm font-normal text-zinc-400 ">
-              one-time payment
+            {meta.price}€
+            <span className="ml-2 text-sm font-normal text-zinc-400">
+              {t("seasonalPackage.price.oneTime")}
             </span>
           </div>
+
           <div className="text-center sm:text-right">
-            <p className="text-amber-400 text-md">Offer ends in</p>
+            <p className="text-amber-400 text-md">
+              {t("seasonalPackage.offerEnds")}
+            </p>
             <p className="font-mono text-amber-400 text-xl md:text-xl font-bold tracking-wider">
               {timer.months}M : {timer.days}D : {timer.hours}H
             </p>
           </div>
         </div>
 
-        {/* Rules – bottom */}
+        {/* Rules */}
         <p className="text-xs text-zinc-500 leading-relaxed text-center">
-          * One-time payment. Includes <b>3 service tickets</b>. Only{" "}
-          <b>1 ticket may be redeemed per month</b>. Tickets are valid{" "}
-          <b>only during the current season</b> and expire when the season ends.
+          <Trans
+            i18nKey="seasonalPackage.rules"
+            values={{ tickets: 3, perMonth: 1 }}
+            components={{ b: <b /> }}
+          />
         </p>
       </div>
     </div>

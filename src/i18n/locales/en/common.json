@@ -233,6 +233,10 @@
   },
 
   "seo": {
+    "booking": {
+      "title": "Book Appointment | Prime Detailing",
+      "description": "Schedule your professional car detailing service today."
+    },
     "siteName": "Prime Detailing Cholargos",
     "home": {
       "title": "Prime Detailing | Premium Auto Detailing in Cholargos",

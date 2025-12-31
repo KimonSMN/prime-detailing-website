@@ -235,6 +235,10 @@
   },
 
   "seo": {
+    "booking": {
+      "title": "Κλείστε Ραντεβού | Prime Detailing",
+      "description": "Προγραμματίστε σήμερα την επαγγελματική υπηρεσία car detailing σας."
+    },
     "siteName": "Prime Detailing Χολαργός",
     "home": {
       "title": "Prime Detailing | Εξειδικευμένο Detailing Studio στον Χολαργό",

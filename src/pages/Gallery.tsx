@@ -1,12 +1,18 @@
+import React, { useEffect, useState, useMemo } from "react";
 import {
   ResponsivePicture,
   ManifestItem,
 } from "@/components/ResponsivePicture";
-import React, { useEffect, useState } from "react";
+import ProjectGalleryModal from "@/components/ProjectGalleryModal";
+import { groupProjects, Project } from "@/components/groupProjects";
 
-export default function GalleryPage() {
+const INITIAL_VISIBLE = 4;
+const LOAD_MORE_STEP = 4;
+
+export default function Gallery() {
   const [items, setItems] = useState<ManifestItem[]>([]);
-  const [visible, setVisible] = useState(8);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   useEffect(() => {
     fetch("/gallery-manifest.json")
@@ -15,39 +21,100 @@ export default function GalleryPage() {
       .catch(() => setItems([]));
   }, []);
 
-  const shown = items.slice(0, visible);
+  const projects = useMemo(() => groupProjects(items), [items]);
+
+  const visibleProjects = projects.slice(0, visibleCount);
+  const hasMore = visibleCount < projects.length;
 
   return (
     <section className="px-4 py-14 md:py-20 bg-background">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid gap-5 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
-          {shown.map((item, idx) => (
-            <figure
-              key={item.id}
-              className="relative overflow-hidden rounded-2xl border bg-card"
-            >
-              <div className="relative w-full">
-                <ResponsivePicture
-                  item={item}
-                  eager={idx < 2}
-                  className="h-auto w-full object-cover"
-                />
-              </div>
-            </figure>
-          ))}
+      <div className="max-w-6xl mx-auto grid gap-6 grid-cols-1 md:grid-cols-2">
+        {visibleProjects.map((project, idx) => {
+          const cover = project.items[0];
 
-          {shown.length < items.length && (
-            <div className="text-center mt-8 col-span-full">
-              <button
-                onClick={() => setVisible((v) => v + 8)}
-                className="inline-flex items-center gap-2 rounded-xl border bg-card px-6 py-3 text-sm md:text-base font-semibold hover:bg-card/80"
-              >
-                Show more photos
-              </button>
+          return (
+            <div
+              key={project.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => setActiveProject(project)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  setActiveProject(project);
+                }
+              }}
+              className="
+              
+                group
+                relative
+                overflow-hidden
+                rounded-2xl
+                border
+                bg-card
+                text-left
+                cursor-pointer
+                touch-manipulation
+                focus:outline-none
+                hover:border-amber-400
+                hover:border-2
+                transition
+              "
+            >
+              <ResponsivePicture
+                item={cover}
+                eager={idx < 2}
+                className="w-full h-auto object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 text-white bg-black/60 px-4 py-3 backdrop-blur-sm">
+                <h3 className="text-lg font-bold leading-tight">
+                  {project.title}
+                </h3>
+                <p className="text-sm opacity-80">
+                  {project.items.length} photos
+                </p>
+              </div>
             </div>
-          )}
-        </div>
+          );
+        })}
       </div>
+
+      {/* Load more */}
+      {hasMore && (
+        <div className="mt-12 flex justify-center">
+          <button
+            onClick={() =>
+              setVisibleCount((c) =>
+                Math.min(c + LOAD_MORE_STEP, projects.length)
+              )
+            }
+            className="
+              rounded-xl
+              border
+              border-amber-400/50
+              px-6
+              py-3
+              text-amber-400
+              font-semibold
+              hover:bg-amber-400
+              hover:text-black
+              transition
+            "
+          >
+            Load more
+          </button>
+        </div>
+      )}
+
+      {activeProject && (
+        <ProjectGalleryModal
+          title={activeProject.title}
+          items={activeProject.items}
+          onClose={() => setActiveProject(null)}
+        />
+      )}
     </section>
   );
 }

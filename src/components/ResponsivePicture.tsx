@@ -1,6 +1,7 @@
 import React from "react";
 
 type Variant = { format: "avif" | "webp"; width: number; url: string };
+
 export type ManifestItem = {
   id: string;
   alt: string;
@@ -21,8 +22,9 @@ export function ResponsivePicture({
 }) {
   const avif = item.variants.filter((v) => v.format === "avif");
   const webp = item.variants.filter((v) => v.format === "webp");
-  const fallback =
-    webp[webp.length - 1]?.url ?? avif[avif.length - 1]?.url ?? "";
+
+  // Use SMALLEST as fallback
+  const fallback = webp[0]?.url ?? avif[0]?.url ?? "";
 
   return (
     <picture>
@@ -46,7 +48,6 @@ export function ResponsivePicture({
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "auto"}
         decoding="async"
-        sizes={sizes}
         width={item.original.width}
         height={item.original.height}
         className={className}

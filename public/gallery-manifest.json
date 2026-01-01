@@ -1,28 +1,59 @@
 [
   {
-    "id": "detailing-bmw-ix1-cholargos-1",
-    "alt": "Detailing Bmw Ix1 Cholargos 1",
+    "id": "detailing-bmw-120-1",
+    "alt": "Detailing Bmw 120 1",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 5522871
+      "bytes": 19798876
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-1-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-bmw-120-1-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-1-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-120-1-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-120-1-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-bmw-ix1-cholargos-2",
-    "alt": "Detailing Bmw Ix1 Cholargos 2",
+    "id": "detailing-bmw-120-2",
+    "alt": "Detailing Bmw 120 2",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 15374818
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-120-2-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-120-2-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-120-2-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-bmw-ix1-2",
+    "alt": "Detailing Bmw Ix1 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -31,19 +62,24 @@
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-bmw-ix1-2-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-2-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-ix1-2-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-ix1-2-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-bmw-ix1-cholargos-3",
-    "alt": "Detailing Bmw Ix1 Cholargos 3",
+    "id": "detailing-bmw-ix1-3",
+    "alt": "Detailing Bmw Ix1 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -52,19 +88,24 @@
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-3-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-bmw-ix1-3-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-3-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-ix1-3-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-ix1-3-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-bmw-ix1-cholargos-4",
-    "alt": "Detailing Bmw Ix1 Cholargos 4",
+    "id": "detailing-bmw-ix1-4",
+    "alt": "Detailing Bmw Ix1 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -73,61 +114,232 @@
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-4-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-bmw-ix1-4-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-bmw-ix1-cholargos-4-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-ix1-4-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-ix1-4-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-ford-kuga-cholargos-1",
-    "alt": "Detailing Ford Kuga Cholargos 1",
+    "id": "detailing-bmw-ix1-5",
+    "alt": "Detailing Bmw Ix1 5",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 5219720
+      "bytes": 5522871
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-ford-kuga-cholargos-1-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-bmw-ix1-5-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-ford-kuga-cholargos-1-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-ix1-5-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-ix1-5-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-ford-kuga-cholargos-2",
-    "alt": "Detailing Ford Kuga Cholargos 2",
+    "id": "detailing-bmw-x1-1",
+    "alt": "Detailing Bmw X1 1",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 3913212
+      "bytes": 18572294
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-ford-kuga-cholargos-2-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x1-1-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-ford-kuga-cholargos-2-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x1-1-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x1-1-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-ford-kuga-cholargos-3",
-    "alt": "Detailing Ford Kuga Cholargos 3",
+    "id": "detailing-bmw-x1-2",
+    "alt": "Detailing Bmw X1 2",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16751527
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x1-2-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x1-2-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x1-2-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-bmw-x1-3",
+    "alt": "Detailing Bmw X1 3",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 12931231
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x1-3-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x1-3-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x1-3-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-bmw-x1-4",
+    "alt": "Detailing Bmw X1 4",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16422277
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x1-4-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x1-4-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x1-4-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-bmw-x5-1",
+    "alt": "Detailing Bmw X5 1",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 19027656
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x5-1-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x5-1-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x5-1-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-bmw-x5-2",
+    "alt": "Detailing Bmw X5 2",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18354126
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x5-2-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x5-2-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x5-2-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-bmw-x5-3",
+    "alt": "Detailing Bmw X5 3",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16455755
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 640,
+        "url": "/gallery/detailing-bmw-x5-3-w640.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1280,
+        "url": "/gallery/detailing-bmw-x5-3-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-bmw-x5-3-w1920.webp"
+      }
+    ]
+  },
+  {
+    "id": "detailing-ford-kuga-1",
+    "alt": "Detailing Ford Kuga 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -136,265 +348,304 @@
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-ford-kuga-cholargos-3-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-ford-kuga-1-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-ford-kuga-cholargos-3-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-ford-kuga-1-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-ford-kuga-1-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-opel-mokka-cholargos-1",
-    "alt": "Detailing Opel Mokka Cholargos 1",
+    "id": "detailing-ford-kuga-2",
+    "alt": "Detailing Ford Kuga 2",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 15627166
+      "bytes": 3913212
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-opel-mokka-cholargos-1-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-ford-kuga-2-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-opel-mokka-cholargos-1-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-ford-kuga-2-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-ford-kuga-2-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-opel-mokka-cholargos-2",
-    "alt": "Detailing Opel Mokka Cholargos 2",
+    "id": "detailing-ford-kuga-3",
+    "alt": "Detailing Ford Kuga 3",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 16218185
+      "bytes": 5219720
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-opel-mokka-cholargos-2-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-ford-kuga-3-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-opel-mokka-cholargos-2-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-ford-kuga-3-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-ford-kuga-3-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-opel-mokka-cholargos-3",
-    "alt": "Detailing Opel Mokka Cholargos 3",
+    "id": "detailing-glc-220d-1",
+    "alt": "Detailing Glc 220d 1",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 18148446
+      "bytes": 17732028
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-opel-mokka-cholargos-3-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-1-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-opel-mokka-cholargos-3-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-1-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-1-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-renault-clio-cholargos-1",
-    "alt": "Detailing Renault Clio Cholargos 1",
+    "id": "detailing-glc-220d-2",
+    "alt": "Detailing Glc 220d 2",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 3324334
+      "bytes": 4556829
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-renault-clio-cholargos-1-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-2-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-renault-clio-cholargos-1-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-2-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-2-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-renault-clio-cholargos-2",
-    "alt": "Detailing Renault Clio Cholargos 2",
+    "id": "detailing-glc-220d-3",
+    "alt": "Detailing Glc 220d 3",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 19439332
+      "bytes": 5143036
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-renault-clio-cholargos-2-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-3-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-renault-clio-cholargos-2-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-3-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-3-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-renault-clio-cholargos-3",
-    "alt": "Detailing Renault Clio Cholargos 3",
+    "id": "detailing-glc-220d-4",
+    "alt": "Detailing Glc 220d 4",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 17355352
+      "bytes": 2632726
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-renault-clio-cholargos-3-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-4-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-renault-clio-cholargos-3-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-4-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-4-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-toyota-auris-cholargos-1",
-    "alt": "Detailing Toyota Auris Cholargos 1",
+    "id": "detailing-glc-220d-5",
+    "alt": "Detailing Glc 220d 5",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 16953103
+      "bytes": 2563654
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-toyota-auris-cholargos-1-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-5-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-toyota-auris-cholargos-1-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-5-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-5-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-toyota-auris-cholargos-2",
-    "alt": "Detailing Toyota Auris Cholargos 2",
+    "id": "detailing-glc-220d-6",
+    "alt": "Detailing Glc 220d 6",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 18579879
+      "bytes": 15760967
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-toyota-auris-cholargos-2-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-6-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-toyota-auris-cholargos-2-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-6-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-6-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-toyota-auris-cholargos-3",
-    "alt": "Detailing Toyota Auris Cholargos 3",
+    "id": "detailing-glc-220d-7",
+    "alt": "Detailing Glc 220d 7",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 18805473
+      "bytes": 16070841
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-toyota-auris-cholargos-3-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-glc-220d-7-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-toyota-auris-cholargos-3-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-glc-220d-7-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-glc-220d-7-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-toyota-auris-cholargos-4",
-    "alt": "Detailing Toyota Auris Cholargos 4",
+    "id": "detailing-volvo-xc40-1",
+    "alt": "Detailing Volvo Xc40 1",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 20603949
+      "bytes": 21195140
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-toyota-auris-cholargos-4-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-volvo-xc40-1-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-toyota-auris-cholargos-4-w960.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-volvo-xc40-1-w1280.webp"
+      },
+      {
+        "format": "webp",
+        "width": 1920,
+        "url": "/gallery/detailing-volvo-xc40-1-w1920.webp"
       }
     ]
   },
   {
-    "id": "detailing-toyota-yaris-cholargos-1",
-    "alt": "Detailing Toyota Yaris Cholargos 1",
+    "id": "detailing-volvo-xc40-2",
+    "alt": "Detailing Volvo Xc40 2",
     "original": {
       "width": 3024,
       "height": 4032,
-      "bytes": 4015876
+      "bytes": 17529069
     },
     "variants": [
       {
         "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-toyota-yaris-cholargos-1-w480.webp"
+        "width": 640,
+        "url": "/gallery/detailing-volvo-xc40-2-w640.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-toyota-yaris-cholargos-1-w960.webp"
-      }
-    ]
-  },
-  {
-    "id": "detailing-toyota-yaris-cholargos-2",
-    "alt": "Detailing Toyota Yaris Cholargos 2",
-    "original": {
-      "width": 3024,
-      "height": 4032,
-      "bytes": 3688781
-    },
-    "variants": [
-      {
-        "format": "webp",
-        "width": 480,
-        "url": "/gallery/detailing-toyota-yaris-cholargos-2-w480.webp"
+        "width": 1280,
+        "url": "/gallery/detailing-volvo-xc40-2-w1280.webp"
       },
       {
         "format": "webp",
-        "width": 960,
-        "url": "/gallery/detailing-toyota-yaris-cholargos-2-w960.webp"
+        "width": 1920,
+        "url": "/gallery/detailing-volvo-xc40-2-w1920.webp"
       }
     ]
   }

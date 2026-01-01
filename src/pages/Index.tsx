@@ -112,9 +112,8 @@ const Index = () => {
             as: "image",
             href: "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp",
             imagesrcset:
-              "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp 480w, /gallery/detailing-bmw-ix1-cholargos-2-w960.webp 960w",
-            imagesizes: "(max-width:768px) 100vw, 480px",
-            crossOrigin: "anonymous",
+              "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp 480w",
+            imagesizes: "100vw",
           },
         ]}
       />

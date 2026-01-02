@@ -142,10 +142,10 @@ const Index = () => {
         heading="Featured Projects"
         galleryUrl="/gallery"
         imageIds={[
-          "detailing-bmw-ix1-cholargos-2",
-          "detailing-ford-kuga-cholargos-3",
-          "detailing-renault-clio-cholargos-2",
-          "detailing-opel-mokka-cholargos-3",
+          "detailing-bmw-120-1",
+          "detailing-bmw-ix1-2",
+          "detailing-volvo-xc40-1",
+          "detailing-glc-220d-1",
         ]}
       />
 

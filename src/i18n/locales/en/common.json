@@ -348,26 +348,36 @@
         "title": "Booking failed",
         "desc": "Please try again."
       }
-    }
-  },
-  "servicesNew": {
-    "heading": "Detailing Packages",
-    "subheading": "Clear pricing. Honest work.",
-    "cards": {
-      "maintenance": {
-        "title": "Maintenance Wash",
-        "price": "From 30€",
-        "duration": "~2h"
+    },
+    "minutes": "min",
+    "minutesShort": "m",
+    "hoursShort": "h",
+    "notEnoughRoom": "not enough room",
+
+    "addons": {
+      "empty": "No extras available."
+    },
+
+    "ui": {
+      "protection": {
+        "title": "Protection",
+        "pickOne": "Pick one: wax / sealant or one ceramic coating option.",
+        "selected": "Selected",
+        "ceramic": {
+          "title": "Ceramic Coating",
+          "subtitle": "Choose durability.",
+          "finalNote": "Final price depends on vehicle size and paint condition. Paint correction may be required.",
+          "estimatedTime": "Estimated time: {{time}}",
+          "options": {
+            "ceramicCoating24": "24 months",
+            "ceramicCoating36": "36 months",
+            "ceramicCoating48": "48 months",
+            "ceramicCoating50": "50 months"
+          }
+        }
       },
-      "fullDetail": {
-        "title": "Full Exterior & Interior Detail",
-        "price": "From 50€",
-        "duration": "~4h"
-      },
-      "ultimate": {
-        "title": "Ultimate Detail",
-        "price": "From 60€",
-        "duration": "~5h"
+      "extras": {
+        "title": "Add-ons"
       }
     }
   },
@@ -429,5 +439,93 @@
     }
   },
   "services.extras.title": "Add-ons",
-  "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas."
+  "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas.",
+  "servicesNew": {
+    "book": "Book Now",
+    "details": "More details",
+    "fromPrice": "From {{price}}€",
+    "fromPriceEmpty": "From —",
+    "heading": "Detailing Packages",
+    "subheading": "Clear pricing. Honest work.",
+    "cards": {
+      "maintenance": {
+        "title": "Maintenance Wash",
+        "price": "From 30€",
+        "duration": "~2h"
+      },
+      "fullDetail": {
+        "title": "Full Exterior & Interior Detail",
+        "price": "From 50€",
+        "duration": "~4h"
+      },
+      "ultimate": {
+        "title": "Ultimate Detail",
+        "price": "From 60€",
+        "duration": "~5h"
+      }
+    },
+    "protection": {
+      "heading": "Protection Options",
+      "subheading": "Add wax, sealant, or ceramic coating for better gloss and long-term protection.",
+      "cta": {
+        "addToBooking": "Book now",
+        "addSelectedCeramic": "Book now"
+      },
+      "meta": {
+        "loading": "Loading...",
+        "whatsIncluded": "What’s included",
+        "estimatedTime": "Estimated time: ~{{min}} min",
+        "finalNote": "Final price depends on vehicle size and paint condition. Paint correction may be required for best results."
+      },
+      "ceramic": {
+        "title": "Ceramic Coating",
+        "options": {
+          "m24": "24 months",
+          "m36": "36 months",
+          "m48": "48 months",
+          "m50": "50 months"
+        }
+      },
+      "cards": {
+        "liquidWax": {
+          "description": "Lasts 1 month",
+          "features": [
+            "Hydrophobic properties",
+            "Adds gloss and slick feel",
+            "Quick protection"
+          ]
+        },
+        "spraySealant": {
+          "description": "Lasts 3 months",
+          "features": [
+            "Stronger durability than basic wax",
+            "Better water beading",
+            "Great for daily drivers"
+          ]
+        }
+      }
+    },
+    "addons": {
+      "heading": "Add-ons",
+      "subheading": "Small extras you can add to any booking.",
+      "cta": {
+        "addToBooking": "Book now"
+      },
+      "meta": {
+        "loading": "Loading...",
+        "whatsIncluded": "What’s included",
+        "estimatedTime": "Estimated time: ~{{min}} min"
+      },
+      "cards": {
+        "headlightRestoration": {
+          "description": "Restore clarity and improve night visibility.",
+          "features": ["Restore lens clarity", "UV protection applied"]
+        },
+        "engineBay": {
+          "description": "Degrease, clean and dress plastics.",
+          "features": ["Degrease & rinse", "Dress engine plastics"]
+        }
+      }
+    }
+  }
 }

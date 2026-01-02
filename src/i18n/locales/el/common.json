@@ -354,29 +354,40 @@
         "title": "Αποτυχία κράτησης",
         "desc": "Παρακαλώ δοκιμάστε ξανά."
       }
-    }
-  },
-  "servicesNew": {
-    "heading": "Detailing Packages",
-    "subheading": "Clear pricing. Honest work.",
-    "cards": {
-      "maintenance": {
-        "title": "Πλύσιμο Συντήρησης",
-        "price": "Απο 30€",
-        "duration": "~2h"
+    },
+    "minutes": "λεπτά",
+    "minutesShort": "λ",
+    "hoursShort": "ω",
+    "notEnoughRoom": "δεν υπάρχει αρκετός χρόνος",
+
+    "addons": {
+      "empty": "Δεν υπάρχουν διαθέσιμα extras."
+    },
+
+    "ui": {
+      "protection": {
+        "title": "Προστασία",
+        "pickOne": "Διαλέξτε ένα: κερί / sealant ή μία επιλογή κεραμικής επίστρωσης.",
+        "selected": "Επιλεγμένο",
+        "ceramic": {
+          "title": "Κεραμική Επίστρωση",
+          "subtitle": "Επιλέξτε διάρκεια προστασίας.",
+          "finalNote": "Η τελική τιμή εξαρτάται από το μέγεθος του οχήματος και την κατάσταση της βαφής. Μπορεί να απαιτείται paint correction.",
+          "estimatedTime": "Εκτιμώμενος χρόνος: {{time}}",
+          "options": {
+            "ceramicCoating24": "24 μήνες",
+            "ceramicCoating36": "36 μήνες",
+            "ceramicCoating48": "48 μήνες",
+            "ceramicCoating50": "50 μήνες"
+          }
+        }
       },
-      "fullDetail": {
-        "title": "Full Exterior & Interior Detail",
-        "price": "Απο 50€",
-        "duration": "~4h"
-      },
-      "ultimate": {
-        "title": "Ultimate Detail",
-        "price": "Απο 60€",
-        "duration": "~5h"
+      "extras": {
+        "title": "Έξτρα"
       }
     }
   },
+
   "seasonalPackage": {
     "badge": "ΕΠΟΧΙΑΚΟ · ΠΕΡΙΟΡΙΣΜΕΝΟ",
     "whatYouGet": "Τι κερδίζετε - {{count}}× ανά σεζόν",
@@ -435,5 +446,98 @@
     }
   },
   "services.extras.title": "Έξτρα επιλογές",
-  "services.extras.subtitle": "Ολοκληρώστε το Detail σας με έξτρα που αποκαθιστούν και βελτιώνουν την εμφάνιση του αυτοκινήτου σας."
+  "services.extras.subtitle": "Ολοκληρώστε το Detail σας με έξτρα που αποκαθιστούν και βελτιώνουν την εμφάνιση του αυτοκινήτου σας.",
+
+  "servicesNew": {
+    "book": "Κλείστε Ραντεβού",
+    "details": "Περισσοτέρες Λεπτομέρειες",
+
+    "fromPrice": "Απο {{price}}€",
+    "fromPriceEmpty": "Απο —",
+    "heading": "Detailing Packages",
+    "subheading": "Clear pricing. Honest work.",
+    "cards": {
+      "maintenance": {
+        "title": "Πλύσιμο Συντήρησης",
+        "price": "Απο 30€",
+        "duration": "~2h"
+      },
+      "fullDetail": {
+        "title": "Full Exterior & Interior Detail",
+        "price": "Απο 50€",
+        "duration": "~4h"
+      },
+      "ultimate": {
+        "title": "Ultimate Detail",
+        "price": "Απο 60€",
+        "duration": "~5h"
+      }
+    },
+    "protection": {
+      "heading": "Επιλογές Προστασίας",
+      "subheading": "Προσθέστε κερί, sealant ή κεραμική επίστρωση για περισσότερη γυαλάδα και μακροχρόνια προστασία.",
+      "cta": {
+        "addToBooking": "Κλείστε Ραντεβού",
+        "addSelectedCeramic": "Κλείστε Ραντεβού"
+      },
+      "meta": {
+        "loading": "Φόρτωση...",
+        "whatsIncluded": "Τι περιλαμβάνει",
+        "estimatedTime": "Εκτιμώμενος χρόνος: ~{{min}} λεπτά",
+        "finalNote": "Η τελική τιμή εξαρτάται από το μέγεθος του οχήματος και την κατάσταση της βαφής. Μπορεί να απαιτείται paint correction για το καλύτερο αποτέλεσμα."
+      },
+      "ceramic": {
+        "title": "Κεραμική Επίστρωση",
+        "options": {
+          "m24": "24 μήνες",
+          "m36": "36 μήνες",
+          "m48": "48 μήνες",
+          "m50": "50 μήνες"
+        }
+      },
+      "cards": {
+        "liquidWax": {
+          "description": "Διάρκεια 1 μήνας",
+          "features": [
+            "Υδροφοβικές ιδιότητες",
+            "Προσθέτει γυαλάδα και slick αίσθηση",
+            "Γρήγορη προστασία"
+          ]
+        },
+        "spraySealant": {
+          "description": "Διάρκεια 3 μήνες",
+          "features": [
+            "Μεγαλύτερη αντοχή από βασικό κερί",
+            "Καλύτερο water beading",
+            "Ιδανικό για καθημερινά αυτοκίνητα"
+          ]
+        }
+      }
+    },
+    "addons": {
+      "heading": "Έξτρα",
+      "subheading": "Μικρά extras που μπορείτε να προσθέσετε σε κάθε κράτηση.",
+      "cta": {
+        "addToBooking": "Κλείστε Ραντεβού"
+      },
+      "meta": {
+        "loading": "Φόρτωση...",
+        "whatsIncluded": "Τι περιλαμβάνει",
+        "estimatedTime": "Εκτιμώμενος χρόνος: ~{{min}} λεπτά"
+      },
+      "cards": {
+        "headlightRestoration": {
+          "description": "Επαναφέρετε τη διαύγεια και βελτιώστε την ορατότητα τη νύχτα.",
+          "features": ["Επαναφορά διαύγειας φακού", "Εφαρμογή UV προστασίας"]
+        },
+        "engineBay": {
+          "description": "Απολίπανση, καθαρισμός και περιποίηση πλαστικών.",
+          "features": [
+            "Απολίπανση & ξέβγαλμα",
+            "Περιποίηση πλαστικών μηχανοστασίου"
+          ]
+        }
+      }
+    }
+  }
 }

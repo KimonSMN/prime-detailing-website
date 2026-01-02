@@ -10,7 +10,16 @@ import {
 } from "@/components/ui/popover";
 import { Calendar as DatePicker } from "@/components/ui/calendar";
 import { useToast } from "@/hooks/use-toast";
-import { Calendar as CalendarIcon, Check } from "lucide-react";
+import {
+  Calendar as CalendarIcon,
+  Check,
+  Droplets,
+  Shield,
+  Crown,
+  Lightbulb,
+  Wrench,
+  Sparkles,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet-async";
@@ -52,6 +61,7 @@ type ServiceRow = {
 
 type AddonRow = {
   id: string;
+  slug: string | null;
   name: string;
   base_price: string | number | null;
   duration_min: number | null;
@@ -93,6 +103,81 @@ const Booking = () => {
     new Set()
   );
 
+  // --- Protection / Ceramic / Extras grouping by slug ---
+  const PROTECTION_SLUGS = ["liquidWax", "spraySealant"] as const;
+
+  const CERAMIC_SLUGS = [
+    "ceramicCoating24",
+    "ceramicCoating36",
+    "ceramicCoating48",
+    "ceramicCoating50",
+  ] as const;
+
+  const EXTRA_SLUGS = ["headlightRestoration", "engineBay"] as const;
+
+  const [selectedProtectionSlug, setSelectedProtectionSlug] = useState<
+    string | null
+  >(null);
+  const [selectedCeramicSlug, setSelectedCeramicSlug] = useState<string | null>(
+    null
+  );
+
+  // Map rows for fast lookup
+  const addonBySlug = useMemo(() => {
+    const map = new Map<string, AddonRow>();
+    for (const a of addons) if (a.slug) map.set(a.slug, a);
+    return map;
+  }, [addons]);
+
+  const protectionRows = useMemo(
+    () =>
+      PROTECTION_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
+        Boolean
+      ) as AddonRow[],
+    [addonBySlug]
+  );
+
+  const ceramicRows = useMemo(
+    () =>
+      CERAMIC_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
+        Boolean
+      ) as AddonRow[],
+    [addonBySlug]
+  );
+
+  const extraRows = useMemo(
+    () =>
+      EXTRA_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
+        Boolean
+      ) as AddonRow[],
+    [addonBySlug]
+  );
+
+  const selectSingleBySlug = useCallback(
+    (slug: string) => {
+      const row = addonBySlug.get(slug);
+      if (!row) return;
+
+      setSelectedAddonIds((prev) => {
+        const next = new Set(prev);
+
+        // enforce exclusivity: protection OR ceramic (one ceramic option)
+        for (const s of PROTECTION_SLUGS) {
+          const r = addonBySlug.get(s);
+          if (r) next.delete(r.id);
+        }
+        for (const s of CERAMIC_SLUGS) {
+          const r = addonBySlug.get(s);
+          if (r) next.delete(r.id);
+        }
+
+        next.add(row.id);
+        return next;
+      });
+    },
+    [addonBySlug]
+  );
+
   const [isCalOpen, setIsCalOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -104,7 +189,6 @@ const Booking = () => {
     time: "",
     vehicleInfo: "",
     notes: "",
-    // ADDED: UI fields referenced in the new layout
     vehicleName: "",
     vehicleType: "",
   });
@@ -216,7 +300,7 @@ const Booking = () => {
     (async () => {
       const { data, error } = await supabase
         .from("addon")
-        .select("id,name,base_price,duration_min")
+        .select("id,slug,name,base_price,duration_min")
         .eq("active", true)
         .order("name");
 
@@ -232,9 +316,6 @@ const Booking = () => {
     })();
   }, [toast, t]);
 
-  const handleInputChange = (field: string, value: string) =>
-    setFormData((p) => ({ ...p, [field]: value }));
-
   /* ---------------- availability loader (reusable) ---------------- */
   const loadAvailabilityForDate = useCallback(
     async (yyyyMmDd: string) => {
@@ -245,7 +326,6 @@ const Booking = () => {
 
       const { start, end } = localDayRange(yyyyMmDd);
 
-      // 1) Load bookings for that local day from availability view
       const { data: avail, error: availErr } = await supabase
         .from("booking_availability")
         .select("preferred_at, status, total_minutes")
@@ -267,7 +347,6 @@ const Booking = () => {
         return;
       }
 
-      // 2) Load admin blocks
       const { data: blocks, error: blocksErr } = await supabase
         .from("admin_block")
         .select("start_at, minutes")
@@ -280,7 +359,6 @@ const Booking = () => {
         console.warn("admin_block fetch error:", blocksErr);
       }
 
-      // Build the blocked set (hours) from bookings and blocks
       const blocked = new Set<string>();
 
       function blockRange(startISO: string, minutes: number) {
@@ -298,13 +376,11 @@ const Booking = () => {
         }
       }
 
-      // From bookings (view)
       for (const b of avail ?? []) {
         const mins = Math.max(1, Number(b.total_minutes ?? 0)) || 180;
         blockRange(b.preferred_at, mins);
       }
 
-      // From admin blocks
       for (const blk of blocks ?? []) {
         const mins = Math.max(1, Number(blk.minutes ?? 0));
         blockRange(blk.start_at, mins);
@@ -312,7 +388,6 @@ const Booking = () => {
 
       setUnavailableTimes(blocked);
 
-      // If currently selected time became blocked, clear it
       if (formData.time && blocked.has(formData.time)) {
         setFormData((p) => ({ ...p, time: "" }));
       }
@@ -331,9 +406,9 @@ const Booking = () => {
 
   /* ---------------- overlap check for the current selection ---------------- */
   const wouldOverlap = (startTimeHHmm: string) => {
-    if (!formData.date) return true; // cannot evaluate
+    if (!formData.date) return true;
     const total = totalSelectedMinutes || 0;
-    if (total <= 0) return false; // no duration info, allow
+    if (total <= 0) return false;
 
     const start = localDateTime(formData.date, startTimeHHmm);
     const end = new Date(start.getTime() + total * 60000);
@@ -341,7 +416,6 @@ const Booking = () => {
     const iter = new Date(start);
     iter.setMinutes(0, 0, 0);
 
-    // walk hour-by-hour; if *any* occupied hour is blocked, it overlaps
     while (iter < end) {
       const key = format(iter, "HH:mm");
       if (unavailableTimes.has(key)) return true;
@@ -350,9 +424,56 @@ const Booking = () => {
     return false;
   };
 
+  const onPickProtection = useCallback(
+    (slug: string) => {
+      if (selectedProtectionSlug === slug) {
+        setSelectedProtectionSlug(null);
+        const row = addonBySlug.get(slug);
+        if (row) {
+          setSelectedAddonIds((prev) => {
+            const next = new Set(prev);
+            next.delete(row.id);
+            return next;
+          });
+        }
+        setFormData((p) => ({ ...p, time: "" }));
+        return;
+      }
+
+      setSelectedProtectionSlug(slug);
+      setSelectedCeramicSlug(null);
+      selectSingleBySlug(slug);
+      setFormData((p) => ({ ...p, time: "" }));
+    },
+    [addonBySlug, selectSingleBySlug, selectedProtectionSlug]
+  );
+
+  const onPickCeramic = useCallback(
+    (slug: string) => {
+      if (selectedCeramicSlug === slug) {
+        setSelectedCeramicSlug(null);
+        const row = addonBySlug.get(slug);
+        if (row) {
+          setSelectedAddonIds((prev) => {
+            const next = new Set(prev);
+            next.delete(row.id);
+            return next;
+          });
+        }
+        setFormData((p) => ({ ...p, time: "" }));
+        return;
+      }
+
+      setSelectedCeramicSlug(slug);
+      setSelectedProtectionSlug(null);
+      selectSingleBySlug(slug);
+      setFormData((p) => ({ ...p, time: "" }));
+    },
+    [addonBySlug, selectSingleBySlug, selectedCeramicSlug]
+  );
+
   /* ---------------- submit ---------------- */
   const handleSubmit = async (e?: React.SyntheticEvent) => {
-    // ADDED: allow onClick usage (no <form>) while keeping behavior
     e?.preventDefault?.();
 
     const { name, email, phone, serviceId, date, time } = formData;
@@ -384,7 +505,6 @@ const Booking = () => {
       });
       return;
     }
-    // Check overlap with *current* total selection (service + add-ons)
     if (wouldOverlap(time)) {
       toast({
         title: t("booking.toast.unavailable.title"),
@@ -438,9 +558,10 @@ const Booking = () => {
         notes: "",
         vehicleName: "",
         vehicleType: "",
-        // keep date as-is
       }));
       setSelectedAddonIds(new Set());
+      setSelectedProtectionSlug(null);
+      setSelectedCeramicSlug(null);
     } catch (err: any) {
       toast({
         title: t("booking.toast.fail.title"),
@@ -453,18 +574,20 @@ const Booking = () => {
     }
   };
 
-  /* ============================ UI (ADDED) ============================ */
+  /* ============================ UI ============================ */
 
-  // ADDED: UI style tokens
   const pillBase =
     "rounded-2xl border p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/30";
   const pillIdle = "border-border hover:border-amber-400/40 bg-card";
   const pillActive =
     "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40";
 
-  // ADDED: formatters used by the new layout
   const formatEuro = (val: string | number | null) =>
-    formatPrice(Number(val ?? 0) || 0);
+    new Intl.NumberFormat(i18n.language, {
+      style: "currency",
+      currency: "EUR",
+      maximumFractionDigits: 0,
+    }).format(Number(val ?? 0) || 0);
 
   const fmtHours = (minutes: number | null) => {
     const m = Math.max(0, Number(minutes ?? 0) || 0);
@@ -488,12 +611,12 @@ const Booking = () => {
     return copy;
   }, [services]);
 
-  // ADDED: step gating flags (minimal)
   const step1Done = !!formData.serviceId;
-  const step2Done = step1Done; // add-ons optional
+  const step2Done = step1Done;
   const step3Done = !!formData.date && !!formData.time;
   const step4Done = step3Done;
   const step5Done = step4Done && !!formData.vehicleName.trim();
+
   const canSubmit =
     !!formData.name &&
     !!formData.email &&
@@ -501,13 +624,10 @@ const Booking = () => {
     !!formData.serviceId &&
     !!formData.date &&
     !!formData.time;
-  const step6Done = canSubmit;
 
-  // ADDED: totals for summary
   const totalMinutes = totalSelectedMinutes;
   const totalPrice = totalSelectedPrice;
 
-  // ADDED: StepHeader component
   const StepHeader = ({
     num,
     title,
@@ -541,9 +661,6 @@ const Booking = () => {
     </div>
   );
 
-  // ADDED: AmberButton (simple wrapper)
-  const AmberButton = Button;
-
   return (
     <section className="min-h-screen bg-secondary/20">
       <Helmet>
@@ -575,7 +692,6 @@ const Booking = () => {
                         ...p,
                         serviceId: s.id,
                         time: "",
-                        date: p.date,
                       }));
                     }}
                     className={cn(pillBase, active ? pillActive : pillIdle)}
@@ -605,55 +721,209 @@ const Booking = () => {
                 hint={t("booking.steps.addons.hint")}
               />
 
-              {addons.length === 0 ? (
-                <div className="rounded-2xl border p-5 text-sm text-muted-foreground">
-                  {t("booking.addons.empty")}
+              {/* Protection */}
+              <div className="space-y-3">
+                <div className="font-semibold">
+                  {t("booking.ui.protection.title", "Protection")}
                 </div>
-              ) : (
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {addons.map((a) => {
-                    const checked = selectedAddonIds.has(a.id);
-                    return (
-                      <button
-                        key={a.id}
-                        type="button"
-                        onClick={() => {
-                          setSelectedAddonIds((prev) => {
-                            const next = new Set(prev);
-                            if (next.has(a.id)) next.delete(a.id);
-                            else next.add(a.id);
-                            return next;
-                          });
-                          setFormData((p) => ({ ...p, time: "" }));
-                        }}
-                        className={cn(
-                          "rounded-2xl border p-4 text-left transition hover:border-amber-400/40",
-                          checked
-                            ? "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40"
-                            : "border-border"
-                        )}
-                      >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <div className="font-semibold">{a.name}</div>
-                            <div className="text-sm text-muted-foreground mt-1">
-                              {formatEuro(a.base_price)} +{"\u00A0"}
-                              {a.duration_min ?? 0} {t("booking.meta.minutes")}
+                <div className="text-sm text-muted-foreground">
+                  {t(
+                    "booking.ui.protection.pickOne",
+                    "Pick one: wax / sealant or one ceramic coating option."
+                  )}
+                </div>
+
+                {/* Wax / Sealant (single pick) */}
+                {protectionRows.length > 0 && (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {protectionRows.map((a) => {
+                      const active = selectedProtectionSlug === a.slug;
+                      const Icon =
+                        a.slug === "liquidWax"
+                          ? Droplets
+                          : a.slug === "spraySealant"
+                            ? Shield
+                            : Sparkles;
+
+                      return (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => a.slug && onPickProtection(a.slug)}
+                          className={cn(
+                            "rounded-2xl border p-4 text-left transition hover:border-amber-400/40",
+                            active
+                              ? "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40"
+                              : "border-border"
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="flex items-center gap-2 font-semibold">
+                                <Icon className="h-4 w-4 text-amber-400" />
+                                {a.name}
+                              </div>
+                              <div className="text-sm text-muted-foreground mt-1">
+                                {formatEuro(a.base_price)} ·{" "}
+                                {fmtHours(a.duration_min)}
+                              </div>
+                            </div>
+                            <div className="pt-0.5 text-xs text-muted-foreground">
+                              {active
+                                ? t(
+                                    "booking.ui.protection.selected",
+                                    "Selected"
+                                  )
+                                : ""}
                             </div>
                           </div>
-                          <div className="pt-0.5">
-                            <Checkbox checked={checked} />
-                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* ONE Ceramic card with options */}
+                {ceramicRows.length > 0 && (
+                  <div className="rounded-2xl border border-border bg-card p-5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <div className="flex items-center gap-2 font-semibold">
+                          <Crown className="h-4 w-4 text-amber-400" />
+                          {t(
+                            "booking.ui.protection.ceramic.title",
+                            "Ceramic Coating"
+                          )}
                         </div>
-                      </button>
-                    );
-                  })}
+                        <div className="text-sm text-muted-foreground mt-1">
+                          {t(
+                            "booking.ui.protection.ceramic.subtitle",
+                            "Choose durability."
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {ceramicRows.map((a) => {
+                        const active = selectedCeramicSlug === a.slug;
+
+                        const label = a.slug
+                          ? t(
+                              `booking.ui.protection.ceramic.options.${a.slug}`,
+                              a.slug
+                            )
+                          : t("booking.ui.protection.ceramic.title", "Ceramic");
+
+                        return (
+                          <button
+                            key={a.id}
+                            type="button"
+                            onClick={() => a.slug && onPickCeramic(a.slug)}
+                            className={cn(
+                              "w-full rounded-xl border px-3 py-3 text-left transition",
+                              active
+                                ? "border-amber-400 bg-amber-400/10"
+                                : "border-border hover:border-amber-400/60"
+                            )}
+                          >
+                            <div className="flex items-center justify-between gap-3">
+                              <div className="font-semibold">{label}</div>
+                              <div className="font-bold text-amber-400">
+                                {formatEuro(a.base_price)}
+                              </div>
+                            </div>
+                            {a.duration_min ? (
+                              <div className="mt-1 text-xs text-muted-foreground">
+                                {t(
+                                  "booking.ui.protection.ceramic.estimatedTime",
+                                  {
+                                    time: fmtHours(a.duration_min),
+                                  }
+                                )}
+                              </div>
+                            ) : null}
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mt-3 text-xs text-muted-foreground">
+                      {t(
+                        "booking.ui.protection.ceramic.finalNote",
+                        "Final price depends on vehicle size and paint condition. Paint correction may be required."
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Add-ons / Extras (multi select) */}
+              <div className="space-y-3 pt-4">
+                <div className="font-semibold">
+                  {t("booking.ui.extras.title", "Add-ons")}
                 </div>
-              )}
+
+                {extraRows.length === 0 ? (
+                  <div className="rounded-2xl border p-5 text-sm text-muted-foreground">
+                    {t("booking.addons.empty", "No extras available.")}
+                  </div>
+                ) : (
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {extraRows.map((a) => {
+                      const checked = selectedAddonIds.has(a.id);
+                      const Icon =
+                        a.slug === "engineBay"
+                          ? Wrench
+                          : a.slug === "headlightRestoration"
+                            ? Lightbulb
+                            : Sparkles;
+
+                      return (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={() => {
+                            setSelectedAddonIds((prev) => {
+                              const next = new Set(prev);
+                              if (next.has(a.id)) next.delete(a.id);
+                              else next.add(a.id);
+                              return next;
+                            });
+                            setFormData((p) => ({ ...p, time: "" }));
+                          }}
+                          className={cn(
+                            "rounded-2xl border p-4 text-left transition hover:border-amber-400/40",
+                            checked
+                              ? "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40"
+                              : "border-border"
+                          )}
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <div className="flex items-center gap-2 font-semibold">
+                                <Icon className="h-4 w-4 text-amber-400" />
+                                {a.name}
+                              </div>
+                              <div className="text-sm text-muted-foreground mt-1">
+                                {formatEuro(a.base_price)} ·{" "}
+                                {fmtHours(a.duration_min)}
+                              </div>
+                            </div>
+                            <div className="pt-0.5">
+                              <Checkbox checked={checked} />
+                            </div>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
-          {/* STEP 3 (KEEP OLD DATE & TIME UI) */}
+          {/* STEP 3 */}
           {step1Done && step2Done && (
             <div className="space-y-6">
               <StepHeader
@@ -664,7 +934,7 @@ const Booking = () => {
               />
 
               <div className="grid md:grid-cols-2 gap-4">
-                {/* Date (OLD) */}
+                {/* Date */}
                 <div className="space-y-2">
                   <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
                     <PopoverTrigger asChild>
@@ -691,7 +961,6 @@ const Booking = () => {
                         onSelect={(d) => {
                           if (!d) return;
                           setDateObj(d);
-                          // keep old behavior
                           setFormData((p) => ({
                             ...p,
                             date: format(d, "yyyy-MM-dd"),
@@ -701,12 +970,6 @@ const Booking = () => {
                         }}
                         disabled={(d) => d.getDay() === 0 || d < today}
                         initialFocus
-                        classNames={{
-                          day_today: "bg-primary/15 text-primary font-semibold",
-                          day_selected:
-                            "bg-transparent text-foreground hover:bg-transparent focus:bg-transparent",
-                          day: "h-9 w-9 p-0 font-normal aria-selected:opacity-100 hover:bg-primary/10",
-                        }}
                       />
                     </PopoverContent>
                   </Popover>
@@ -719,7 +982,7 @@ const Booking = () => {
                   </div>
                 </div>
 
-                {/* Time (OLD) */}
+                {/* Time */}
                 <div className="space-y-2">
                   <Select
                     value={formData.time}
@@ -779,7 +1042,7 @@ const Booking = () => {
             </div>
           )}
 
-          {/* STEP 4 (Vehicle details) */}
+          {/* STEP 4 */}
           {step4Done && (
             <div className="space-y-6">
               <StepHeader
@@ -797,7 +1060,7 @@ const Booking = () => {
                     setFormData((p) => ({
                       ...p,
                       vehicleName: e.target.value,
-                      vehicleInfo: e.target.value, // ADDED: keep existing payload field populated
+                      vehicleInfo: e.target.value,
                     }))
                   }
                   className="border-amber-400/20 focus-visible:ring-amber-400/30"
@@ -814,13 +1077,13 @@ const Booking = () => {
             </div>
           )}
 
-          {/* STEP 5 (Contact) */}
+          {/* STEP 5 */}
           {step5Done && (
             <div className="space-y-6">
               <StepHeader
                 num={5}
                 title={t("booking.steps.contact.title")}
-                done={step6Done}
+                done={canSubmit}
                 hint={t("booking.steps.contact.hint")}
               />
 
@@ -850,7 +1113,7 @@ const Booking = () => {
                   className="border-amber-400/20 focus-visible:ring-amber-400/30"
                 />
 
-                <AmberButton
+                <Button
                   size="lg"
                   className={cn(
                     "w-full",
@@ -863,7 +1126,7 @@ const Booking = () => {
                   {loading
                     ? t("booking.btn.submitting")
                     : t("booking.btn.submit")}
-                </AmberButton>
+                </Button>
 
                 {!canSubmit && (
                   <p className="text-xs text-muted-foreground">
@@ -977,8 +1240,6 @@ const Booking = () => {
           </aside>
         )}
       </div>
-
-      {/* <Footer /> */}
     </section>
   );
 };

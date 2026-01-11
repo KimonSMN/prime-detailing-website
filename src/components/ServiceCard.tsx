@@ -20,16 +20,16 @@ const ServiceCard = ({
   return (
     <div
       className="
-      w-full
-      min-w-0
-      rounded-2xl
-      p-4 sm:p-6
-      border border-zinc-800
-      bg-zinc-900/60
-      flex flex-col
-      hover:border-zinc-400
-      transition
-    "
+        w-full
+        min-w-0
+        rounded-2xl
+        p-4 sm:p-6
+        border border-zinc-800
+        bg-zinc-900/60
+        flex flex-col
+        hover:border-zinc-400
+        transition
+      "
     >
       {/* Title */}
       <h3 className="text-base sm:text-xl font-bold mb-1 leading-tight">
@@ -37,7 +37,7 @@ const ServiceCard = ({
       </h3>
 
       {/* Price */}
-      <p className="text-sm sm:text-base text-zinc-300 mb-4">
+      <p className="  text-base text-zinc-300 mb-4">
         {price} {duration}
       </p>
 

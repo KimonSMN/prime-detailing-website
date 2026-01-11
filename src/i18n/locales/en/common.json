@@ -527,5 +527,20 @@
         }
       }
     }
+  },
+  "special": {
+    "paintCorrection": {
+      "title": "Paint Correction",
+      "description": "Multi-stage machine polishing to remove swirl marks, oxidation, and light scratches. Restores depth, gloss, and overall paint clarity.",
+      "features": [
+        "Removes swirls & paint defects",
+        "Restores gloss & color depth",
+        "Safe multi-stage machine polishing",
+        "Paint ready for ceramic coating"
+      ],
+      "meta": "From 100€ ~6h",
+      "cta": "Book Now",
+      "note": "*Often required before ceramic coating services. Final pricing may vary based on paint condition."
+    }
   }
 }

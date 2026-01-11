@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { MinimalServiceCard } from "@/components/MinimalServiceCard";
 import { CeramicSelectorCard } from "@/components/CeramicSelectorCard";
+import SpecialistServiceCard from "@/components/SpecialistServiceCard";
 
 /* ---------------- Types from DB ---------------- */
 type AddonRow = {
@@ -269,7 +270,17 @@ const ServicesNew = () => {
             onMoreDetails={scrollToComparison}
           />
         </div>
+        <div className="mt-20 max-w-6xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl font-bold">Special Services</h2>
+            <p className="text-zinc-400 mt-2">
+              Advanced treatments for vehicles that need correction, not just
+              cleaning.
+            </p>
+          </div>
 
+          <SpecialistServiceCard />
+        </div>
         {/* Seasonal Package */}
         <div>
           <SeasonalPackage />

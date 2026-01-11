@@ -680,7 +680,7 @@ const Booking = () => {
               hint={t("booking.steps.package.hint")}
             />
 
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-2 gap-4">
               {sortedServices.map((s) => {
                 const active = s.id === formData.serviceId;
                 return (
@@ -742,8 +742,8 @@ const Booking = () => {
                         a.slug === "liquidWax"
                           ? Droplets
                           : a.slug === "spraySealant"
-                            ? Shield
-                            : Sparkles;
+                          ? Shield
+                          : Sparkles;
 
                       return (
                         <button
@@ -876,8 +876,8 @@ const Booking = () => {
                         a.slug === "engineBay"
                           ? Wrench
                           : a.slug === "headlightRestoration"
-                            ? Lightbulb
-                            : Sparkles;
+                          ? Lightbulb
+                          : Sparkles;
 
                       return (
                         <button
@@ -1027,11 +1027,11 @@ const Booking = () => {
                             {takenByStart
                               ? `— ${t("booking.booked")}`
                               : overlap
-                                ? `— ${t(
-                                    "booking.notEnoughRoom",
-                                    "not enough room"
-                                  )}`
-                                : ""}
+                              ? `— ${t(
+                                  "booking.notEnoughRoom",
+                                  "not enough room"
+                                )}`
+                              : ""}
                           </SelectItem>
                         );
                       })}

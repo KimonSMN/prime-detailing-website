@@ -282,9 +282,9 @@ const ServicesNew = () => {
           <SpecialistServiceCard />
         </div>
         {/* Seasonal Package */}
-        <div>
+        {/* <div>
           <SeasonalPackage />
-        </div>
+        </div> */}
 
         {/* ---------------- Protection + Add-ons ---------------- */}
         <div className="mt-16">

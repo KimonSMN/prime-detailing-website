@@ -28,7 +28,7 @@ serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = buildCorsHeaders(origin);
 
-  // ✅ CORS preflight
+  // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -67,7 +67,7 @@ serve(async (req) => {
       content: String(message),
     });
 
-    // Load recent chat history (context)
+    // Load recent chat history
     const { data: history, error: histErr } = await supabase
       .from("chat_messages")
       .select("role,content,created_at")
@@ -77,19 +77,35 @@ serve(async (req) => {
 
     if (histErr) console.error("history error:", histErr);
 
-    // Load KB (business facts)
+    // Load KB (business facts) - include the new keys
+    const kbKeys = [
+      "location",
+      "hours",
+      "phone",
+      "booking",
+      "packages",
+      "services",
+      "pricing",
+      "paint_correction",
+      "ceramic_coating",
+    ];
+
     const { data: kbRows, error: kbErr } = await supabase
       .from("chat_kb")
       .select("key,content")
-      .in("key", ["location", "hours", "pricing", "services", "booking"]);
+      .in("key", kbKeys);
 
     if (kbErr) console.error("kb error:", kbErr);
 
-    const KB = (kbRows ?? [])
-      .map((r) => `${String(r.key).toUpperCase()}: ${String(r.content)}`)
+    // Build context in a stable order (so the model reads it predictably)
+    const kbMap = new Map<string, string>();
+    for (const r of kbRows ?? []) kbMap.set(String(r.key), String(r.content));
+
+    const KB = kbKeys
+      .filter((k) => kbMap.has(k))
+      .map((k) => `${k.toUpperCase()}: ${kbMap.get(k)}`)
       .join("\n");
 
-    // --- GEMINI ---
     const ai = new GoogleGenAI({
       apiKey: Deno.env.get("GEMINI_API_KEY")!,
     });
@@ -104,26 +120,24 @@ Language:
 
 Tone:
 - Normal, short, direct. No marketing fluff. No long greetings.
+- No formatting. No asterisks. No quotes. No markdown.
 
 Rules:
-- Use ONLY the facts provided in CONTEXT for services, pricing, hours, location, policies.
-- Don't use asteriscs, quotes, or formatting in your answers.
-- If you don't know the answer based on CONTEXT, say you don't know.
-- Never make up answers.
-- Always encourage booking/contact for more details.
-- If asked about services/pricing/hours/location, use CONTEXT to answer.
-- If info is missing from CONTEXT, say you don't know and suggest booking/contact.
+- Use ONLY the facts in CONTEXT. Do not invent services, prices, hours, address, or policies.
+- Never mention website paths like /booking or any URL path. Always direct them to call the phone number from CONTEXT.
+- If user asks about Paint Correction, use the exact price from CONTEXT (paint_correction) and mention that final quote depends on condition.
+- If user asks about Ceramic Coating, use the exact tier prices from CONTEXT (ceramic_coating).
+- If the user asks generally for "price/prices", reply with a short list of package starting prices + paint correction + ceramic coating tiers, then ask which service they want.
 - Ask at most ONE clarifying question when needed.
-- Prefer bullet points only when listing options.
-- If the user wants to book: ask for date/time, car size/type, and which package/service they want.
+- End with the phone number from CONTEXT when the user is asking about booking/prices or next steps.
 `;
 
     const userText = String(message);
 
     const prompt = [
       `System: ${SYSTEM}`,
-      `CONTEXT (business info):`,
-      KB ? KB : "No business info provided.",
+      `CONTEXT:`,
+      KB || "No business info provided.",
       ``,
       ...(history ?? []).map(
         (m) => `${m.role === "bot" ? "Assistant" : "User"}: ${m.content}`,

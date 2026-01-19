@@ -17,6 +17,7 @@ import Booking from "./pages/Booking";
 import Gallery from "./pages/Gallery";
 import Footer from "./components/Footer";
 import ServicesNew from "./pages/ServicesNew";
+import FloatingChatbot from "./components/FloatingChatbot";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => {
             <Route path="*" element={<NotFound />} />
           </Routes>
           {/* <Footer /> */}
+          <FloatingChatbot />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

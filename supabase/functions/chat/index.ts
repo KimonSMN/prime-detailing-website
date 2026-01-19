@@ -24,6 +24,27 @@ function buildCorsHeaders(origin: string | null) {
   };
 }
 
+function isGreekText(s: string) {
+  return /[\u0370-\u03FF\u1F00-\u1FFF]/.test(s);
+}
+
+function extractPhone(kbPhone: string | undefined) {
+  const m = (kbPhone ?? "").match(/\+\d[\d\s-]{7,}/);
+  return (m?.[0] ?? "+30 6939949788").trim();
+}
+
+function isQuotaError(err: unknown) {
+  const msg = String((err as any)?.message ?? err ?? "");
+  const status = (err as any)?.status ?? (err as any)?.code;
+  return (
+    status === 429 ||
+    msg.includes("429") ||
+    msg.toUpperCase().includes("RESOURCE_EXHAUSTED") ||
+    msg.toLowerCase().includes("rate limit") ||
+    msg.toLowerCase().includes("quota")
+  );
+}
+
 serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = buildCorsHeaders(origin);
@@ -77,7 +98,7 @@ serve(async (req) => {
 
     if (histErr) console.error("history error:", histErr);
 
-    // Load KB (business facts) - include the new keys
+    // Load KB (business facts)
     const kbKeys = [
       "location",
       "hours",
@@ -97,7 +118,7 @@ serve(async (req) => {
 
     if (kbErr) console.error("kb error:", kbErr);
 
-    // Build context in a stable order (so the model reads it predictably)
+    // Build context in a stable order
     const kbMap = new Map<string, string>();
     for (const r of kbRows ?? []) kbMap.set(String(r.key), String(r.content));
 
@@ -146,12 +167,28 @@ Rules:
       `Assistant:`,
     ].join("\n");
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: prompt,
-    });
+    // Gemini call + quota fallback
+    let reply = "…";
+    try {
+      const response = await ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: prompt,
+      });
+      reply = response.text || "…";
+    } catch (err) {
+      const phone = extractPhone(kbMap.get("phone"));
+      const greek = isGreekText(userText);
 
-    const reply = response.text || "…";
+      if (isQuotaError(err)) {
+        reply = greek
+          ? `Η βάρδια μου ως Τεχνιτή Νοημοσύνη τελείωσε. Πάρε τηλέφωνο στο ${phone} και θα σε βοηθήσω σαν αληθινός άνθρωπος.`
+          : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
+      } else {
+        reply = greek
+          ? `Κάτι πήγε στραβά. Παρε τηλεφωνο στο ${phone}.`
+          : `Something went wrong. Call ${phone}.`;
+      }
+    }
 
     // Store bot reply
     await supabase.from("chat_messages").insert({

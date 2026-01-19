@@ -185,8 +185,8 @@ Rules:
           : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
       } else {
         reply = greek
-          ? `Κάτι πήγε στραβά. Παρε τηλεφωνο στο ${phone}.`
-          : `Something went wrong. Call ${phone}.`;
+          ? `Η βάρδια μου ως Τεχνιτή Νοημοσύνη τελείωσε. Πάρε τηλέφωνο στο ${phone} και θα σε βοηθήσω σαν αληθινός άνθρωπος.`
+          : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
       }
     }
 

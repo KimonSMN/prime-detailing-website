@@ -67,25 +67,56 @@ serve(async (req) => {
       content: String(message),
     });
 
-    // Load recent history (context)
-    const { data: history } = await supabase
+    // Load recent chat history (context)
+    const { data: history, error: histErr } = await supabase
       .from("chat_messages")
-      .select("role,content")
+      .select("role,content,created_at")
       .eq("session_id", sessionId)
       .order("created_at", { ascending: true })
       .limit(12);
+
+    if (histErr) console.error("history error:", histErr);
+
+    // Load KB (business facts)
+    const { data: kbRows, error: kbErr } = await supabase
+      .from("chat_kb")
+      .select("key,content")
+      .in("key", ["location", "hours", "pricing", "services", "booking"]);
+
+    if (kbErr) console.error("kb error:", kbErr);
+
+    const KB = (kbRows ?? [])
+      .map((r) => `${String(r.key).toUpperCase()}: ${String(r.content)}`)
+      .join("\n");
 
     // --- GEMINI ---
     const ai = new GoogleGenAI({
       apiKey: Deno.env.get("GEMINI_API_KEY")!,
     });
 
+    const SYSTEM = `
+You are the website chat assistant for Prime Detailing Cholargos.
+Tone: normal, short, direct. No marketing fluff. No long greetings.
+Rules:
+- Use ONLY the facts provided in CONTEXT for services, pricing, hours, location, policies.
+- If info is missing from CONTEXT, say you don't know (do not guess) and suggest booking/contact.
+- Ask at most ONE clarifying question when needed.
+- Prefer bullet points only when listing options.
+- If user wants to book: collect date/time, car type/size, location (mobile or studio), and desired service/add-ons.
+`;
+
+    const userText = String(message);
+
     const prompt = [
-      "You are a helpful website assistant for Prime Detailing (Cholargos).",
+      `System: ${SYSTEM}`,
+      `CONTEXT (business info):`,
+      KB ? KB : "No business info provided.",
+      ``,
       ...(history ?? []).map(
         (m) => `${m.role === "bot" ? "Assistant" : "User"}: ${m.content}`,
       ),
-      "Assistant:",
+      `User: ${userText}`,
+      `Assistant:`,
     ].join("\n");
 
     const response = await ai.models.generateContent({

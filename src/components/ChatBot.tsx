@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { getChatSessionId } from "@/lib/chatSession";
 
 type Message = {
   id: number;
@@ -7,43 +9,52 @@ type Message = {
 };
 
 export default function ChatBot() {
+  const sessionId = useMemo(() => getChatSessionId(), []);
   const [messages, setMessages] = useState<Message[]>([
-    {
-      id: 1,
-      role: "bot",
-      content: "Hi 👋 How can I help you?",
-    },
+    { id: 1, role: "bot", content: "Hi 👋 How can I help you?" },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  function sendMessage() {
-    if (!input.trim()) return;
+  async function sendMessage() {
+    const text = input.trim();
+    if (!text || loading) return;
 
-    const userMessage: Message = {
-      id: Date.now(),
-      role: "user",
-      content: input,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [
+      ...prev,
+      { id: Date.now(), role: "user", content: text },
+    ]);
     setInput("");
+    setLoading(true);
 
-    // Fake bot reply (replace later with API call)
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke("chat", {
+        body: { message: text, sessionId },
+      });
+
+      if (error) throw error;
+
       setMessages((prev) => [
         ...prev,
         {
           id: Date.now() + 1,
           role: "bot",
-          content: "Got it 👍 (hook me to a backend next)",
+          content: String(data?.reply ?? "…"),
         },
       ]);
-    }, 600);
+    } catch (err) {
+      console.error(err);
+      setMessages((prev) => [
+        ...prev,
+        { id: Date.now() + 2, role: "bot", content: "Server error 🤕" },
+      ]);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <div className="flex h-full flex-col text-sm">
-      {/* Messages */}
       <div className="flex-1 space-y-3 overflow-y-auto pr-1">
         {messages.map((m) => (
           <div
@@ -57,9 +68,13 @@ export default function ChatBot() {
             {m.content}
           </div>
         ))}
+        {loading && (
+          <div className="max-w-[85%] rounded-xl px-3 py-2 bg-zinc-100 text-zinc-900">
+            Typing…
+          </div>
+        )}
       </div>
 
-      {/* Input */}
       <div className="mt-3 flex gap-2 border-t border-black/10 pt-2 text-zinc-900">
         <input
           value={input}
@@ -71,8 +86,9 @@ export default function ChatBot() {
         />
         <button
           onClick={sendMessage}
+          disabled={loading}
           className="rounded-xl bg-zinc-900 px-4 py-2 text-white
-                     hover:bg-zinc-800 active:scale-[0.98] transition"
+                     hover:bg-zinc-800 disabled:opacity-60 active:scale-[0.98] transition"
         >
           Send
         </button>

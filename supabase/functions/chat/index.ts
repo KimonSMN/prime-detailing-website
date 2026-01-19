@@ -2,15 +2,52 @@ import { serve } from "https://deno.land/std/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { GoogleGenAI } from "https://esm.sh/@google/genai";
 
+const ALLOWED_ORIGINS = new Set([
+  "https://prime-detailing-cholargos.com",
+  "https://www.prime-detailing-cholargos.com",
+  "http://localhost:8080",
+  "http://localhost:5173",
+]);
+
+function buildCorsHeaders(origin: string | null) {
+  const allowOrigin =
+    origin && ALLOWED_ORIGINS.has(origin)
+      ? origin
+      : "https://prime-detailing-cholargos.com";
+
+  return {
+    "Access-Control-Allow-Origin": allowOrigin,
+    Vary: "Origin",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers":
+      "authorization, x-client-info, apikey, content-type",
+  };
+}
+
 serve(async (req) => {
+  const origin = req.headers.get("origin");
+  const corsHeaders = buildCorsHeaders(origin);
+
+  // ✅ CORS preflight
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
+  }
+
   if (req.method !== "POST") {
-    return new Response("Method not allowed", { status: 405 });
+    return new Response("Method not allowed", {
+      status: 405,
+      headers: corsHeaders,
+    });
   }
 
   try {
     const { message, sessionId } = await req.json();
+
     if (!message || !sessionId) {
-      return new Response("Bad request", { status: 400 });
+      return new Response("Bad request", {
+        status: 400,
+        headers: corsHeaders,
+      });
     }
 
     const supabase = createClient(
@@ -27,7 +64,7 @@ serve(async (req) => {
     await supabase.from("chat_messages").insert({
       session_id: sessionId,
       role: "user",
-      content: message,
+      content: String(message),
     });
 
     // Load recent history (context)
@@ -44,8 +81,7 @@ serve(async (req) => {
     });
 
     const prompt = [
-      "You are a helpful website assistant.",
-      "",
+      "You are a helpful website assistant for Prime Detailing (Cholargos).",
       ...(history ?? []).map(
         (m) => `${m.role === "bot" ? "Assistant" : "User"}: ${m.content}`,
       ),
@@ -66,9 +102,14 @@ serve(async (req) => {
       content: reply,
     });
 
-    return Response.json({ reply });
+    return new Response(JSON.stringify({ reply }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (err) {
     console.error(err);
-    return new Response("Server error", { status: 500 });
+    return new Response("Server error", {
+      status: 500,
+      headers: corsHeaders,
+    });
   }
 });

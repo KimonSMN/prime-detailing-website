@@ -46,29 +46,40 @@ function isQuotaError(err: unknown) {
 }
 
 function getClientIp(req: Request) {
+  // Cloudflare (if you ever use it)
+  const cfIp = req.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp.trim();
+
+  // Common reverse proxy header
   const xff = req.headers.get("x-forwarded-for");
   if (xff) return xff.split(",")[0].trim();
 
+  // Some proxies
   const realIp = req.headers.get("x-real-ip");
   if (realIp) return realIp.trim();
-
-  // Supabase sometimes forwards this too (depending on setup)
-  const cfIp = req.headers.get("cf-connecting-ip");
-  if (cfIp) return cfIp.trim();
 
   return "unknown";
 }
 
 // Rate limits
 const WINDOW_SECONDS = 60;
-const MAX_PER_WINDOW_PER_IP = 12; // 12 user messages / minute / IP
-const MAX_PER_WINDOW_PER_SESSION = 8; // 8 user messages / minute / session
-const MAX_PER_DAY_PER_IP = 2; // daily cap / IP
+
+// Burst limits (rolling 60s)
+const MAX_PER_WINDOW_PER_SESSION = 8;
+const MAX_PER_WINDOW_PER_IP = 12;
+
+// Daily cap (rolling 24h)
+// You said you set this to 2: keep it here.
+const MAX_PER_DAY_PER_IP = 2;
+
+// Optional: also cap per-session per-day, so it works even if IP is missing/unknown
+const MAX_PER_DAY_PER_SESSION = 2;
 
 serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = buildCorsHeaders(origin);
 
+  // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -81,7 +92,9 @@ serve(async (req) => {
   }
 
   try {
-    const { message, sessionId } = await req.json();
+    const body = await req.json().catch(() => null);
+    const message = body?.message;
+    const sessionId = body?.sessionId;
 
     if (!message || !sessionId) {
       return new Response("Bad request", {
@@ -90,6 +103,7 @@ serve(async (req) => {
       });
     }
 
+    // Safety: ensure key exists
     if (!Deno.env.get("OPENAI_API_KEY")) {
       return new Response(
         JSON.stringify({
@@ -108,14 +122,14 @@ serve(async (req) => {
     );
 
     const userText = String(message);
-    const ip = getClientIp(req);
+    const ip = String(getClientIp(req) || "unknown"); // ALWAYS a string
 
     // Ensure session exists
     await supabase
       .from("chat_sessions")
       .upsert({ id: sessionId }, { onConflict: "id" });
 
-    // Load KB first (so we can use phone in rate-limit response too)
+    // Load KB early so we can use phone even on rate-limit responses
     const kbKeys = [
       "location",
       "hours",
@@ -143,21 +157,9 @@ serve(async (req) => {
     // -------------------------
     // RATE LIMIT (server-side)
     // -------------------------
-    const windowSince = new Date(
-      Date.now() - WINDOW_SECONDS * 1000,
-    ).toISOString();
-
-    const daySince = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
-    // Per-IP rolling window
-    const { count: ipWindowCount, error: ipWinErr } = await supabase
-      .from("chat_messages")
-      .select("id", { count: "exact", head: true })
-      .eq("role", "user")
-      .eq("ip", ip)
-      .gte("created_at", windowSince);
-
-    if (ipWinErr) console.error("rate ip window error:", ipWinErr);
+    const now = Date.now();
+    const windowSince = new Date(now - WINDOW_SECONDS * 1000).toISOString();
+    const daySince = new Date(now - 24 * 60 * 60 * 1000).toISOString();
 
     // Per-session rolling window
     const { count: sessionWindowCount, error: sessWinErr } = await supabase
@@ -169,7 +171,27 @@ serve(async (req) => {
 
     if (sessWinErr) console.error("rate session window error:", sessWinErr);
 
-    // Optional daily cap per IP
+    // Per-IP rolling window (only meaningful if IP is real; still fine if "unknown")
+    const { count: ipWindowCount, error: ipWinErr } = await supabase
+      .from("chat_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "user")
+      .eq("ip", ip)
+      .gte("created_at", windowSince);
+
+    if (ipWinErr) console.error("rate ip window error:", ipWinErr);
+
+    // Daily cap per-session (works always)
+    const { count: sessionDayCount, error: sessDayErr } = await supabase
+      .from("chat_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "user")
+      .eq("session_id", sessionId)
+      .gte("created_at", daySince);
+
+    if (sessDayErr) console.error("rate session day error:", sessDayErr);
+
+    // Daily cap per-IP (works if ip is being saved; also works for "unknown" bucket)
     const { count: ipDayCount, error: ipDayErr } = await supabase
       .from("chat_messages")
       .select("id", { count: "exact", head: true })
@@ -179,12 +201,18 @@ serve(async (req) => {
 
     if (ipDayErr) console.error("rate ip day error:", ipDayErr);
 
-    const exceeded =
-      (ip !== "unknown" && (ipWindowCount ?? 0) >= MAX_PER_WINDOW_PER_IP) ||
+    const exceededWindow =
       (sessionWindowCount ?? 0) >= MAX_PER_WINDOW_PER_SESSION ||
-      (ip !== "unknown" && (ipDayCount ?? 0) >= MAX_PER_DAY_PER_IP);
+      (ipWindowCount ?? 0) >= MAX_PER_WINDOW_PER_IP;
 
-    if (exceeded) {
+    // Daily enforcement:
+    // - Always enforce per-session daily cap (so it works even if IP is null/unknown)
+    // - Also enforce per-IP daily cap when IP is real (or even "unknown" if you want)
+    const exceededDaily =
+      (sessionDayCount ?? 0) >= MAX_PER_DAY_PER_SESSION ||
+      (ipDayCount ?? 0) >= MAX_PER_DAY_PER_IP;
+
+    if (exceededWindow || exceededDaily) {
       const greek = isGreekText(userText);
       const reply = greek
         ? `Πολλά μηνύματα σε σύντομο χρόνο. Πάρε τηλέφωνο στο ${phone}.`
@@ -196,13 +224,15 @@ serve(async (req) => {
       });
     }
 
-    // Store user message (with IP)
-    await supabase.from("chat_messages").insert({
+    // Store user message (FORCE ip to be written)
+    const { error: insUserErr } = await supabase.from("chat_messages").insert({
       session_id: sessionId,
       role: "user",
       content: userText,
       ip,
     });
+
+    if (insUserErr) console.error("insert user msg error:", insUserErr);
 
     // Load recent chat history
     const { data: history, error: histErr } = await supabase
@@ -272,7 +302,6 @@ serve(async (req) => {
       reply = response.output_text || "…";
     } catch (err) {
       const greek = isGreekText(userText);
-
       reply = greek
         ? `Η βάρδια μου ως Τεχνητή Νοημοσύνη τελείωσε. Πάρε τηλέφωνο στο ${phone} και θα σε βοηθήσω σαν αληθινός άνθρωπος.`
         : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
@@ -280,13 +309,15 @@ serve(async (req) => {
       if (!isQuotaError(err)) console.error("OpenAI error:", err);
     }
 
-    // Store bot reply (optional: keep ip too for debugging/abuse forensics)
-    await supabase.from("chat_messages").insert({
+    // Store bot reply (keep ip too)
+    const { error: insBotErr } = await supabase.from("chat_messages").insert({
       session_id: sessionId,
       role: "bot",
       content: reply,
       ip,
     });
+
+    if (insBotErr) console.error("insert bot msg error:", insBotErr);
 
     return new Response(JSON.stringify({ reply }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

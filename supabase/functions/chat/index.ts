@@ -45,11 +45,30 @@ function isQuotaError(err: unknown) {
   );
 }
 
+function getClientIp(req: Request) {
+  const xff = req.headers.get("x-forwarded-for");
+  if (xff) return xff.split(",")[0].trim();
+
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) return realIp.trim();
+
+  // Supabase sometimes forwards this too (depending on setup)
+  const cfIp = req.headers.get("cf-connecting-ip");
+  if (cfIp) return cfIp.trim();
+
+  return "unknown";
+}
+
+// Rate limits
+const WINDOW_SECONDS = 60;
+const MAX_PER_WINDOW_PER_IP = 12; // 12 user messages / minute / IP
+const MAX_PER_WINDOW_PER_SESSION = 8; // 8 user messages / minute / session
+const MAX_PER_DAY_PER_IP = 2; // daily cap / IP
+
 serve(async (req) => {
   const origin = req.headers.get("origin");
   const corsHeaders = buildCorsHeaders(origin);
 
-  // CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -71,7 +90,6 @@ serve(async (req) => {
       });
     }
 
-    // Safety: ensure key exists
     if (!Deno.env.get("OPENAI_API_KEY")) {
       return new Response(
         JSON.stringify({
@@ -89,29 +107,15 @@ serve(async (req) => {
       Deno.env.get("SERVICE_ROLE_KEY")!,
     );
 
+    const userText = String(message);
+    const ip = getClientIp(req);
+
     // Ensure session exists
     await supabase
       .from("chat_sessions")
       .upsert({ id: sessionId }, { onConflict: "id" });
 
-    // Store user message
-    await supabase.from("chat_messages").insert({
-      session_id: sessionId,
-      role: "user",
-      content: String(message),
-    });
-
-    // Load recent chat history
-    const { data: history, error: histErr } = await supabase
-      .from("chat_messages")
-      .select("role,content,created_at")
-      .eq("session_id", sessionId)
-      .order("created_at", { ascending: true })
-      .limit(12);
-
-    if (histErr) console.error("history error:", histErr);
-
-    // Load KB (business facts)
+    // Load KB first (so we can use phone in rate-limit response too)
     const kbKeys = [
       "location",
       "hours",
@@ -131,10 +135,86 @@ serve(async (req) => {
 
     if (kbErr) console.error("kb error:", kbErr);
 
-    // Build context in a stable order
     const kbMap = new Map<string, string>();
     for (const r of kbRows ?? []) kbMap.set(String(r.key), String(r.content));
 
+    const phone = extractPhone(kbMap.get("phone"));
+
+    // -------------------------
+    // RATE LIMIT (server-side)
+    // -------------------------
+    const windowSince = new Date(
+      Date.now() - WINDOW_SECONDS * 1000,
+    ).toISOString();
+
+    const daySince = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+    // Per-IP rolling window
+    const { count: ipWindowCount, error: ipWinErr } = await supabase
+      .from("chat_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "user")
+      .eq("ip", ip)
+      .gte("created_at", windowSince);
+
+    if (ipWinErr) console.error("rate ip window error:", ipWinErr);
+
+    // Per-session rolling window
+    const { count: sessionWindowCount, error: sessWinErr } = await supabase
+      .from("chat_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "user")
+      .eq("session_id", sessionId)
+      .gte("created_at", windowSince);
+
+    if (sessWinErr) console.error("rate session window error:", sessWinErr);
+
+    // Optional daily cap per IP
+    const { count: ipDayCount, error: ipDayErr } = await supabase
+      .from("chat_messages")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "user")
+      .eq("ip", ip)
+      .gte("created_at", daySince);
+
+    if (ipDayErr) console.error("rate ip day error:", ipDayErr);
+
+    const exceeded =
+      (ip !== "unknown" && (ipWindowCount ?? 0) >= MAX_PER_WINDOW_PER_IP) ||
+      (sessionWindowCount ?? 0) >= MAX_PER_WINDOW_PER_SESSION ||
+      (ip !== "unknown" && (ipDayCount ?? 0) >= MAX_PER_DAY_PER_IP);
+
+    if (exceeded) {
+      const greek = isGreekText(userText);
+      const reply = greek
+        ? `Πολλά μηνύματα σε σύντομο χρόνο. Πάρε τηλέφωνο στο ${phone}.`
+        : `Too many messages in a short time. Call ${phone}.`;
+
+      return new Response(JSON.stringify({ reply }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Store user message (with IP)
+    await supabase.from("chat_messages").insert({
+      session_id: sessionId,
+      role: "user",
+      content: userText,
+      ip,
+    });
+
+    // Load recent chat history
+    const { data: history, error: histErr } = await supabase
+      .from("chat_messages")
+      .select("role,content,created_at")
+      .eq("session_id", sessionId)
+      .order("created_at", { ascending: true })
+      .limit(12);
+
+    if (histErr) console.error("history error:", histErr);
+
+    // Build context in a stable order
     const KB = kbKeys
       .filter((k) => kbMap.has(k))
       .map((k) => `${k.toUpperCase()}: ${kbMap.get(k)}`)
@@ -164,14 +244,14 @@ serve(async (req) => {
 - Μετα απο καθε κόμμα ή τελεία, γράψε απο κάτω την επόμενη πρόταση.
 `.trim();
 
-    const userText = String(message);
-
     const openai = new OpenAI({ apiKey: Deno.env.get("OPENAI_API_KEY")! });
 
     const inputMessages = [
       {
         role: "system" as const,
-        content: `${SYSTEM}\n\nCONTEXT:\n${KB || "Δεν υπάρχουν διαθέσιμες πληροφορίες επιχείρησης."}`,
+        content: `${SYSTEM}\n\nCONTEXT:\n${
+          KB || "Δεν υπάρχουν διαθέσιμες πληροφορίες επιχείρησης."
+        }`,
       },
       ...(history ?? []).map((m: any) => ({
         role: (m.role === "bot" ? "assistant" : "user") as "assistant" | "user",
@@ -185,14 +265,12 @@ serve(async (req) => {
       const response = await openai.responses.create({
         model: "gpt-4.1-mini",
         input: inputMessages,
-        // Για έλεγχο κόστους/μήκους:
         max_output_tokens: 250,
         temperature: 0.4,
       });
 
       reply = response.output_text || "…";
     } catch (err) {
-      const phone = extractPhone(kbMap.get("phone"));
       const greek = isGreekText(userText);
 
       reply = greek
@@ -202,11 +280,12 @@ serve(async (req) => {
       if (!isQuotaError(err)) console.error("OpenAI error:", err);
     }
 
-    // Store bot reply
+    // Store bot reply (optional: keep ip too for debugging/abuse forensics)
     await supabase.from("chat_messages").insert({
       session_id: sessionId,
       role: "bot",
       content: reply,
+      ip,
     });
 
     return new Response(JSON.stringify({ reply }), {

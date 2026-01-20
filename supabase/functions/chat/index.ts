@@ -69,11 +69,10 @@ const MAX_PER_WINDOW_PER_SESSION = 8;
 const MAX_PER_WINDOW_PER_IP = 12;
 
 // Daily cap (rolling 24h)
-// You said you set this to 2: keep it here.
-const MAX_PER_DAY_PER_IP = 2;
+const MAX_PER_DAY_PER_IP = 20;
 
 // Optional: also cap per-session per-day, so it works even if IP is missing/unknown
-const MAX_PER_DAY_PER_SESSION = 2;
+const MAX_PER_DAY_PER_SESSION = 20;
 
 serve(async (req) => {
   const origin = req.headers.get("origin");

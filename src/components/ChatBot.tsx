@@ -13,13 +13,15 @@ function isGreekText(s: string) {
 }
 
 function looksLikeQuotaError(s: string) {
-  return /429|resource_exhausted|quota|rate limit|rpd/i.test(s || "");
+  return /429|resource_exhausted|quota|rate limit|rpd|insufficient_quota/i.test(
+    s || "",
+  );
 }
 
 export default function ChatBot() {
   const sessionId = useMemo(() => getChatSessionId(), []);
   const [messages, setMessages] = useState<Message[]>([
-    { id: 1, role: "bot", content: "Hi 👋 How can I help you?" },
+    { id: 1, role: "bot", content: "Καλησπέρα 👋 Πώς μπορώ να σας βοηθήσω;" },
   ]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -64,7 +66,6 @@ export default function ChatBot() {
 
       const msg = String(err?.message ?? err ?? "");
       const status = Number(err?.status ?? err?.code ?? 0);
-
       const quota = status === 429 || looksLikeQuotaError(msg);
 
       const fallback = quota

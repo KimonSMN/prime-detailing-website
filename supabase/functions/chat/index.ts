@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { GoogleGenAI } from "https://esm.sh/@google/genai";
+import OpenAI from "npm:openai";
 
 const ALLOWED_ORIGINS = new Set([
   "https://prime-detailing-cholargos.com",
@@ -39,9 +39,9 @@ function isQuotaError(err: unknown) {
   return (
     status === 429 ||
     msg.includes("429") ||
-    msg.toUpperCase().includes("RESOURCE_EXHAUSTED") ||
     msg.toLowerCase().includes("rate limit") ||
-    msg.toLowerCase().includes("quota")
+    msg.toLowerCase().includes("quota") ||
+    msg.toLowerCase().includes("insufficient_quota")
   );
 }
 
@@ -69,6 +69,19 @@ serve(async (req) => {
         status: 400,
         headers: corsHeaders,
       });
+    }
+
+    // Safety: ensure key exists
+    if (!Deno.env.get("OPENAI_API_KEY")) {
+      return new Response(
+        JSON.stringify({
+          reply: "Λείπει το OPENAI_API_KEY στο Supabase secrets.",
+        }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        },
+      );
     }
 
     const supabase = createClient(
@@ -127,67 +140,64 @@ serve(async (req) => {
       .map((k) => `${k.toUpperCase()}: ${kbMap.get(k)}`)
       .join("\n");
 
-    const ai = new GoogleGenAI({
-      apiKey: Deno.env.get("GEMINI_API_KEY")!,
-    });
-
     const SYSTEM = `
-You are the website assistant for Prime Detailing Cholargos.
+Είσαι ο βοηθός του site “Prime Detailing Cholargos”.
 
-Language:
-- Default to English.
-- If the user writes in Greek or asks for Greek, respond in Greek.
-- If the user mixes languages, mirror their language.
+Γλώσσα:
+- Default απάντηση στα Ελληνικά.
+- Αν ο χρήστης γράψει στα Αγγλικά ή ζητήσει Αγγλικά, απάντα στα Αγγλικά.
+- Αν ο χρήστης μιξάρει γλώσσες, ακολούθησε τη γλώσσα του.
 
-Tone:
-- Normal, short, direct. No marketing fluff. No long greetings.
-- No formatting. No asterisks. No quotes. No markdown.
+Ύφος:
+- Κανονικό, σύντομο, ευθύ. Χωρίς marketing fluff. Χωρίς μεγάλους χαιρετισμούς.
+- Χωρίς μορφοποίηση. Όχι αστεράκια, όχι quotes, όχι markdown.
 
-Rules:
-- Use ONLY the facts in CONTEXT. Do not invent services, prices, hours, address, or policies.
-- Never mention website paths like /booking or any URL path. Always direct them to call the phone number from CONTEXT.
-- If user asks about Paint Correction, use the exact price from CONTEXT (paint_correction) and mention that final quote depends on condition.
-- If user asks about Ceramic Coating, use the exact tier prices from CONTEXT (ceramic_coating).
-- If the user asks generally for "price/prices", reply with a short list of package starting prices + paint correction + ceramic coating tiers, then ask which service they want.
-- Ask at most ONE clarifying question when needed.
-- End with the phone number from CONTEXT when the user is asking about booking/prices or next steps.
-`;
+Κανόνες:
+- Χρησιμοποίησε ΜΟΝΟ τις πληροφορίες στο CONTEXT. Μην επινοείς υπηρεσίες, τιμές, ωράρια, διευθύνσεις ή πολιτικές.
+- Μην αναφέρεις ποτέ paths του site (π.χ. /booking) ή URLs. Για ραντεβού/επόμενα βήματα να λες να καλέσουν στο τηλέφωνο από το CONTEXT.
+- Αν ρωτήσουν για Paint Correction, χρησιμοποίησε την ΑΚΡΙΒΗ τιμή από το CONTEXT (paint_correction) και πες ότι το τελικό κόστος εξαρτάται από την κατάσταση.
+- Αν ρωτήσουν για Ceramic Coating, χρησιμοποίησε τις ΑΚΡΙΒΕΙΣ τιμές tiers από το CONTEXT (ceramic_coating).
+- Αν ρωτήσουν γενικά για “τιμές/price/prices”, απάντα με μια σύντομη λίστα: starting prices πακέτων + paint correction + ceramic coating tiers, και μετά κάνε ΜΙΑ διευκρινιστική ερώτηση (ποια υπηρεσία θέλουν).
+- Κάνε το πολύ ΜΙΑ διευκρινιστική ερώτηση όταν χρειάζεται.
+- Να κλείνεις με το τηλέφωνο από το CONTEXT όταν ο χρήστης ρωτά για booking/τιμές/επόμενα βήματα.
+`.trim();
 
     const userText = String(message);
 
-    const prompt = [
-      `System: ${SYSTEM}`,
-      `CONTEXT:`,
-      KB || "No business info provided.",
-      ``,
-      ...(history ?? []).map(
-        (m) => `${m.role === "bot" ? "Assistant" : "User"}: ${m.content}`,
-      ),
-      `User: ${userText}`,
-      `Assistant:`,
-    ].join("\n");
+    const openai = new OpenAI({ apiKey: Deno.env.get("OPENAI_API_KEY")! });
 
-    // Gemini call + quota fallback
+    const inputMessages = [
+      {
+        role: "system" as const,
+        content: `${SYSTEM}\n\nCONTEXT:\n${KB || "Δεν υπάρχουν διαθέσιμες πληροφορίες επιχείρησης."}`,
+      },
+      ...(history ?? []).map((m: any) => ({
+        role: (m.role === "bot" ? "assistant" : "user") as "assistant" | "user",
+        content: String(m.content),
+      })),
+      { role: "user" as const, content: userText },
+    ];
+
     let reply = "…";
     try {
-      const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: prompt,
+      const response = await openai.responses.create({
+        model: "gpt-4.1-mini",
+        input: inputMessages,
+        // Για έλεγχο κόστους/μήκους:
+        max_output_tokens: 250,
+        temperature: 0.4,
       });
-      reply = response.text || "…";
+
+      reply = response.output_text || "…";
     } catch (err) {
       const phone = extractPhone(kbMap.get("phone"));
       const greek = isGreekText(userText);
 
-      if (isQuotaError(err)) {
-        reply = greek
-          ? `Η βάρδια μου ως Τεχνιτή Νοημοσύνη τελείωσε. Πάρε τηλέφωνο στο ${phone} και θα σε βοηθήσω σαν αληθινός άνθρωπος.`
-          : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
-      } else {
-        reply = greek
-          ? `Η βάρδια μου ως Τεχνιτή Νοημοσύνη τελείωσε. Πάρε τηλέφωνο στο ${phone} και θα σε βοηθήσω σαν αληθινός άνθρωπος.`
-          : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
-      }
+      reply = greek
+        ? `Η βάρδια μου ως Τεχνητή Νοημοσύνη τελείωσε. Πάρε τηλέφωνο στο ${phone} και θα σε βοηθήσω σαν αληθινός άνθρωπος.`
+        : `My AI shift ended. Call ${phone} and I’ll help you like a real human.`;
+
+      if (!isQuotaError(err)) console.error("OpenAI error:", err);
     }
 
     // Store bot reply

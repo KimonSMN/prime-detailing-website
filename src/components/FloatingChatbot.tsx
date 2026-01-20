@@ -11,11 +11,10 @@ export default function FloatingChatbot() {
           className="w-[360px] max-w-[calc(100vw-2.5rem)] h-[520px]
                         overflow-hidden rounded-2xl border border-black/10 bg-white shadow-2xl"
         >
-          <div className="h-12 px-3 flex items-center justify-between border-b border-black/10 bg-zinc-50">
-            <span className="text-sm font-semibold">Assistant</span>
+          <div className="h-12 px-3 flex items-center justify-end border-b border-black/10 bg-zinc-60">
             <button
               onClick={() => setOpen(false)}
-              className="h-8 w-8 rounded-xl border border-black/10 hover:bg-zinc-100"
+              className="h-8 w-8 rounded-xl border border-black/10 bg-zinc-900 hover:bg-zinc-700"
             >
               ✕
             </button>

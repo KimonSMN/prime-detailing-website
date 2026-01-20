@@ -115,7 +115,8 @@ export default function ChatBot() {
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder="Type a message..."
           className="flex-1 rounded-xl border border-black/10 px-3 py-2 outline-none
-                     focus:ring-2 focus:ring-zinc-900/20"
+             text-base md:text-sm
+             focus:ring-2 focus:ring-zinc-900/20"
         />
         <button
           onClick={sendMessage}

@@ -6,14 +6,14 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-secondary py-16 px-4">
+    <footer className="bg-background py-16 px-4">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8 justify-items-center">
           {/* Company Info (narrow, centered) */}
           <div className="space-y-4 w-full max-w-xs text-center">
             <h3 className="text-2xl font-bold">
               <span className="text-foreground">{t("footer.title.prime")}</span>
-              <span className="text-amber-400 ml-2">
+              <span className="text-secondary ml-2">
                 {t("footer.title.detailing")}
               </span>
             </h3>
@@ -27,7 +27,7 @@ const Footer = () => {
             </h4>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-muted-foreground justify-center md:justify-start">
-                <Phone className="w-5 h-5 text-amber-400" />
+                <Phone className="w-5 h-5 text-secondary" />
                 <a
                   href="tel:+306939949788"
                   className="hover:underline"
@@ -37,7 +37,7 @@ const Footer = () => {
                 </a>
               </div>
               <div className="flex items-center gap-3 text-zinc-400 justify-center md:justify-start">
-                <Mail className="w-5 h-5 text-amber-400" />
+                <Mail className="w-5 h-5 text-secondary" />
                 <a
                   href="mailto:kimonsmirlianos@gmail.com"
                   className="hover:underline break-all"
@@ -47,7 +47,7 @@ const Footer = () => {
                 </a>
               </div>
               <div className="flex items-center gap-3 text-zinc-400 justify-center md:justify-start">
-                <MapPin className="w-5 h-5 text-amber-400" />
+                <MapPin className="w-5 h-5 text-secondary" />
                 <a
                   href="https://maps.app.goo.gl/spdExjQ9h5NxUgze8"
                   target="_blank"
@@ -60,7 +60,7 @@ const Footer = () => {
               <div className="flex items-center gap-3 text-muted-foreground justify-center md:justify-start">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5 text-amber-400"
+                  className="w-5 h-5 text-secondary"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >

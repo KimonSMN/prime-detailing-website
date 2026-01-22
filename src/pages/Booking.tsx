@@ -100,7 +100,7 @@ const Booking = () => {
   const [services, setServices] = useState<ServiceRow[]>([]);
   const [addons, setAddons] = useState<AddonRow[]>([]);
   const [selectedAddonIds, setSelectedAddonIds] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
 
   // --- Protection / Ceramic / Extras grouping by slug ---
@@ -119,7 +119,7 @@ const Booking = () => {
     string | null
   >(null);
   const [selectedCeramicSlug, setSelectedCeramicSlug] = useState<string | null>(
-    null
+    null,
   );
 
   // Map rows for fast lookup
@@ -132,25 +132,25 @@ const Booking = () => {
   const protectionRows = useMemo(
     () =>
       PROTECTION_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
-        Boolean
+        Boolean,
       ) as AddonRow[],
-    [addonBySlug]
+    [addonBySlug],
   );
 
   const ceramicRows = useMemo(
     () =>
       CERAMIC_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
-        Boolean
+        Boolean,
       ) as AddonRow[],
-    [addonBySlug]
+    [addonBySlug],
   );
 
   const extraRows = useMemo(
     () =>
       EXTRA_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
-        Boolean
+        Boolean,
       ) as AddonRow[],
-    [addonBySlug]
+    [addonBySlug],
   );
 
   const selectSingleBySlug = useCallback(
@@ -175,7 +175,7 @@ const Booking = () => {
         return next;
       });
     },
-    [addonBySlug]
+    [addonBySlug],
   );
 
   const [isCalOpen, setIsCalOpen] = useState(false);
@@ -195,19 +195,19 @@ const Booking = () => {
 
   const [dateObj, setDateObj] = useState<Date | undefined>(undefined);
   const [unavailableTimes, setUnavailableTimes] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
 
   // selected service
   const selectedService = useMemo(
     () => services.find((s) => s.id === formData.serviceId),
-    [services, formData.serviceId]
+    [services, formData.serviceId],
   );
 
   // selected add-ons resolved to objects
   const selectedAddons = useMemo(
     () => addons.filter((a) => selectedAddonIds.has(a.id)),
-    [addons, selectedAddonIds]
+    [addons, selectedAddonIds],
   );
 
   // total minutes from selected add-ons
@@ -215,36 +215,36 @@ const Booking = () => {
     () =>
       selectedAddons.reduce(
         (sum, a) => sum + (Number(a.duration_min ?? 0) || 0),
-        0
+        0,
       ),
-    [selectedAddons]
+    [selectedAddons],
   );
 
   // base service minutes
   const serviceMinutes = useMemo(
     () => Number(selectedService?.duration_min ?? 0) || 0,
-    [selectedService]
+    [selectedService],
   );
 
   // TOTAL minutes for the *new* booking being composed
   const totalSelectedMinutes = useMemo(
     () => serviceMinutes + totalAddonMinutes,
-    [serviceMinutes, totalAddonMinutes]
+    [serviceMinutes, totalAddonMinutes],
   );
 
   // --- price helpers ---
   const servicePrice = useMemo(
     () => Number(selectedService?.base_price ?? 0) || 0,
-    [selectedService]
+    [selectedService],
   );
 
   const addonsTotalPrice = useMemo(
     () =>
       selectedAddons.reduce(
         (sum, a) => sum + (Number(a.base_price ?? 0) || 0),
-        0
+        0,
       ),
-    [selectedAddons]
+    [selectedAddons],
   );
 
   const totalSelectedPrice = servicePrice + addonsTotalPrice;
@@ -338,7 +338,7 @@ const Booking = () => {
         toast({
           title: t(
             "booking.toast.availabilityFailTitle",
-            "Couldn’t load availability"
+            "Couldn’t load availability",
           ),
           description: availErr.message,
           variant: "destructive",
@@ -392,7 +392,7 @@ const Booking = () => {
         setFormData((p) => ({ ...p, time: "" }));
       }
     },
-    [toast, t, formData.time]
+    [toast, t, formData.time],
   );
 
   /* ---------------- availability (load when date changes) ---------------- */
@@ -445,7 +445,7 @@ const Booking = () => {
       selectSingleBySlug(slug);
       setFormData((p) => ({ ...p, time: "" }));
     },
-    [addonBySlug, selectSingleBySlug, selectedProtectionSlug]
+    [addonBySlug, selectSingleBySlug, selectedProtectionSlug],
   );
 
   const onPickCeramic = useCallback(
@@ -469,7 +469,7 @@ const Booking = () => {
       selectSingleBySlug(slug);
       setFormData((p) => ({ ...p, time: "" }));
     },
-    [addonBySlug, selectSingleBySlug, selectedCeramicSlug]
+    [addonBySlug, selectSingleBySlug, selectedCeramicSlug],
   );
 
   /* ---------------- submit ---------------- */
@@ -510,7 +510,7 @@ const Booking = () => {
         title: t("booking.toast.unavailable.title"),
         description: t(
           "booking.toast.unavailable.descFull",
-          "The selected start time overlaps with another booking."
+          "The selected start time overlaps with another booking.",
         ),
         variant: "destructive",
       });
@@ -577,10 +577,10 @@ const Booking = () => {
   /* ============================ UI ============================ */
 
   const pillBase =
-    "rounded-2xl border p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/30";
-  const pillIdle = "border-border hover:border-amber-400/40 bg-card";
+    "rounded-2xl border p-5 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-secondary/30";
+  const pillIdle = "border-border hover:border-secondary-hover/40 bg-card";
   const pillActive =
-    "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40";
+    "border-secondary bg-secondary/10 ring-1 ring-secondary/40";
 
   const formatEuro = (val: string | number | null) =>
     new Intl.NumberFormat(i18n.language, {
@@ -598,7 +598,7 @@ const Booking = () => {
     if (r === 0) return `${h}${t("booking.hoursShort", "h")}`;
     return `${h}${t("booking.hoursShort", "h")} ${r}${t(
       "booking.minutesShort",
-      "m"
+      "m",
     )}`;
   };
 
@@ -606,7 +606,7 @@ const Booking = () => {
     const copy = [...services];
     copy.sort(
       (a, b) =>
-        (Number(a.base_price ?? 0) || 0) - (Number(b.base_price ?? 0) || 0)
+        (Number(a.base_price ?? 0) || 0) - (Number(b.base_price ?? 0) || 0),
     );
     return copy;
   }, [services]);
@@ -645,8 +645,8 @@ const Booking = () => {
           className={cn(
             "mt-0.5 h-8 w-8 rounded-full border flex items-center justify-center text-sm",
             done
-              ? "border-amber-400/60 bg-amber-400/10 text-amber-200"
-              : "border-border text-muted-foreground"
+              ? "border-secondary/60 bg-secondary/10 text-secondary"
+              : "border-border text-muted-foreground",
           )}
         >
           {done ? <Check className="h-4 w-4" /> : num}
@@ -729,7 +729,7 @@ const Booking = () => {
                 <div className="text-sm text-muted-foreground">
                   {t(
                     "booking.ui.protection.pickOne",
-                    "Pick one: wax / sealant or one ceramic coating option."
+                    "Pick one: wax / sealant or one ceramic coating option.",
                   )}
                 </div>
 
@@ -742,8 +742,8 @@ const Booking = () => {
                         a.slug === "liquidWax"
                           ? Droplets
                           : a.slug === "spraySealant"
-                          ? Shield
-                          : Sparkles;
+                            ? Shield
+                            : Sparkles;
 
                       return (
                         <button
@@ -751,16 +751,16 @@ const Booking = () => {
                           type="button"
                           onClick={() => a.slug && onPickProtection(a.slug)}
                           className={cn(
-                            "rounded-2xl border p-4 text-left transition hover:border-amber-400/40",
+                            "rounded-2xl border p-4 text-left transition hover:border-secondary-hover/40",
                             active
-                              ? "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40"
-                              : "border-border"
+                              ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40"
+                              : "border-border",
                           )}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <div className="flex items-center gap-2 font-semibold">
-                                <Icon className="h-4 w-4 text-amber-400" />
+                                <Icon className="h-4 w-4 text-secondary" />
                                 {a.name}
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
@@ -772,7 +772,7 @@ const Booking = () => {
                               {active
                                 ? t(
                                     "booking.ui.protection.selected",
-                                    "Selected"
+                                    "Selected",
                                   )
                                 : ""}
                             </div>
@@ -789,16 +789,16 @@ const Booking = () => {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 font-semibold">
-                          <Crown className="h-4 w-4 text-amber-400" />
+                          <Crown className="h-4 w-4 text-secondary" />
                           {t(
                             "booking.ui.protection.ceramic.title",
-                            "Ceramic Coating"
+                            "Ceramic Coating",
                           )}
                         </div>
                         <div className="text-sm text-muted-foreground mt-1">
                           {t(
                             "booking.ui.protection.ceramic.subtitle",
-                            "Choose durability."
+                            "Choose durability.",
                           )}
                         </div>
                       </div>
@@ -811,7 +811,7 @@ const Booking = () => {
                         const label = a.slug
                           ? t(
                               `booking.ui.protection.ceramic.options.${a.slug}`,
-                              a.slug
+                              a.slug,
                             )
                           : t("booking.ui.protection.ceramic.title", "Ceramic");
 
@@ -823,13 +823,13 @@ const Booking = () => {
                             className={cn(
                               "w-full rounded-xl border px-3 py-3 text-left transition",
                               active
-                                ? "border-amber-400 bg-amber-400/10"
-                                : "border-border hover:border-amber-400/60"
+                                ? "border-secondary bg-secondary/10"
+                                : "border-border hover:border-secondary/60",
                             )}
                           >
                             <div className="flex items-center justify-between gap-3">
                               <div className="font-semibold">{label}</div>
-                              <div className="font-bold text-amber-400">
+                              <div className="font-bold text-secondary">
                                 {formatEuro(a.base_price)}
                               </div>
                             </div>
@@ -839,7 +839,7 @@ const Booking = () => {
                                   "booking.ui.protection.ceramic.estimatedTime",
                                   {
                                     time: fmtHours(a.duration_min),
-                                  }
+                                  },
                                 )}
                               </div>
                             ) : null}
@@ -851,7 +851,7 @@ const Booking = () => {
                     <div className="mt-3 text-xs text-muted-foreground">
                       {t(
                         "booking.ui.protection.ceramic.finalNote",
-                        "Final price depends on vehicle size and paint condition. Paint correction may be required."
+                        "Final price depends on vehicle size and paint condition. Paint correction may be required.",
                       )}
                     </div>
                   </div>
@@ -876,8 +876,8 @@ const Booking = () => {
                         a.slug === "engineBay"
                           ? Wrench
                           : a.slug === "headlightRestoration"
-                          ? Lightbulb
-                          : Sparkles;
+                            ? Lightbulb
+                            : Sparkles;
 
                       return (
                         <button
@@ -893,16 +893,16 @@ const Booking = () => {
                             setFormData((p) => ({ ...p, time: "" }));
                           }}
                           className={cn(
-                            "rounded-2xl border p-4 text-left transition hover:border-amber-400/40",
+                            "rounded-2xl border p-4 text-left transition hover:border-secondary-hover/40",
                             checked
-                              ? "border-amber-400 bg-amber-400/10 ring-1 ring-amber-400/40"
-                              : "border-border"
+                              ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40"
+                              : "border-border",
                           )}
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div>
                               <div className="flex items-center gap-2 font-semibold">
-                                <Icon className="h-4 w-4 text-amber-400" />
+                                <Icon className="h-4 w-4 text-secondary" />
                                 {a.name}
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
@@ -941,9 +941,9 @@ const Booking = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        className="justify-start w-full bg-background border-border hover:border-amber-400/40"
+                        className="justify-start w-full bg-background border-border hover:border-secondary-hover/40"
                       >
-                        <CalendarIcon className="mr-2 h-4 w-4 text-amber-200" />
+                        <CalendarIcon className="mr-2 h-4 w-4 text-secondary" />
                         {dateObj ? (
                           fmtDate(dateObj)
                         ) : (
@@ -976,7 +976,7 @@ const Booking = () => {
 
                   <div className="text-sm text-muted-foreground">
                     {t("booking.meta.estimatedDuration")}{" "}
-                    <span className="text-amber-200 font-medium">
+                    <span className="text-secondary font-medium">
                       {totalMinutes ? fmtHours(totalMinutes) : "—"}
                     </span>
                   </div>
@@ -992,7 +992,7 @@ const Booking = () => {
                           title: t("booking.toast.unavailable.title"),
                           description: t(
                             "booking.toast.unavailable.descFull",
-                            "The selected start time overlaps with another booking."
+                            "The selected start time overlaps with another booking.",
                           ),
                           variant: "destructive",
                         });
@@ -1002,7 +1002,7 @@ const Booking = () => {
                     }}
                     disabled={!formData.date}
                   >
-                    <SelectTrigger className="bg-background border-border hover:border-amber-400/40">
+                    <SelectTrigger className="bg-background border-border hover:border-secondary-hover/40">
                       <SelectValue
                         placeholder={
                           formData.date
@@ -1027,11 +1027,11 @@ const Booking = () => {
                             {takenByStart
                               ? `— ${t("booking.booked")}`
                               : overlap
-                              ? `— ${t(
-                                  "booking.notEnoughRoom",
-                                  "not enough room"
-                                )}`
-                              : ""}
+                                ? `— ${t(
+                                    "booking.notEnoughRoom",
+                                    "not enough room",
+                                  )}`
+                                : ""}
                           </SelectItem>
                         );
                       })}
@@ -1063,7 +1063,7 @@ const Booking = () => {
                       vehicleInfo: e.target.value,
                     }))
                   }
-                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                  className="border-secondary/20 focus-visible:ring-secondary/30"
                 />
                 <Textarea
                   placeholder={t("booking.ph.notes")}
@@ -1071,7 +1071,7 @@ const Booking = () => {
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, notes: e.target.value }))
                   }
-                  className="min-h-[110px] border-amber-400/20 focus-visible:ring-amber-400/30"
+                  className="min-h-[110px] border-secondary/20 focus-visible:ring-secondary/30"
                 />
               </div>
             </div>
@@ -1094,7 +1094,7 @@ const Booking = () => {
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, name: e.target.value }))
                   }
-                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                  className="border-secondary/20 focus-visible:ring-secondary/30"
                 />
                 <Input
                   placeholder={t("booking.ph.phone")}
@@ -1102,7 +1102,7 @@ const Booking = () => {
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, phone: e.target.value }))
                   }
-                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                  className="border-secondary/20 focus-visible:ring-secondary/30"
                 />
                 <Input
                   placeholder={t("booking.ph.email")}
@@ -1110,15 +1110,15 @@ const Booking = () => {
                   onChange={(e) =>
                     setFormData((p) => ({ ...p, email: e.target.value }))
                   }
-                  className="border-amber-400/20 focus-visible:ring-amber-400/30"
+                  className="border-secondary/20 focus-visible:ring-secondary/30"
                 />
 
                 <Button
                   size="lg"
                   className={cn(
                     "w-full",
-                    "bg-amber-400 text-black hover:bg-amber-300",
-                    !canSubmit && "opacity-60"
+                    "bg-secondary text-black hover:bg-secondary-hover",
+                    !canSubmit && "opacity-60",
                   )}
                   disabled={loading || !canSubmit}
                   onClick={(e) => void handleSubmit(e)}
@@ -1144,7 +1144,7 @@ const Booking = () => {
             <div className="p-6 border-b">
               <div className="flex items-center justify-between gap-3">
                 <h3 className="font-semibold">{t("booking.summary.title")}</h3>
-                <div className="text-xs px-2 py-1 rounded-full border border-amber-400/40 text-amber-200">
+                <div className="text-xs px-2 py-1 rounded-full border border-secondary/40 text-secondary">
                   {formatEuro(totalPrice)}
                 </div>
               </div>
@@ -1177,7 +1177,7 @@ const Booking = () => {
                       {selectedAddons.map((a) => (
                         <span
                           key={a.id}
-                          className="text-xs rounded-full border border-amber-400/30 bg-amber-400/5 px-2 py-1"
+                          className="text-xs rounded-full border border-secondary/30 bg-secondary/5 px-2 py-1"
                         >
                           {a.name}
                         </span>

@@ -17,7 +17,7 @@ const TopNavbar = () => {
             className={({ isActive }) =>
               `text-base font-medium ${
                 isActive
-                  ? "text-amber-400"
+                  ? "text-secondary"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
@@ -30,7 +30,7 @@ const TopNavbar = () => {
             className={({ isActive }) =>
               `text-base font-medium ${
                 isActive
-                  ? "text-amber-400"
+                  ? "text-secondary"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
@@ -43,7 +43,7 @@ const TopNavbar = () => {
             className={({ isActive }) =>
               `text-base font-medium ${
                 isActive
-                  ? "text-amber-400"
+                  ? "text-secondary"
                   : "text-muted-foreground hover:text-foreground"
               }`
             }
@@ -60,11 +60,11 @@ const TopNavbar = () => {
             to="/booking"
             className="
               rounded-full
-              bg-amber-400
+              bg-secondary
               text-black
               px-5 py-2
               text-base font-semibold
-              hover:bg-amber-300
+              hover:bg-secondary-hover
               transition
             "
           >
@@ -96,7 +96,7 @@ const TopNavbar = () => {
             <NavLink
               to="/"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
             >
               Home
             </NavLink>
@@ -104,7 +104,7 @@ const TopNavbar = () => {
             <NavLink
               to="/services"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
             >
               Services
             </NavLink>
@@ -112,7 +112,7 @@ const TopNavbar = () => {
             <NavLink
               to="/gallery"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
             >
               Gallery
             </NavLink>
@@ -123,10 +123,10 @@ const TopNavbar = () => {
               className="
                 block px-3 py-2
                 rounded-md
-                bg-amber-400
+                bg-secondary
                 text-black
                 text-base font-semibold
-                hover:bg-amber-300
+                hover:bg-secondary-hover
               
                 text-center
               "

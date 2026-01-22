@@ -94,7 +94,7 @@ export default function SeasonalPackage() {
         </span>
 
         {/* Title */}
-        <h2 className="text-2xl md:text-3xl font-bold text-amber-400 mb-2 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-secondary mb-2 text-center">
           {pkg.name}
         </h2>
 
@@ -108,7 +108,7 @@ export default function SeasonalPackage() {
           {pkg.description}
         </p>
 
-        <p className="text-sm font-semibold text-amber-400 mb-4 text-center">
+        <p className="text-sm font-semibold text-secondary mb-4 text-center">
           {t("seasonalPackage.whatYouGet", { count: 3 })}
         </p>
 
@@ -116,7 +116,7 @@ export default function SeasonalPackage() {
         <ul className="space-y-2 mb-6">
           {pkg.items.map((item) => (
             <li key={item} className="text-sm text-zinc-200 flex gap-2">
-              <span className="text-amber-400">✓</span>
+              <span className="text-secondary">✓</span>
               <span>{item}</span>
             </li>
           ))}
@@ -138,7 +138,7 @@ export default function SeasonalPackage() {
               }}
               components={{
                 s: <span className="line-through" />,
-                b: <b className="text-amber-400" />,
+                b: <b className="text-secondary" />,
               }}
             />
           </p>
@@ -154,10 +154,10 @@ export default function SeasonalPackage() {
           </div>
 
           <div className="text-center sm:text-right">
-            <p className="text-amber-400 text-md">
+            <p className="text-secondary text-md">
               {t("seasonalPackage.offerEnds")}
             </p>
-            <p className="font-mono text-amber-400 text-xl md:text-xl font-bold tracking-wider">
+            <p className="font-mono text-secondary text-xl md:text-xl font-bold tracking-wider">
               {timer.months}M : {timer.days}D : {timer.hours}H
             </p>
           </div>

@@ -11,10 +11,10 @@ import BeforeAfterStrip from "@/components/BeforeAfterStrip";
 
 // ✅ Lazy import heavy components so they don't hurt LCP
 const ReviewsCarousel = React.lazy(
-  () => import("@/components/ReviewsCarousel")
+  () => import("@/components/ReviewsCarousel"),
 );
 const GoogleReviewsEmbed = React.lazy(
-  () => import("@/components/GoogleReviewsEmbed")
+  () => import("@/components/GoogleReviewsEmbed"),
 );
 
 /* Mount children only when near viewport */
@@ -39,7 +39,7 @@ function LazyWhenVisible({
           }
         });
       },
-      { root: null, rootMargin, threshold: 0.01 }
+      { root: null, rootMargin, threshold: 0.01 },
     );
     io.observe(ref.current);
     return () => io.disconnect();

@@ -441,6 +441,15 @@
   "services.extras.title": "Add-ons",
   "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas.",
   "servicesNew": {
+    "cta": {
+      "title": "Not Sure What You Need?",
+      "subtitle": "Contact us for a free consultation and we'll recommend the perfect service for your vehicle.",
+      "bookBtn": "Schedule Consultation",
+      "callBtn": "Call (+30) 693 994 9788",
+      "bookAria": "Schedule a consultation",
+      "callAria": "Call Prime Detailing",
+      "phoneHref": "tel:+306939949788"
+    },
     "book": "Book Now",
     "details": "More details",
     "fromPrice": "From {{price}}€",

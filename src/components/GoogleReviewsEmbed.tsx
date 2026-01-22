@@ -23,7 +23,7 @@ const GoogleReviewsEmbed = ({ embedSrc, reviewsLink }: Props) => {
           io.disconnect(); // load only once
         }
       },
-      { rootMargin: "200px" }
+      { rootMargin: "200px" },
     );
     io.observe(ref.current);
     return () => io.disconnect();
@@ -63,7 +63,7 @@ const GoogleReviewsEmbed = ({ embedSrc, reviewsLink }: Props) => {
               href={reviewsLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-xl border bg-amber-400 text-black px-5 py-3 font-medium hover:opacity-95"
+              className="inline-flex items-center gap-2 rounded-xl border bg-secondary text-black px-5 py-3 font-medium hover:opacity-95"
             >
               {t("reviews.cta", "Read all reviews on Google")}
               <ExternalLink className="h-4 w-4" aria-hidden="true" />

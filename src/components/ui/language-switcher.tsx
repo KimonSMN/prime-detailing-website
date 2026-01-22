@@ -74,7 +74,7 @@ export function LanguageSwitcher() {
           onClick={() => setLang("en")}
           className={`relative z-10 flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
             !isEL
-              ? "text-amber-400"
+              ? "text-secondary"
               : "text-foreground/70 hover:text-foreground"
           }`}
           aria-pressed={!isEL}
@@ -86,7 +86,7 @@ export function LanguageSwitcher() {
           type="button"
           onClick={() => setLang("el")}
           className={`relative z-10 flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors ${
-            isEL ? "text-amber-400" : "text-foreground/70 hover:text-foreground"
+            isEL ? "text-secondary" : "text-foreground/70 hover:text-foreground"
           }`}
           aria-pressed={isEL}
         >

@@ -57,7 +57,7 @@ const Hero = () => {
           </span>
 
           {/*  "Detailing" title  */}
-          <span className="text-amber-400 ml-3">
+          <span className="text-secondary ml-3">
             {t("hero.title.detailing")}
           </span>
         </h1>
@@ -69,7 +69,7 @@ const Hero = () => {
         <p className="text-lg md:text-2xl text-zinc-400 mb-10 leading-relaxed max-w-2xl mx-auto">
           {t(
             "hero.tagline",
-            "Transform your vehicle with premium detailing — paint correction, ceramic coating, and deep interior care."
+            "Transform your vehicle with premium detailing — paint correction, ceramic coating, and deep interior care.",
           )}
         </p>
 
@@ -80,16 +80,16 @@ const Hero = () => {
             asChild
             variant="hero"
             size="lg"
-            className="text-lg px-8 py-6 h-auto hover:bg-amber-300 bg-amber-400 text-black"
+            className="text-lg px-8 py-6 h-auto hover:bg-secondary-hover bg-secondary text-black"
           >
             <Link
-              to="/services"
+              to="/booking"
               aria-label={t(
-                "hero.cta.servicesAria",
-                "View detailing services in Athens"
+                "hero.cta.contactAria",
+                "Contact Prime Detailing to book",
               )}
             >
-              {t("hero.btn.services", "View Services")}
+              {t("hero.btn.book", "Book Appointment")}
             </Link>
           </Button>
 
@@ -105,13 +105,13 @@ const Hero = () => {
             "
           >
             <Link
-              to="/booking"
+              to="/services"
               aria-label={t(
-                "hero.cta.contactAria",
-                "Contact Prime Detailing to book"
+                "hero.cta.servicesAria",
+                "View detailing services in Athens",
               )}
             >
-              {t("hero.btn.book", "Book Appointment")}
+              {t("hero.btn.services", "View Services")}
             </Link>
           </Button>
         </div>
@@ -126,8 +126,8 @@ const Hero = () => {
         "
         aria-hidden="true"
       >
-        <div className="w-6 h-10 border-2 rounded-full flex justify-center border-amber-400">
-          <div className="w-1 h-3 rounded-full mt-2 animate-pulse bg-amber-400"></div>
+        <div className="w-6 h-10 border-2 rounded-full flex justify-center border-secondary">
+          <div className="w-1 h-3 rounded-full mt-2 animate-pulse bg-secondary"></div>
         </div>
       </div>
 

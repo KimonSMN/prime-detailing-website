@@ -195,7 +195,7 @@ export default function AdminBookings() {
 
   // Month-level blocks for coloring the calendar days
   const [monthWithBlocks, setMonthWithBlocks] = useState<Set<string>>(
-    new Set()
+    new Set(),
   );
   const [calendarMonth, setCalendarMonth] = useState<Date>(new Date());
 
@@ -203,7 +203,7 @@ export default function AdminBookings() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
     const { data: sub } = supabase.auth.onAuthStateChange((_e, s) =>
-      setAuthed(!!s)
+      setAuthed(!!s),
     );
     return () => sub.subscription.unsubscribe();
   }, []);
@@ -225,7 +225,7 @@ export default function AdminBookings() {
       quantity,
       addon:addon_id ( name, base_price, duration_min )
     )
-  `
+  `,
       )
       .order("preferred_at", { ascending: true })
       .limit(200);
@@ -272,7 +272,7 @@ export default function AdminBookings() {
         load();
       }
     },
-    [toast, load]
+    [toast, load],
   );
 
   const deleteBooking = useCallback(
@@ -296,7 +296,7 @@ export default function AdminBookings() {
         setDeletingId(null);
       }
     },
-    [toast, load]
+    [toast, load],
   );
 
   // ---- Helpers ----
@@ -310,7 +310,7 @@ export default function AdminBookings() {
   function expandBlockedHours(
     startISO: string,
     minutes: number,
-    acc: Set<string>
+    acc: Set<string>,
   ) {
     const s = parseISO(startISO);
     const e = new Date(s.getTime() + minutes * 60000);
@@ -334,7 +334,7 @@ export default function AdminBookings() {
       h,
       m,
       0,
-      0
+      0,
     );
   }
 
@@ -384,7 +384,7 @@ export default function AdminBookings() {
   // For a given date, compute unavailable slots + kind map
   async function fetchUnavailableForDate(
     date: Date,
-    excludeBookingId?: string
+    excludeBookingId?: string,
   ) {
     const start = new Date(date);
     start.setHours(0, 0, 0, 0);
@@ -404,7 +404,7 @@ export default function AdminBookings() {
           quantity,
           addon:addon_id ( duration_min )
         )
-      `
+      `,
       )
       .gte("preferred_at", start.toISOString())
       .lt("preferred_at", end.toISOString())
@@ -493,7 +493,7 @@ export default function AdminBookings() {
     date: Date,
     start: Date,
     minutes: number,
-    excludeBookingId?: string
+    excludeBookingId?: string,
   ): Promise<boolean> {
     const end = new Date(start.getTime() + minutes * 60000);
 
@@ -515,7 +515,7 @@ export default function AdminBookings() {
           quantity,
           addon:addon_id ( duration_min )
         )
-      `
+      `,
       )
       .gte("preferred_at", dayStart.toISOString())
       .lt("preferred_at", dayEnd.toISOString())
@@ -571,7 +571,7 @@ export default function AdminBookings() {
       resDate,
       newStart,
       myMin,
-      resBooking.id
+      resBooking.id,
     );
 
     if (conflict) {
@@ -850,8 +850,8 @@ export default function AdminBookings() {
                       blockFullDay
                         ? "Disabled (full day)"
                         : blockDate
-                        ? "Select time"
-                        : "Pick date first"
+                          ? "Select time"
+                          : "Pick date first"
                     }
                   />
                 </SelectTrigger>
@@ -863,10 +863,10 @@ export default function AdminBookings() {
                       kind === "both"
                         ? "both"
                         : kind === "booking"
-                        ? "booked"
-                        : kind === "block"
-                        ? "block"
-                        : "";
+                          ? "booked"
+                          : kind === "block"
+                            ? "block"
+                            : "";
                     return (
                       <SelectItem
                         key={t}
@@ -879,10 +879,10 @@ export default function AdminBookings() {
                             <span
                               className={
                                 badge === "block"
-                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900"
+                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-secondary text-secondary"
                                   : badge === "booked"
-                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
-                                  : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
+                                    ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
+                                    : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
                               }
                             >
                               {badge}
@@ -950,7 +950,7 @@ export default function AdminBookings() {
                               ? "Full day"
                               : `${format(start, "HH:mm")} – ${format(
                                   end,
-                                  "HH:mm"
+                                  "HH:mm",
                                 )}`}
                           </span>
                           {b.note && (
@@ -992,8 +992,8 @@ export default function AdminBookings() {
                 {blockBusy
                   ? "Saving..."
                   : blockFullDay
-                  ? "Save full-day block"
-                  : "Save block"}
+                    ? "Save full-day block"
+                    : "Save block"}
               </Button>
             </div>
           </div>
@@ -1081,8 +1081,8 @@ export default function AdminBookings() {
                         kind === "block"
                           ? "This slot has an admin block."
                           : kind === "booking"
-                          ? "This slot overlaps a booking."
-                          : "This slot overlaps booking + block.",
+                            ? "This slot overlaps a booking."
+                            : "This slot overlaps booking + block.",
                     });
                   }
                 }}
@@ -1100,10 +1100,10 @@ export default function AdminBookings() {
                       kind === "both"
                         ? "both"
                         : kind === "booking"
-                        ? "booked"
-                        : kind === "block"
-                        ? "block"
-                        : "";
+                          ? "booked"
+                          : kind === "block"
+                            ? "block"
+                            : "";
                     return (
                       <SelectItem
                         key={t}
@@ -1116,10 +1116,10 @@ export default function AdminBookings() {
                             <span
                               className={
                                 badge === "block"
-                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-amber-200 text-amber-900"
+                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-secondary text-secondary"
                                   : badge === "booked"
-                                  ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
-                                  : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
+                                    ? "text-[10px] px-1.5 py-0.5 rounded bg-slate-200 text-slate-900"
+                                    : "text-[10px] px-1.5 py-0.5 rounded bg-purple-200 text-purple-900"
                               }
                             >
                               {badge}
@@ -1202,7 +1202,7 @@ const BookingCard = memo(function BookingCard({
             ? `${ba.addon.name}${
                 ba.quantity && ba.quantity > 1 ? ` × ${ba.quantity}` : ""
               }`
-            : null
+            : null,
         )
         .filter(Boolean) || [];
     return items.length ? items.join(", ") : "—";

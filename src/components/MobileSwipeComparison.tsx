@@ -124,7 +124,7 @@ const swipePackages = [
 ] as const;
 
 const Check = ({ value }: { value: boolean }) => (
-  <span className={value ? "text-amber-400" : "text-zinc-600"}>
+  <span className={value ? "text-secondary" : "text-zinc-600"}>
     {value ? "●" : "×"}
   </span>
 );
@@ -148,7 +148,7 @@ export default function MobileSwipeComparison() {
   const GROUP_HEIGHT = "h-[28px]";
   const BORDER = "border-t border-zinc-800";
 
-  const groupCellLeft = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center text-[10px] uppercase text-amber-400`;
+  const groupCellLeft = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center text-[10px] uppercase text-secondary`;
   const groupCellMid = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center`;
   const groupCellRight = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center`;
 
@@ -161,7 +161,7 @@ export default function MobileSwipeComparison() {
       <div className="grid grid-cols-[1fr_90px_1fr] border-b border-zinc-800 text-xs font-semibold">
         <div className="p-3 text-zinc-400">Feature</div>
         <div className="p-3 text-center">Maintenance</div>
-        <div className="p-3 text-center text-amber-400">
+        <div className="p-3 text-center text-secondary">
           {swipePackages[activeIndex].title}
         </div>
       </div>
@@ -181,7 +181,7 @@ export default function MobileSwipeComparison() {
                   {it.row.label}
                 </span>
               </div>
-            )
+            ),
           )}
         </div>
 
@@ -197,7 +197,7 @@ export default function MobileSwipeComparison() {
               <div key={`rm-${idx}`} className={checkCell}>
                 <Check value={it.row.maintenance} />
               </div>
-            )
+            ),
           )}
         </div>
 
@@ -208,7 +208,7 @@ export default function MobileSwipeComparison() {
             const w = e.currentTarget.clientWidth || 1;
             const index = Math.round(e.currentTarget.scrollLeft / w);
             setActiveIndex(
-              Math.max(0, Math.min(index, swipePackages.length - 1))
+              Math.max(0, Math.min(index, swipePackages.length - 1)),
             );
           }}
         >
@@ -228,7 +228,7 @@ export default function MobileSwipeComparison() {
                     <div key={`rs-${pkg.key}-${idx}`} className={checkCell}>
                       <Check value={it.row[pkg.key]} />
                     </div>
-                  )
+                  ),
                 )}
               </div>
             ))}

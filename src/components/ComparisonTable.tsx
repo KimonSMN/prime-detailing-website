@@ -125,7 +125,7 @@ const Check = ({ value }: { value: boolean }) => (
   <span
     className={
       value
-        ? "text-amber-400 text-base sm:text-xl"
+        ? "text-secondary text-base sm:text-xl"
         : "text-zinc-500 text-base sm:text-2xl"
     }
   >

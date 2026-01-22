@@ -11,6 +11,20 @@ All colors MUST be HSL.
     /* Deep navy neutrals */
     --background: 222 22% 8%;
     --foreground: 210 20% 96%;
+    /* HERE YOU CHANGE THE WHOLE SITE COLORS */
+
+    --text-secondary: 212 100% 65.9%; /* HERE YOU CHANGE ALL THE SECONDARY TEXT COLOR */
+    --text-secondary-hover: 212 100% 70%; /* Lighter version for hover states */
+
+    --bg-secondary: 212 100% 65.9%;
+    --bg-secondary-hover: 212 100% 70%;
+
+    --border-secondary: 212 100% 65.9%;
+    --border-secondary-hover: 212 100% 70%;
+    --ring-secondary: 212 100% 59%;
+    --ring-secondary-hover: 212 100% 70%;
+
+    /* ----------------------------------------*/
 
     --card: 222 24% 11%;
     --card-foreground: 210 20% 96%;
@@ -68,46 +82,6 @@ All colors MUST be HSL.
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 213 92% 58%;
   }
-
-  .dark {
-    --background: 222 22% 8%;
-    --foreground: 210 20% 96%;
-
-    --card: 222 24% 11%;
-    --card-foreground: 210 20% 96%;
-
-    --popover: 222 24% 11%;
-    --popover-foreground: 210 20% 96%;
-
-    --primary: 213 92% 58%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 222 16% 16%;
-    --secondary-foreground: 210 20% 96%;
-
-    --muted: 222 16% 18%;
-    --muted-foreground: 215 12% 65%;
-
-    --accent: 201 100% 72%;
-    --accent-foreground: 222 22% 10%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 220 15% 22%;
-    --input: 220 15% 22%;
-    --ring: 213 92% 58%;
-
-    /* Sidebar (dark) */
-    --sidebar-background: 240 6% 10%;
-    --sidebar-foreground: 0 0% 96%;
-    --sidebar-primary: 213 92% 58%;
-    --sidebar-primary-foreground: 0 0% 10%;
-    --sidebar-accent: 240 4% 16%;
-    --sidebar-accent-foreground: 0 0% 96%;
-    --sidebar-border: 240 4% 16%;
-    --sidebar-ring: 213 92% 58%;
-  }
 }
 
 @layer base {
@@ -117,6 +91,40 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  /* -------- Text -------- */
+  .text-secondary {
+    color: hsl(var(--text-secondary));
+  }
+  .hover\:text-secondary-hover:hover {
+    color: hsl(var(--text-secondary-hover));
+  }
+
+  /* -------- Background -------- */
+  .bg-secondary {
+    background-color: hsl(var(--bg-secondary));
+  }
+  .hover\:bg-secondary-hover:hover {
+    background-color: hsl(var(--bg-secondary-hover));
+  }
+
+  /* -------- Border -------- */
+  .border-secondary {
+    border-color: hsl(var(--border-secondary));
+  }
+  .hover\:border-secondary-hover:hover {
+    border-color: hsl(var(--border-secondary-hover));
+  }
+
+  /* -------- Ring (focus-visible) -------- */
+  .ring-secondary {
+    --tw-ring-color: hsl(var(--ring-secondary));
+  }
+  .focus-visible\:ring-secondary:focus-visible {
+    --tw-ring-color: hsl(var(--ring-secondary));
   }
 }
 

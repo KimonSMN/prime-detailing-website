@@ -56,7 +56,6 @@ const App = () => {
             {/* 404 fallback */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-          {/* <Footer /> */}
           <FloatingChatbot />
         </BrowserRouter>
       </TooltipProvider>

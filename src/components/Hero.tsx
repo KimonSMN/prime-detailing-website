@@ -54,8 +54,8 @@ const Hero = () => {
       >
         <div className="text-center md:text-left max-w-xl sm:max-w-2xl">
           {/* Small text (top) */}
-          <p className="text-sm sm:text-base md:text-lg text-zinc-200/90 font-light tracking-wide mb-3">
-            {t("hero.h1", "Detailing in Cholargos")}
+          <p className="text-sm sm:text-base md:text-lg text-zinc-200/90 font-light tracking-wide mb-3 ml-1">
+            Detailing in Cholargos
           </p>
 
           {/* Headline */}
@@ -67,12 +67,9 @@ const Hero = () => {
               mb-8 sm:mb-10
             "
           >
-            {t("hero.headline.line1", "Perfection in")}
+            Perfection in
             <br />
-            <span className="text-secondary">
-              {t("hero.headline.line2", "Every Detail")}
-            </span>
-
+            <span className="text-secondary">Every Detail</span>
             {/* Optional santa hat */}
             <span className="relative inline-block align-top ml-2">
               <img

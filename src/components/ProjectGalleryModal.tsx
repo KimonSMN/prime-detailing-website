@@ -41,7 +41,7 @@ export default function ProjectGalleryModal({ title, items, onClose }: Props) {
               onClose();
             }}
             aria-label="Close gallery"
-            className="rounded-full bg-black/60 px-4 py-2 text-white hover:bg-black transition"
+            className="rounded-full bg-secondary px-4 py-2 text-white hover:bg-secondary-hover transition"
           >
             ✕ Close
           </button>

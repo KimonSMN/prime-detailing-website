@@ -895,7 +895,7 @@ const Booking = () => {
                           className={cn(
                             "rounded-2xl border p-4 text-left transition hover:border-secondary-hover/40",
                             checked
-                              ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40"
+                              ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40 "
                               : "border-border",
                           )}
                         >
@@ -941,7 +941,7 @@ const Booking = () => {
                       <Button
                         type="button"
                         variant="outline"
-                        className="justify-start w-full bg-background border-border hover:border-secondary-hover/40"
+                        className="justify-start w-full bg-background border-border hover:text-white hover:border-secondary"
                       >
                         <CalendarIcon className="mr-2 h-4 w-4 text-secondary" />
                         {dateObj ? (
@@ -952,7 +952,7 @@ const Booking = () => {
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className="w-auto p-0 bg-popover border-border"
+                      className="w-auto p-0 bg-popover border-border bg-background"
                       align="start"
                     >
                       <DatePicker
@@ -974,7 +974,7 @@ const Booking = () => {
                     </PopoverContent>
                   </Popover>
 
-                  <div className="text-sm text-muted-foreground">
+                  <div className="text-sm text-muted-foreground ">
                     {t("booking.meta.estimatedDuration")}{" "}
                     <span className="text-secondary font-medium">
                       {totalMinutes ? fmtHours(totalMinutes) : "—"}
@@ -983,7 +983,7 @@ const Booking = () => {
                 </div>
 
                 {/* Time */}
-                <div className="space-y-2">
+                <div className="space-y-2 ">
                   <Select
                     value={formData.time}
                     onValueChange={(v) => {
@@ -1002,7 +1002,7 @@ const Booking = () => {
                     }}
                     disabled={!formData.date}
                   >
-                    <SelectTrigger className="bg-background border-border hover:border-secondary-hover/40">
+                    <SelectTrigger className="bg-background border-border hover:border-secondary">
                       <SelectValue
                         placeholder={
                           formData.date
@@ -1011,7 +1011,7 @@ const Booking = () => {
                         }
                       />
                     </SelectTrigger>
-                    <SelectContent className="bg-popover border-border">
+                    <SelectContent className="bg-background border-border">
                       {TIMES.map((tm) => {
                         const takenByStart = unavailableTimes.has(tm);
                         const overlap = !takenByStart && wouldOverlap(tm);

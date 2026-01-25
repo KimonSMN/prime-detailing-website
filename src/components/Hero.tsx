@@ -2,122 +2,154 @@ import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import hat from "../assets/icons/santa-hat.png";
+import hero from "../assets/icons/hero.png";
+
 const Hero = () => {
   const { t } = useTranslation();
 
   return (
     <section
-      className="relative h-[calc(100vh-4rem)] flex items-center justify-center overflow-hidden "
+      className="
+        relative
+        min-h-[calc(100svh-4rem)] md:min-h-[calc(100vh-4rem)]
+        flex items-center justify-center
+        overflow-hidden
+      "
       aria-label={t("hero.sectionLabel", "Prime Detailing hero")}
     >
       {/* Background */}
-      <div className="absolute inset-0 -z-10">
-        {/* Subtle amber-tinted overlay */}
+      <div className="absolute inset-0 h-full w-full overflow-hidden">
+        <img
+          src={hero}
+          alt=""
+          className="
+            absolute inset-0 h-full w-full object-cover
+            opacity-20 -scale-x-100
+            object-right
+            translate-x-6 sm:translate-x-10 md:translate-x-24
+          "
+        />
+
+        {/* Left-to-right fade to pure black on the left (stronger on mobile) */}
         <div
-          className="absolute inset-0 bg-gradient-to-b from-zinc-950 via-zinc-950/90 to-zinc-900"
+          className="absolute inset-0 bg-gradient-to-r from-black via-black/90 sm:via-black/80 to-transparent"
+          aria-hidden="true"
+        />
+
+        {/* Vertical mood overlay */}
+        <div
+          className="absolute inset-0 bg-gradient-to-b from-zinc-950/70 via-zinc-950/40 to-zinc-900/60"
           aria-hidden="true"
         />
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto animate-fade-in">
-        {/* ⭐ UPDATED TITLE WITH SANTA HAT ⭐ */}
-        <h1 className="text-5xl md:text-7xl font-extrabold mb-4 tracking-tight">
-          {/* Prime with Christmas Hat */}
-          <span className="text-zinc-100 relative inline-block ">
-            {/* P with hat */}
-            <span className="relative inline-block christmas:hat-wrapper">
-              P
+      <div
+        className="
+          relative z-10 w-full max-w-6xl mx-auto
+          px-5 sm:px-6 lg:px-8
+          flex items-center justify-center md:justify-start
+          animate-fade-in
+        "
+      >
+        <div className="text-center md:text-left max-w-xl sm:max-w-2xl">
+          {/* Small text (top) */}
+          <p className="text-sm sm:text-base md:text-lg text-zinc-200/90 font-light tracking-wide mb-3">
+            {t("hero.h1", "Detailing in Cholargos")}
+          </p>
+
+          {/* Headline */}
+          <h1
+            className="
+              text-5xl sm:text-6xl md:text-7xl lg:text-8xl
+              font-extrabold tracking-tight text-zinc-100
+              leading-[1.02] sm:leading-[0.98]
+              mb-8 sm:mb-10
+            "
+          >
+            {t("hero.headline.line1", "Perfection in")}
+            <br />
+            <span className="text-secondary">
+              {t("hero.headline.line2", "Every Detail")}
+            </span>
+
+            {/* Optional santa hat */}
+            <span className="relative inline-block align-top ml-2">
               <img
                 src={hat}
                 alt=""
                 style={{ transform: "scaleX(-1)" }}
                 className="
-                  hidden
-                  christmas:block
-                  christmas:absolute
-                  pointer-events-none
-                  select-none
-
-                  /* Mobile (default) = hat lower */
-                  christmas:-top-1
-                  christmas:-left-2.5
-
-                  /* Larger screens restore tighter placement */
-                  sm:christmas:-top-1.5
-                  sm:christmas:-left-3.5
-
-                  christmas:w-20    /* slightly smaller on phones */
-                  sm:christmas:w-24 /* full size on desktop */"
+                  hidden christmas:block
+                  absolute
+                  -top-5 -left-5 sm:-top-6 sm:-left-6
+                  pointer-events-none select-none
+                  w-12 sm:w-16 md:w-20
+                "
               />
             </span>
+          </h1>
 
-            {/* "Prime" title */}
-            {t("hero.title.prime").slice(1)}
-          </span>
-
-          {/*  "Detailing" title  */}
-          <span className="text-secondary ml-3">
-            {t("hero.title.detailing")}
-          </span>
-        </h1>
-
-        <p className="text-xl md:text-2xl text-zinc-100 font-semibold mb-6">
-          {t("hero.h1", "Car Detailing in Cholargos")}
-        </p>
-
-        <p className="text-lg md:text-2xl text-zinc-400 mb-10 leading-relaxed max-w-2xl mx-auto">
-          {t(
-            "hero.tagline",
-            "Transform your vehicle with premium detailing — paint correction, ceramic coating, and deep interior care.",
-          )}
-        </p>
-
-        {/* CTAs */}
-
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center animate-slide-up">
-          <Button
-            asChild
-            variant="hero"
-            size="lg"
-            className="text-lg px-8 py-6 h-auto hover:bg-secondary-hover bg-secondary text-black"
-          >
-            <Link
-              to="/booking"
-              aria-label={t(
-                "hero.cta.contactAria",
-                "Contact Prime Detailing to book",
-              )}
-            >
-              {t("hero.btn.book", "Book Appointment")}
-            </Link>
-          </Button>
-
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
+          {/* CTAs */}
+          <div
             className="
-              border-zinc-700 text-zinc-200
-              hover:bg-zinc-800 
-              hover:text-zinc-200
-              px-8 py-6 h-auto text-lg
+              flex flex-col sm:flex-row gap-3 sm:gap-4
+              justify-center md:justify-start
+              items-stretch sm:items-center md:items-start
+              animate-slide-up
             "
           >
-            <Link
-              to="/services"
-              aria-label={t(
-                "hero.cta.servicesAria",
-                "View detailing services in Athens",
-              )}
+            <Button
+              asChild
+              variant="hero"
+              size="lg"
+              className="
+                rounded-3xl text-base sm:text-lg
+                px-12 py-3 h-auto
+                hover:bg-secondary-hover bg-secondary text-black
+                w-full sm:w-auto
+              "
             >
-              {t("hero.btn.services", "View Services")}
-            </Link>
-          </Button>
+              <Link
+                to="/booking"
+                aria-label={t(
+                  "hero.cta.contactAria",
+                  "Contact Prime Detailing to book",
+                )}
+                className="w-full"
+              >
+                {t("hero.btn.book", "Book Appointment")}
+              </Link>
+            </Button>
+
+            <Button
+              asChild
+              variant="outline"
+              size="lg"
+              className="
+                border-zinc-700 text-zinc-200
+                hover:bg-zinc-800 hover:text-zinc-200
+                rounded-3xl
+                px-12 py-3 h-auto text-base sm:text-lg
+                w-full sm:w-auto
+              "
+            >
+              <Link
+                to="/services"
+                aria-label={t(
+                  "hero.cta.servicesAria",
+                  "View detailing services in Athens",
+                )}
+                className="w-full"
+              >
+                {t("hero.btn.services", "View Services")}
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Scroll Indicator — optional on landing */}
+      {/* Scroll Indicator — hide on small screens */}
       <div
         className="
           hidden md:block
@@ -131,7 +163,7 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* NoScript fallback for key contact info */}
+      {/* NoScript fallback */}
       <noscript>
         <div className="sr-only">
           Prime Detailing — Kleious 39 &amp; Aetideon 46, Cholargos 15561 —
@@ -140,12 +172,7 @@ const Hero = () => {
       </noscript>
 
       {/* Snowflakes */}
-      <div
-        className="
-          pointer-events-none absolute inset-0 overflow-hidden z-[5]
-          christmas:block hidden
-        "
-      >
+      <div className="pointer-events-none absolute inset-0 overflow-hidden z-[5] christmas:block hidden">
         <div className="snowflake"></div>
         <div className="snowflake"></div>
         <div className="snowflake"></div>

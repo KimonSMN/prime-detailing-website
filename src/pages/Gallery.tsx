@@ -93,12 +93,12 @@ export default function Gallery() {
             className="
               rounded-xl
               border
-              border-secondary/50
+              border-secondary
               px-6
               py-3
               text-secondary
               font-semibold
-              hover:bg-secondary-hover
+              hover:bg-secondary
               hover:text-black
               transition
             "

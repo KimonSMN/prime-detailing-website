@@ -2,10 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
-
 @layer base {
   :root {
     /* Deep navy neutrals */
@@ -25,16 +21,6 @@ All colors MUST be HSL.
     --ring-secondary-hover: 212 100% 70%;
 
     /* ----------------------------------------*/
-
-    --card: 222 24% 11%;
-    --card-foreground: 210 20% 96%;
-
-    --popover: 222 24% 11%;
-    --popover-foreground: 210 20% 96%;
-
-    /* Brand blue */
-    --primary: 213 92% 58%;
-    --primary-foreground: 0 0% 100%;
 
     /* Subtle blue-gray UI surfaces */
     --secondary: 222 16% 16%;
@@ -90,7 +76,7 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-display;
   }
 }
 

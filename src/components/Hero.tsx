@@ -25,8 +25,8 @@ const Hero = () => {
           className="
             absolute inset-0 h-full w-full object-cover
             opacity-20 -scale-x-100
-            object-right
-            translate-x-6 sm:translate-x-10 md:translate-x-24
+            object-center sm:object-right
+            translate-x-0 sm:translate-x-24
           "
         />
 

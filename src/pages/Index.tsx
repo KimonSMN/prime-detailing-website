@@ -139,13 +139,13 @@ const Index = () => {
       </LazyWhenVisible>
 
       <BeforeAfterStrip
-        heading="Featured Projects"
+        heading="Projects"
         galleryUrl="/gallery"
         imageIds={[
-          "detailing-bmw-120-1",
-          "detailing-bmw-ix1-2",
-          "detailing-volvo-xc40-1",
-          "detailing-glc-220d-1",
+          "glc-220d/mercedes-glc220d-1",
+          "bmw-ix1/bmw-ix1-1",
+          "kia-sportage/kia-sportage-1",
+          "bmw-x5/bmw-x5-1",
         ]}
       />
 

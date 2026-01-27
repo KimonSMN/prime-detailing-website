@@ -1,12 +1,11 @@
-import React from "react";
-
 type Variant = { format: "avif" | "webp"; width: number; url: string };
 
 export type ManifestItem = {
   id: string;
   alt: string;
-  original: { width: number; height: number };
+  original: { width: number; height: number; bytes: number | null };
   variants: Variant[];
+  project?: { id: string; title: string };
 };
 
 export function ResponsivePicture({
@@ -23,7 +22,7 @@ export function ResponsivePicture({
   const avif = item.variants.filter((v) => v.format === "avif");
   const webp = item.variants.filter((v) => v.format === "webp");
 
-  // Use SMALLEST as fallback
+  // Use smallest as fallback (your variants are sorted ascending in the script)
   const fallback = webp[0]?.url ?? avif[0]?.url ?? "";
 
   return (
@@ -35,6 +34,7 @@ export function ResponsivePicture({
           sizes={sizes}
         />
       )}
+
       {webp.length > 0 && (
         <source
           type="image/webp"
@@ -42,6 +42,7 @@ export function ResponsivePicture({
           sizes={sizes}
         />
       )}
+
       <img
         src={fallback}
         alt={item.alt}

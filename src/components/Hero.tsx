@@ -24,7 +24,7 @@ const Hero = () => {
           alt=""
           className="
             absolute inset-0 h-full w-full object-cover
-            opacity-20 -scale-x-100
+            opacity-50 md:opacity-20 lg:opacity-20 -scale-x-100
             object-center sm:object-right
             translate-x-0 sm:translate-x-24
           "
@@ -32,7 +32,7 @@ const Hero = () => {
 
         {/* Left-to-right fade to pure black on the left (stronger on mobile) */}
         <div
-          className="absolute inset-0 bg-gradient-to-r from-black via-black/90 sm:via-black/80 to-transparent"
+          className="absolute inset-0 bg-gradient-to-r from-black via-black/50 sm:via-black/80 to-transparent"
           aria-hidden="true"
         />
 

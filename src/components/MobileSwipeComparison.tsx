@@ -1,56 +1,56 @@
-import { useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 type PackageKey = "maintenance" | "full_detail" | "ultimate";
 
 type FeatureRow = {
-  label: string;
+  labelKey: string;
   maintenance: boolean;
   full_detail: boolean;
   ultimate: boolean;
 };
 
 type FeatureGroup = {
-  title: string;
+  titleKey: string;
   rows: FeatureRow[];
 };
 
 const groups: FeatureGroup[] = [
   {
-    title: "Exterior Cleaning",
+    titleKey: "comparison.groups.exteriorCleaning",
     rows: [
       {
-        label: "Contactless pre-wash & Hand wash",
-        maintenance: true,
-        full_detail: true,
-        ultimate: true,
-      },
-
-      {
-        label: "Wheel face cleaning & tire dressing",
+        labelKey: "comparison.rows.contactlessPrewashHandWash",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Tar / sap removal",
+        labelKey: "comparison.rows.wheelFaceCleaningTireDressing",
+        maintenance: true,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        labelKey: "comparison.rows.tarSapRemoval",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Wheel barrel deep cleaning",
+        labelKey: "comparison.rows.wheelBarrelDeepCleaning",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Exterior protection wax",
+        labelKey: "comparison.rows.exteriorProtectiveWax",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Exterior plastic protection",
+        labelKey: "comparison.rows.exteriorPlasticsProtection",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -58,58 +58,58 @@ const groups: FeatureGroup[] = [
     ],
   },
   {
-    title: "Interior Cleaning",
+    titleKey: "comparison.groups.interiorCleaning",
     rows: [
       {
-        label: "Interior vacuum & wipe-down",
+        labelKey: "comparison.rows.interiorVacuumWipeDown",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Glass cleaning",
+        labelKey: "comparison.rows.glassCleaning",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Full vacuum & carpet cleaning",
+        labelKey: "comparison.rows.fullVacuumCarpetCleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Interior surface shampooing",
+        labelKey: "comparison.rows.interiorSurfaceShampooing",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Door jambs & trunk cleaning",
+        labelKey: "comparison.rows.doorJambsTrunkCleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Leather cleaning",
+        labelKey: "comparison.rows.leatherCleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Leather conditioning",
+        labelKey: "comparison.rows.leatherConditioning",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Interior plastic protection",
+        labelKey: "comparison.rows.interiorPlasticsProtection",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Fabric seat deep extraction",
+        labelKey: "comparison.rows.fabricSeatDeepExtraction",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -119,66 +119,140 @@ const groups: FeatureGroup[] = [
 ];
 
 const swipePackages = [
-  { key: "full_detail", title: "Full Detail" },
-  { key: "ultimate", title: "Ultimate Detail" },
+  { key: "full_detail", titleKey: "comparison.headers.fullShort" },
+  { key: "ultimate", titleKey: "comparison.headers.ultimateShort" },
 ] as const;
 
 const Check = ({ value }: { value: boolean }) => (
-  <span className={value ? "text-secondary" : "text-zinc-600"}>
+  <span
+    className={[
+      "inline-flex items-center justify-center",
+      "w-5 h-5 leading-none select-none",
+      value ? "text-secondary" : "text-zinc-600",
+    ].join(" ")}
+    aria-hidden="true"
+  >
     {value ? "●" : "×"}
   </span>
 );
 
-type Item = { type: "group"; title: string } | { type: "row"; row: FeatureRow };
+
+type Item =
+  | { type: "group"; titleKey: string }
+  | { type: "row"; row: FeatureRow };
 
 export default function MobileSwipeComparison() {
+  const { t, i18n } = useTranslation();
   const [activeIndex, setActiveIndex] = useState(0);
 
   const items: Item[] = useMemo(() => {
     const out: Item[] = [];
     for (const g of groups) {
-      out.push({ type: "group", title: g.title });
+      out.push({ type: "group", titleKey: g.titleKey });
       for (const r of g.rows) out.push({ type: "row", row: r });
     }
     return out;
   }, []);
 
   // --- sizes / classes ---
-  const ROW_HEIGHT = "h-[48px]";
-  const GROUP_HEIGHT = "h-[48px] ";
+  const GROUP_HEIGHT = "h-[48px]";
   const BORDER = "border-t border-zinc-800";
 
-  const groupCellLeft = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center text-[10px] uppercase text-secondary`;
-  const groupCellMid = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center`;
-  const groupCellRight = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center`;
+  const groupCellLeft  = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center text-[10px] uppercase text-secondary box-border`;
+  const groupCellMid   = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center box-border`;
+  const groupCellRight = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center justify-center box-border`;
 
-  const featureCell = `px-3 ${ROW_HEIGHT} ${BORDER} flex items-center text-xs text-zinc-200`;
-  const checkCell = `px-3 ${ROW_HEIGHT} ${BORDER} flex items-center justify-center`;
+  const featureCell = `px-3 py-3 ${BORDER} flex items-start text-xs text-zinc-200 box-border`;
+  const checkCell   = `px-3 py-3 ${BORDER} flex items-center justify-center box-border`;
+
+
+  // --- refs for height syncing ---
+  const leftRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const midRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rightRefs = useRef<(HTMLDivElement | null)[][]>([]); // [pkgIndex][itemIndex]
+
+  const syncHeights = () => {
+  const heights = items.map((_, idx) => {
+    const el = leftRefs.current[idx];
+    return el ? el.getBoundingClientRect().height : 0;
+  });
+
+  // Apply to LEFT too (prevents fractional-vs-integer drift)
+  heights.forEach((h, idx) => {
+    const el = leftRefs.current[idx];
+    if (el && h) el.style.height = `${h}px`; // keep decimals
+  });
+
+  // Apply to middle
+  heights.forEach((h, idx) => {
+    const el = midRefs.current[idx];
+    if (el && h) el.style.height = `${h}px`;
+  });
+
+  // Apply to each swipe page
+  for (let p = 0; p < swipePackages.length; p++) {
+    const page = rightRefs.current[p] || [];
+    heights.forEach((h, idx) => {
+      const el = page[idx];
+      if (el && h) el.style.height = `${h}px`;
+    });
+  }
+};
+
+
+  // Recalc when text/width changes
+  useLayoutEffect(() => {
+    // next frame helps after layout settles
+    const raf = requestAnimationFrame(syncHeights);
+
+    const onResize = () => syncHeights();
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length, activeIndex, i18n.language]);
 
   return (
     <div className="md:hidden mt-2 border border-zinc-800 rounded-xl overflow-hidden bg-zinc-900/50">
       {/* Header */}
       <div className="grid grid-cols-[1fr_90px_1fr] border-b border-zinc-800 text-xs font-semibold">
-        <div className="p-3 text-zinc-400">Feature</div>
-        <div className="p-3 text-center">Maintenance</div>
-        <div className="p-3 text-center text-secondary ">
-          {swipePackages[activeIndex].title}
+        <div className="p-3 text-zinc-400">{t("comparison.headers.features")}</div>
+
+        <div className="p-3 text-center">{t("comparison.headers.maintenanceShort")}</div>
+
+        <div className="p-3 text-center text-secondary">
+          {t(swipePackages[activeIndex].titleKey)}
         </div>
       </div>
 
-      {/* Body: 3 columns, but rows are rendered in sync */}
+      {/* Body */}
       <div className="grid grid-cols-[1fr_90px_1fr]">
-        {/* Left column (Feature / Group titles) */}
-        <div className="border-r border-zinc-800">
+        {/* Left column */}
+        <div className="border-r border-zinc-800 min-w-0">
           {items.map((it, idx) =>
             it.type === "group" ? (
-              <div key={`g-${idx}`} className={groupCellLeft}>
-                {it.title}
+              <div
+                key={`g-${idx}`}
+                ref={(el) => {
+                  leftRefs.current[idx] = el;
+                }}
+                className={groupCellLeft}
+              >
+                {t(it.titleKey)}
               </div>
             ) : (
-              <div key={`r-${idx}`} className={featureCell}>
-                <span className="leading-snug line-clamp-2">
-                  {it.row.label}
+              <div
+                key={`r-${idx}`}
+                ref={(el) => {
+                  leftRefs.current[idx] = el;
+                }}
+                className={featureCell}
+              >
+                <span className="break-words leading-snug">
+                  {t(it.row.labelKey)}
                 </span>
               </div>
             ),
@@ -189,12 +263,23 @@ export default function MobileSwipeComparison() {
         <div className="border-r border-zinc-800">
           {items.map((it, idx) =>
             it.type === "group" ? (
-              <div key={`gm-${idx}`} className={groupCellMid}>
-                {/* this is the "box next to group.title" */}
+              <div
+                key={`gm-${idx}`}
+                ref={(el) => {
+                  midRefs.current[idx] = el;
+                }}
+                className={groupCellMid}
+              >
                 &nbsp;
               </div>
             ) : (
-              <div key={`rm-${idx}`} className={checkCell}>
+              <div
+                key={`rm-${idx}`}
+                ref={(el) => {
+                  midRefs.current[idx] = el;
+                }}
+                className={checkCell}
+              >
                 <Check value={it.row.maintenance} />
               </div>
             ),
@@ -207,25 +292,33 @@ export default function MobileSwipeComparison() {
           onScroll={(e) => {
             const w = e.currentTarget.clientWidth || 1;
             const index = Math.round(e.currentTarget.scrollLeft / w);
-            setActiveIndex(
-              Math.max(0, Math.min(index, swipePackages.length - 1)),
-            );
+            setActiveIndex(Math.max(0, Math.min(index, swipePackages.length - 1)));
           }}
         >
           <div className="flex">
-            {swipePackages.map((pkg) => (
+            {swipePackages.map((pkg, pkgIndex) => (
               <div key={pkg.key} className="min-w-full snap-center">
                 {items.map((it, idx) =>
                   it.type === "group" ? (
                     <div
                       key={`gs-${pkg.key}-${idx}`}
+                      ref={(el) => {
+                        rightRefs.current[pkgIndex] ??= [];
+                        rightRefs.current[pkgIndex][idx] = el;
+                      }}
                       className={groupCellRight}
                     >
-                      {/* this is the 2nd "box next to group.title" */}
                       &nbsp;
                     </div>
                   ) : (
-                    <div key={`rs-${pkg.key}-${idx}`} className={checkCell}>
+                    <div
+                      key={`rs-${pkg.key}-${idx}`}
+                      ref={(el) => {
+                        rightRefs.current[pkgIndex] ??= [];
+                        rightRefs.current[pkgIndex][idx] = el;
+                      }}
+                      className={checkCell}
+                    >
                       <Check value={it.row[pkg.key]} />
                     </div>
                   ),

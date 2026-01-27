@@ -209,6 +209,46 @@
     }
   },
 
+
+
+  "comparison": {
+    "headers": {
+      "features": "Features",
+      "maintenanceShort": "Maintenance",
+      "maintenanceLong": "Maintenance Wash",
+      "fullShort": "Full Detail",
+      "fullLong": "Full Exterior & Interior Detail",
+      "ultimateShort": "Ultimate",
+      "ultimate": "Ultimate Detail"
+    },
+    "groups": {
+      "exteriorCleaning": "Exterior Cleaning",
+      "interiorCleaning": "Interior Cleaning",
+      "protection": "Protection"
+    },
+    "rows": {
+      "contactlessPrewashHandWash": "Contactless pre-wash & hand wash",
+      "wheelFaceCleaningTireDressing": "Wheel face cleaning & tire dressing",
+      "tarSapRemoval": "Tar / sap removal",
+      "wheelBarrelDeepCleaning": "Wheel barrel deep cleaning",
+
+      "interiorVacuumWipeDown": "Interior vacuum & wipe-down",
+      "glassCleaning": "Glass cleaning",
+      "fullVacuumCarpetCleaning": "Full vacuum & carpet cleaning",
+      "interiorSurfaceShampooing": "Interior surface shampooing",
+      "doorJambsTrunkCleaning": "Door jambs & trunk cleaning",
+      "leatherCleaning": "Leather cleaning",
+      "fabricSeatDeepExtraction": "Fabric seat deep extraction",
+
+      "exteriorProtectiveWax": "Exterior protective wax",
+      "interiorPlasticsProtection": "Interior plastics protection",
+      "exteriorPlasticsProtection": "Exterior plastics protection",
+      "leatherConditioning": "Leather conditioning"
+    }
+  },
+
+
+
   "reviews": {
     "aria": "Google reviews",
     "heading": "What Clients Say on Google",

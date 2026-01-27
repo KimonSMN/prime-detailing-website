@@ -209,6 +209,47 @@
     }
   },
 
+
+
+  "comparison": {
+    "headers": {
+      "features": "Χαρακτηριστικά",
+      "maintenanceShort": "Συντήρησης",
+      "maintenanceLong": "Πλύσιμο Συντήρησης",
+      "fullShort": "Πλήρες Detail",
+      "fullLong": "Πλήρες Εξωτερικό & Εσωτερικό Detail",
+      "ultimateShort": "Ultimate Detail",
+      "ultimate": "Ultimate Detail"
+    },
+    "groups": {
+      "exteriorCleaning": "Καθαρισμός Εξωτερικού",
+      "interiorCleaning": "Καθαρισμός Εσωτερικού",
+      "protection": "Προστασία"
+    },
+    "rows": {
+      "contactlessPrewashHandWash": "Προπλύση χωρίς επαφή & πλύσιμο στο χέρι",
+      "wheelFaceCleaningTireDressing": "Καθαρισμός ζαντών & περιποίηση ελαστικών",
+      "tarSapRemoval": "Αφαίρεση πίσσας / ρετσινιού",
+      "wheelBarrelDeepCleaning": "Βαθύς καθαρισμός εσωτερικού ζάντας",
+
+      "interiorVacuumWipeDown": "Σκούπισμα εσωτερικού & επιφανειών",
+      "glassCleaning": "Καθαρισμός τζαμιών",
+      "fullVacuumCarpetCleaning": "Πλήρες σκούπισμα & καθαρισμός μοκετών",
+      "interiorSurfaceShampooing": "Σαπούνισμα εσωτερικών επιφανειών",
+      "doorJambsTrunkCleaning": "Καθαρισμός μαρσπιέ & πορτμπαγκάζ",
+      "leatherCleaning": "Καθαρισμός δέρματος",
+      "fabricSeatDeepExtraction": "Βαθύς καθαρισμός υφασμάτινων καθισμάτων (extraction)",
+
+      "exteriorProtectiveWax": "Προστατευτικό κερί εξωτερικού",
+      "interiorPlasticsProtection": "Προστασία πλαστικών εσωτερικού",
+      "exteriorPlasticsProtection": "Προστασία πλαστικών εξωτερικού",
+      "leatherConditioning": "Ενυδάτωση & Προστασία δέρματος"
+    }
+  },
+
+
+
+
   "reviews": {
     "aria": "Κριτικές Google",
     "heading": "Τι λένε οι πελάτες μας στο Google",

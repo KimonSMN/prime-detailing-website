@@ -5,7 +5,7 @@ import SeasonalPackage from "@/components/SeasonalPackage";
 import ComparisonTable from "@/components/ComparisonTable";
 import MobileSwipeComparison from "@/components/MobileSwipeComparison";
 import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ function toNumber(v: number | string | null | undefined) {
 
 function formatMinutes(
   min?: number | null,
-  t?: (k: string, d?: any) => string
+  t?: (k: string, d?: any) => string,
 ) {
   if (!min || min <= 0) return null;
   // keep it simple + consistent with your current UI
@@ -143,7 +143,7 @@ const ServicesNew = () => {
   const [addonsLoading, setAddonsLoading] = useState(true);
 
   const [selectedCeramicSlug, setSelectedCeramicSlug] = useState<string | null>(
-    null
+    null,
   );
 
   const scrollToComparison = useCallback(() => {
@@ -373,6 +373,40 @@ const ServicesNew = () => {
           </div>
         </div>
       </div>
+      {/* CTA Section */}
+      <section className="py-20 px-6 bg-card border-t border-border">
+        <div className="max-w-6xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            {t("servicesNew.cta.title", "Not Sure What You Need?")}
+          </h2>
+
+          <p className="text-muted-foreground max-w-xl mx-auto mb-8">
+            {t(
+              "servicesNew.cta.subtitle",
+              "Contact us for a free consultation and we'll recommend the perfect service for your vehicle.",
+            )}
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="border-border hover:bg-secondary hover:text-black"
+            >
+              <a
+                href={t("servicesNew.cta.phoneHref", "tel:+306939949788")}
+                aria-label={t(
+                  "servicesNew.cta.callAria",
+                  "Call Prime Detailing",
+                )}
+              >
+                {t("servicesNew.cta.callBtn", "Call (+30) 693 994 9788")}
+              </a>
+            </Button>
+          </div>
+        </div>
+      </section>
 
       <Footer />
     </section>

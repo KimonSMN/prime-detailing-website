@@ -55,7 +55,7 @@ export default function Gallery() {
                 cursor-pointer
                 touch-manipulation
                 focus:outline-none
-                hover:border-amber-400
+                hover:border-secondary-hover
                 hover:border-2
                 transition
               "
@@ -87,18 +87,18 @@ export default function Gallery() {
           <button
             onClick={() =>
               setVisibleCount((c) =>
-                Math.min(c + LOAD_MORE_STEP, projects.length)
+                Math.min(c + LOAD_MORE_STEP, projects.length),
               )
             }
             className="
               rounded-xl
               border
-              border-amber-400/50
+              border-secondary
               px-6
               py-3
-              text-amber-400
+              text-secondary
               font-semibold
-              hover:bg-amber-400
+              hover:bg-secondary
               hover:text-black
               transition
             "

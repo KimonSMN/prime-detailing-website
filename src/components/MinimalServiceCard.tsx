@@ -69,7 +69,7 @@ export function MinimalServiceCard({
       {/* Title */}
       <div className="flex items-start gap-3 mb-1">
         <div className="mt-0.5 w-9 h-9 rounded-xl bg-zinc-800/60 flex items-center justify-center flex-shrink-0">
-          <Icon className="w-5 h-5 text-amber-400" />
+          <Icon className="w-5 h-5 text-secondary" />
         </div>
 
         <div className="min-w-0">
@@ -91,7 +91,7 @@ export function MinimalServiceCard({
         <ul className="mt-4 space-y-1 text-sm text-zinc-400">
           {features.map((f, idx) => (
             <li key={idx} className="flex gap-2">
-              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-amber-400/70 flex-shrink-0" />
+              <span className="mt-2 w-1.5 h-1.5 rounded-full bg-secondary/70 flex-shrink-0" />
               <span>{f}</span>
             </li>
           ))}

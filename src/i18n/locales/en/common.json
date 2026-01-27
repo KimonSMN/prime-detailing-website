@@ -209,6 +209,46 @@
     }
   },
 
+
+
+  "comparison": {
+    "headers": {
+      "features": "Features",
+      "maintenanceShort": "Maintenance",
+      "maintenanceLong": "Maintenance Wash",
+      "fullShort": "Full Detail",
+      "fullLong": "Full Exterior & Interior Detail",
+      "ultimateShort": "Ultimate",
+      "ultimate": "Ultimate Detail"
+    },
+    "groups": {
+      "exteriorCleaning": "Exterior Cleaning",
+      "interiorCleaning": "Interior Cleaning",
+      "protection": "Protection"
+    },
+    "rows": {
+      "contactlessPrewashHandWash": "Contactless pre-wash & hand wash",
+      "wheelFaceCleaningTireDressing": "Wheel face cleaning & tire dressing",
+      "tarSapRemoval": "Tar / sap removal",
+      "wheelBarrelDeepCleaning": "Wheel barrel deep cleaning",
+
+      "interiorVacuumWipeDown": "Interior vacuum & wipe-down",
+      "glassCleaning": "Glass cleaning",
+      "fullVacuumCarpetCleaning": "Full vacuum & carpet cleaning",
+      "interiorSurfaceShampooing": "Interior surface shampooing",
+      "doorJambsTrunkCleaning": "Door jambs & trunk cleaning",
+      "leatherCleaning": "Leather cleaning",
+      "fabricSeatDeepExtraction": "Fabric seat deep extraction",
+
+      "exteriorProtectiveWax": "Exterior protective wax",
+      "interiorPlasticsProtection": "Interior plastics protection",
+      "exteriorPlasticsProtection": "Exterior plastics protection",
+      "leatherConditioning": "Leather conditioning"
+    }
+  },
+
+
+
   "reviews": {
     "aria": "Google reviews",
     "heading": "What Clients Say on Google",
@@ -441,6 +481,15 @@
   "services.extras.title": "Add-ons",
   "services.extras.subtitle": "Complete your Detail with targeted extras that restore and refine key areas.",
   "servicesNew": {
+    "cta": {
+      "title": "Not Sure What You Need?",
+      "subtitle": "Contact us for a free consultation and we'll recommend the perfect service for your vehicle.",
+      "bookBtn": "Schedule Consultation",
+      "callBtn": "Call (+30) 693 994 9788",
+      "bookAria": "Schedule a consultation",
+      "callAria": "Call Prime Detailing",
+      "phoneHref": "tel:+306939949788"
+    },
     "book": "Book Now",
     "details": "More details",
     "fromPrice": "From {{price}}€",

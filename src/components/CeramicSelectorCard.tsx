@@ -86,7 +86,7 @@ export function CeramicSelectorCard({
       {/* Top */}
       <div className="flex items-center gap-3 mb-4">
         <div className="w-9 h-9 rounded-xl bg-zinc-800/60 flex items-center justify-center flex-shrink-0">
-          <CrownIcon className="w-5 h-5 text-amber-400" />
+          <CrownIcon className="w-5 h-5 text-secondary" />
         </div>
 
         <h3 className="text-base sm:text-xl font-bold leading-tight text-zinc-100">
@@ -105,14 +105,14 @@ export function CeramicSelectorCard({
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
               {OptIcon ? (
-                <OptIcon className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                <OptIcon className="w-4 h-4 text-secondary flex-shrink-0" />
               ) : null}
               <div className="font-semibold text-zinc-100 truncate">
                 {t(current.labelKey)}
               </div>
             </div>
 
-            <div className="text-lg font-extrabold tracking-tight text-amber-400">
+            <div className="text-lg font-extrabold tracking-tight text-secondary">
               {priceText}
             </div>
           </div>
@@ -152,7 +152,7 @@ export function CeramicSelectorCard({
                     onClick={() => goTo(i)}
                     className={`
                       h-2.5 w-2.5 rounded-full transition
-                      ${active ? "bg-amber-400" : "bg-zinc-700 hover:bg-zinc-500"}
+                      ${active ? "bg-secondary" : "bg-zinc-700 hover:bg-zinc-500"}
                     `}
                     aria-label={t(o.labelKey)}
                   />

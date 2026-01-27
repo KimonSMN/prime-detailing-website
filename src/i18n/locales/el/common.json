@@ -209,6 +209,47 @@
     }
   },
 
+
+
+  "comparison": {
+    "headers": {
+      "features": "Χαρακτηριστικά",
+      "maintenanceShort": "Συντήρησης",
+      "maintenanceLong": "Πλύσιμο Συντήρησης",
+      "fullShort": "Πλήρες Detail",
+      "fullLong": "Πλήρες Εξωτερικό & Εσωτερικό Detail",
+      "ultimateShort": "Ultimate Detail",
+      "ultimate": "Ultimate Detail"
+    },
+    "groups": {
+      "exteriorCleaning": "Καθαρισμός Εξωτερικού",
+      "interiorCleaning": "Καθαρισμός Εσωτερικού",
+      "protection": "Προστασία"
+    },
+    "rows": {
+      "contactlessPrewashHandWash": "Προπλύση χωρίς επαφή & πλύσιμο στο χέρι",
+      "wheelFaceCleaningTireDressing": "Καθαρισμός ζαντών & περιποίηση ελαστικών",
+      "tarSapRemoval": "Αφαίρεση πίσσας / ρετσινιού",
+      "wheelBarrelDeepCleaning": "Βαθύς καθαρισμός εσωτερικού ζάντας",
+
+      "interiorVacuumWipeDown": "Σκούπισμα εσωτερικού & επιφανειών",
+      "glassCleaning": "Καθαρισμός τζαμιών",
+      "fullVacuumCarpetCleaning": "Πλήρες σκούπισμα & καθαρισμός μοκετών",
+      "interiorSurfaceShampooing": "Σαπούνισμα εσωτερικών επιφανειών",
+      "doorJambsTrunkCleaning": "Καθαρισμός μαρσπιέ & πορτμπαγκάζ",
+      "leatherCleaning": "Καθαρισμός δέρματος",
+      "fabricSeatDeepExtraction": "Βαθύς καθαρισμός υφασμάτινων καθισμάτων (extraction)",
+
+      "exteriorProtectiveWax": "Προστατευτικό κερί εξωτερικού",
+      "interiorPlasticsProtection": "Προστασία πλαστικών εσωτερικού",
+      "exteriorPlasticsProtection": "Προστασία πλαστικών εξωτερικού",
+      "leatherConditioning": "Ενυδάτωση & Προστασία δέρματος"
+    }
+  },
+
+
+
+
   "reviews": {
     "aria": "Κριτικές Google",
     "heading": "Τι λένε οι πελάτες μας στο Google",
@@ -449,6 +490,15 @@
   "services.extras.subtitle": "Ολοκληρώστε το Detail σας με έξτρα που αποκαθιστούν και βελτιώνουν την εμφάνιση του αυτοκινήτου σας.",
 
   "servicesNew": {
+    "cta": {
+      "title": "Δεν είσαι σίγουρος τι να επιλέξεις;",
+      "subtitle": "Επικοινώνησε μαζί μας και θα σου προτείνουμε την ιδανική υπηρεσία για το όχημα σου.",
+      "bookBtn": "Κλείσε Συμβουλευτική",
+      "callBtn": "(+30) 693 994 9788",
+      "bookAria": "Κλείσε δωρεάν συμβουλευτική",
+      "callAria": "Κάλεσε την Prime Detailing",
+      "phoneHref": "tel:+306939949788"
+    },
     "book": "Κλείστε Ραντεβού",
     "details": "Περισσοτέρες Λεπτομέρειες",
 

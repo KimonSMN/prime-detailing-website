@@ -6,22 +6,32 @@ export type Project = {
   items: ManifestItem[];
 };
 
+function prettyTitleFromId(id: string) {
+  return id
+    .replace(/^detailing-/, "")
+    .replace(/-/g, " ")
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
 export function groupProjects(items: ManifestItem[]): Project[] {
-  const map = new Map<string, ManifestItem[]>();
+  const map = new Map<string, { title: string; items: ManifestItem[] }>();
 
   for (const item of items) {
-    // Example: detailing-bmw-x1-3 → detailing-bmw-x1
-    const projectId = item.id.replace(/-\d+$/, "");
-    if (!map.has(projectId)) map.set(projectId, []);
-    map.get(projectId)!.push(item);
+    // NEW manifest: item.project.{id,title}
+    const projectId =
+      (item as any)?.project?.id ?? item.id.replace(/-\d+$/, "");
+    const projectTitle =
+      (item as any)?.project?.title ?? prettyTitleFromId(projectId);
+
+    if (!map.has(projectId)) {
+      map.set(projectId, { title: projectTitle, items: [] });
+    }
+    map.get(projectId)!.items.push(item);
   }
 
-  return Array.from(map.entries()).map(([id, items]) => ({
+  return Array.from(map.entries()).map(([id, bucket]) => ({
     id,
-    title: id
-      .replace(/^detailing-/, "")
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase()),
-    items: items.sort((a, b) => a.id.localeCompare(b.id)),
+    title: bucket.title,
+    items: bucket.items.sort((a, b) => a.id.localeCompare(b.id)),
   }));
 }

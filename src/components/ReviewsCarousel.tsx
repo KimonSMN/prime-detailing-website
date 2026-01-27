@@ -10,6 +10,30 @@ const REVIEWS = [
     rating: 5,
     authorUrl: "https://maps.app.goo.gl/T44NLqJe1VYSj4ja9",
   },
+    {
+    author: "Nik Bn",
+    text: "Παρα πολύ καλός στη δουλειά του , συνίσταται  ανεπιφύλακτα.",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/fbwQgcWufrEmi4qf8",
+  },
+    {
+    author: "Manos Aggelikakis",
+    text: "Επαγγελματική δουλειά με εξαιρετικό αποτέλεσμα σε κάθε λεπτομέρεια. Ένας πολύ ευγενικός επαγγελματίας με μεγάλη διάθεση και γνώση στο κομμάτι του detailing. Παραλαμβά...",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/Daa7Pz7z1ceYmykS6",
+  },
+    {
+    author: "Burcu Ozdemir",
+    text: "Today I had an appointment at Prime Detailing for the interior and exterior cleaning, detailing, and care of my car, and I received an absolutely outstanding service—far...",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/zVzcCh7QZNab5xqd6",
+  },
+    {
+    author: "Αδάμ Καρτελιάς",
+    text: "Είμαι πολύ ευχαριστημένος από το αποτέλεσμα. Το αυτοκίνητο παραδόθηκε σε άψογη κατάσταση, με προσοχή στη λεπτομέρεια. Η τιμή είναι απολύτως λογική για την ποιότητα της δουλειάς ...",
+    rating: 5,
+    authorUrl: "https://maps.app.goo.gl/h36t5XuYSH8hU7wV6",
+  },
   {
     author: "adonis smirlianos",
     text: "Went for a deep clean and he also fixed some paint scratches, amazing",
@@ -91,14 +115,12 @@ const ReviewsCarousel = () => {
       className="px-4 py-14 pb-0 md:py-20 md:pb-0 bg-muted/20"
       aria-label={t("reviews.aria", "Google reviews")}
     >
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-8">
+      {/* Headings can be centered on mobile, left on md+ */}
+      <div className="max-w-6xl mx-auto text-center md:text-left">
+        <div className="mb-8">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-foreground">
             {t("reviews.heading", "What Clients Say on Google")}
           </h2>
-          <p className="mt-2 text-sm text-zinc-400">
-            {t("reviews.subheading", "Verified feedback from real customers")}
-          </p>
         </div>
 
         <div className="overflow-hidden" ref={emblaRef}>
@@ -106,44 +128,52 @@ const ReviewsCarousel = () => {
             {REVIEWS.map((r, idx) => (
               <li
                 key={idx}
-                className="min-w-0 flex-[0_0_100%] md:flex-[0_0_48%] lg:flex-[0_0_31%] rounded-2xl border bg-card p-6"
+                className="
+                  min-w-0 flex-[0_0_100%] md:flex-[0_0_48%] lg:flex-[0_0_31%]
+                  rounded-2xl border bg-card p-6
+                "
               >
-                <div className="flex items-center justify-between mb-3">
-                  <p className="font-medium text-foreground">{r.author}</p>
+                {/* Force ALL review card content to be left-aligned on every breakpoint */}
+                <div className="text-left">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="font-medium text-foreground">{r.author}</p>
+                  </div>
+
+                  {/* Stars left on both mobile + desktop */}
+                  <div className="flex items-center gap-1 mb-2 justify-start">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`h-4 w-4 ${
+                          i < r.rating
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-muted-foreground"
+                        }`}
+                        aria-hidden="true"
+                      />
+                    ))}
+                  </div>
+
+                  <p className="text-foreground leading-relaxed">{r.text}</p>
+
+                  {r.authorUrl && (
+                    <a
+                      href={r.authorUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-block text-sm text-zinc-400 underline"
+                    >
+                      {t("reviews.viewOnGoogle", "View on Google")}
+                    </a>
+                  )}
                 </div>
-
-                <div className="flex items-center gap-1 mb-2">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`h-4 w-4 ${
-                        i < r.rating
-                          ? "text-yellow-400 fill-yellow-400" // solid gold/yellow
-                          : "text-muted-foreground"
-                      }`}
-                      aria-hidden="true"
-                    />
-                  ))}
-                </div>
-
-                <p className="text-foreground leading-relaxed">{r.text}</p>
-
-                {r.authorUrl && (
-                  <a
-                    href={r.authorUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-3 inline-block text-sm text-zinc-400 underline"
-                  >
-                    {t("reviews.viewOnGoogle", "View on Google")}
-                  </a>
-                )}
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="mt-4 text-center text-xs text-zinc-400">
+        {/* Attribution can follow the heading alignment (center on mobile, left on md+) */}
+        <p className="mt-4 text-center md:text-left text-xs text-zinc-400">
           {t(
             "reviews.attribution",
             "These reviews are taken from our Google Business Profile"

@@ -28,8 +28,8 @@ export default function FloatingChatbot() {
 
       <button
         onClick={() => setOpen((v) => !v)}
-        className="h-14 w-14 rounded-full bg-amber-400 text-white text-2xl shadow-2xl
-                   hover:bg-amber-200 active:scale-[0.98] transition"
+        className="h-14 w-14 rounded-full bg-secondary text-white text-2xl shadow-2xl
+                   hover:bg-secondary-hover active:scale-[0.98] transition"
       >
         {open ? "—" : "💬"}
       </button>

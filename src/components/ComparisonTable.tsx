@@ -1,42 +1,42 @@
 import { Fragment } from "react";
+import { useTranslation } from "react-i18next";
 
 type FeatureRow = {
-  label: string;
+  labelKey: string;
   maintenance: boolean;
   full_detail: boolean;
   ultimate: boolean;
 };
 
 type FeatureGroup = {
-  title: string;
+  titleKey: string;
   rows: FeatureRow[];
 };
 
 const groups: FeatureGroup[] = [
   {
-    title: "Exterior Cleaning",
+    titleKey: "comparison.groups.exteriorCleaning",
     rows: [
       {
-        label: "Contactless pre-wash & Hand wash",
-        maintenance: true,
-        full_detail: true,
-        ultimate: true,
-      },
-
-      {
-        label: "Wheel face cleaning & tire dressing",
+        labelKey: "comparison.rows.contactlessPrewashHandWash",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Tar / sap removal",
+        labelKey: "comparison.rows.wheelFaceCleaningTireDressing",
+        maintenance: true,
+        full_detail: true,
+        ultimate: true,
+      },
+      {
+        labelKey: "comparison.rows.tarSapRemoval",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Wheel barrel deep cleaning",
+        labelKey: "comparison.rows.wheelBarrelDeepCleaning",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -44,46 +44,46 @@ const groups: FeatureGroup[] = [
     ],
   },
   {
-    title: "Interior Cleaning",
+    titleKey: "comparison.groups.interiorCleaning",
     rows: [
       {
-        label: "Interior vacuum & wipe-down",
+        labelKey: "comparison.rows.interiorVacuumWipeDown",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Glass cleaning",
+        labelKey: "comparison.rows.glassCleaning",
         maintenance: true,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Full vacuum & carpet cleaning",
+        labelKey: "comparison.rows.fullVacuumCarpetCleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Interior surface shampooing",
+        labelKey: "comparison.rows.interiorSurfaceShampooing",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Door jambs & trunk cleaning",
+        labelKey: "comparison.rows.doorJambsTrunkCleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Leather cleaning",
+        labelKey: "comparison.rows.leatherCleaning",
         maintenance: false,
         full_detail: true,
         ultimate: true,
       },
       {
-        label: "Fabric seat deep extraction",
+        labelKey: "comparison.rows.fabricSeatDeepExtraction",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -91,28 +91,28 @@ const groups: FeatureGroup[] = [
     ],
   },
   {
-    title: "Protection",
+    titleKey: "comparison.groups.protection",
     rows: [
       {
-        label: "Exterior protective wax",
+        labelKey: "comparison.rows.exteriorProtectiveWax",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Interior plastics protection",
+        labelKey: "comparison.rows.interiorPlasticsProtection",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Exterior plastics protection",
+        labelKey: "comparison.rows.exteriorPlasticsProtection",
         maintenance: false,
         full_detail: false,
         ultimate: true,
       },
       {
-        label: "Leather conditioning",
+        labelKey: "comparison.rows.leatherConditioning",
         maintenance: false,
         full_detail: false,
         ultimate: true,
@@ -125,7 +125,7 @@ const Check = ({ value }: { value: boolean }) => (
   <span
     className={
       value
-        ? "text-amber-400 text-base sm:text-xl"
+        ? "text-secondary text-base sm:text-xl"
         : "text-zinc-500 text-base sm:text-2xl"
     }
   >
@@ -134,51 +134,58 @@ const Check = ({ value }: { value: boolean }) => (
 );
 
 const ComparisonTable = () => {
+  const { t } = useTranslation();
+
   return (
     <div className="mt-16 -mx-4 sm:mx-0">
       <div className="overflow-x-auto border border-zinc-700 rounded-xl mt-16">
         <table className="w-full min-w-[600px] border-collapse text-xs sm:text-sm">
-          {/* Header */}
           <thead>
             <tr className="border-b border-zinc-700">
               <th className="text-left p-2 sm:p-4 font-medium text-zinc-400">
-                Features
+                {t("comparison.headers.features")}
               </th>
               <th className="p-2 sm:p-4 text-center font-semibold">
-                <span className="sm:hidden">Maint.</span>
-                <span className="hidden sm:inline">Maintenance Wash</span>
-              </th>
-              <th className="p-2 sm:p-4 text-center font-semibold">
-                <span className="sm:hidden">Full</span>
+                <span className="sm:hidden">
+                  {t("comparison.headers.maintenanceShort")}
+                </span>
                 <span className="hidden sm:inline">
-                  Full Exterior & Interior
+                  {t("comparison.headers.maintenanceLong")}
                 </span>
               </th>
-              <th className="p-2 sm:p-4 text-center font-semibold">Ultimate</th>
+              <th className="p-2 sm:p-4 text-center font-semibold">
+                <span className="sm:hidden">
+                  {t("comparison.headers.fullShort")}
+                </span>
+                <span className="hidden sm:inline">
+                  {t("comparison.headers.fullLong")}
+                </span>
+              </th>
+              <th className="p-2 sm:p-4 text-center font-semibold">
+                {t("comparison.headers.ultimate")}
+              </th>
             </tr>
           </thead>
 
           <tbody>
             {groups.map((group) => (
-              <Fragment key={group.title}>
-                {/* Group title */}
+              <Fragment key={group.titleKey}>
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-2 sm:px-4 pt-6 pb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-white"
+                    className="px-2 sm:px-4 sm:py-4 py-4 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-secondary"
                   >
-                    {group.title}
+                    {t(group.titleKey)}
                   </td>
                 </tr>
 
-                {/* Rows */}
                 {group.rows.map((row) => (
                   <tr
-                    key={row.label}
-                    className="border-t border-zinc-800 hover:bg-zinc-900/40"
+                    key={row.labelKey}
+                    className="border-t border-b border-zinc-800 hover:bg-zinc-900/40"
                   >
                     <td className="p-2 sm:p-4 text-zinc-200 leading-tight">
-                      {row.label}
+                      {t(row.labelKey)}
                     </td>
                     <td className="p-2 sm:p-4 text-center">
                       <Check value={row.maintenance} />

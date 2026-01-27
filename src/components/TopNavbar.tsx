@@ -9,78 +9,99 @@ const TopNavbar = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-background border-b border-border">
-      <div className="mx-auto flex items-center justify-end gap-6 px-4 py-3 md:py-4">
-        {/* Desktop menu */}
-        <nav className="hidden md:flex items-center gap-8">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              `text-base font-medium ${
-                isActive
-                  ? "text-amber-400"
-                  : "text-muted-foreground hover:text-foreground"
-              }`
-            }
-          >
-            Home
-          </NavLink>
-
-          <NavLink
-            to="/services"
-            className={({ isActive }) =>
-              `text-base font-medium ${
-                isActive
-                  ? "text-amber-400"
-                  : "text-muted-foreground hover:text-foreground"
-              }`
-            }
-          >
-            Services
-          </NavLink>
-
-          <NavLink
-            to="/gallery"
-            className={({ isActive }) =>
-              `text-base font-medium ${
-                isActive
-                  ? "text-amber-400"
-                  : "text-muted-foreground hover:text-foreground"
-              }`
-            }
-          >
-            Gallery
-          </NavLink>
-
-          {/* Language selector (desktop) */}
-          <div className="pl-2 border-l pr-2 border-r border-border">
-            <LanguageSwitcher />
-          </div>
-
-          <Link
-            to="/booking"
-            className="
-              rounded-full
-              bg-amber-400
-              text-black
-              px-5 py-2
-              text-base font-semibold
-              hover:bg-amber-300
-              transition
-            "
-          >
-            Book an Appointment
-          </Link>
-        </nav>
-
-        {/* Mobile menu button */}
-        <button
-          className="md:hidden p-2 rounded-md hover:bg-accent"
-          onClick={() => setOpen(!open)}
-          aria-label="Menu"
-          aria-expanded={open}
+      {/* Top bar */}
+      <div className="mx-auto flex items-center justify-between px-4 py-3 md:py-4">
+        {/* Left: Brand */}
+        <Link
+          to="/"
+          className="
+          font-extrabold tracking-wide
+          text-sm sm:text-lg md:text-xl
+          text-foreground hover:text-foreground/90
+          ml-4
+        "
+          aria-label="Prime Detailing home"
         >
-          {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          PRIME
+          <span className="text-secondary ml-1.5 text-sm sm:text-lg md:text-xl">
+            DETAILING
+          </span>
+        </Link>
+
+        {/* Right: Desktop nav + Mobile button */}
+        <div className="flex items-center justify-end mr-4">
+          {/* Desktop menu */}
+          <nav className="hidden md:flex items-center gap-8">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-base font-medium ${
+                  isActive
+                    ? "text-secondary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`
+              }
+            >
+              Home
+            </NavLink>
+
+            <NavLink
+              to="/services"
+              className={({ isActive }) =>
+                `text-base font-medium ${
+                  isActive
+                    ? "text-secondary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`
+              }
+            >
+              Services
+            </NavLink>
+
+            <NavLink
+              to="/gallery"
+              className={({ isActive }) =>
+                `text-base font-medium ${
+                  isActive
+                    ? "text-secondary"
+                    : "text-muted-foreground hover:text-foreground"
+                }`
+              }
+            >
+              Gallery
+            </NavLink>
+
+            {/* Language selector (desktop) */}
+            <div className="pl-2 border-l pr-2 border-r border-border">
+              <LanguageSwitcher />
+            </div>
+
+            <Link
+              to="/booking"
+              className="
+                rounded-full
+                bg-secondary
+                text-black
+                px-5 py-2
+                text-base font-semibold
+                hover:bg-secondary-hover
+                transition
+              "
+            >
+              Book an Appointment
+            </Link>
+          </nav>
+
+          {/* Mobile menu button */}
+          <button
+            className="md:hidden p-2 rounded-md hover:bg-accent"
+            onClick={() => setOpen(!open)}
+            aria-label="Menu"
+            aria-expanded={open}
+          >
+            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile dropdown */}
@@ -96,7 +117,7 @@ const TopNavbar = () => {
             <NavLink
               to="/"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
             >
               Home
             </NavLink>
@@ -104,7 +125,7 @@ const TopNavbar = () => {
             <NavLink
               to="/services"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
             >
               Services
             </NavLink>
@@ -112,7 +133,7 @@ const TopNavbar = () => {
             <NavLink
               to="/gallery"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-amber-400"
+              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
             >
               Gallery
             </NavLink>
@@ -121,13 +142,12 @@ const TopNavbar = () => {
               to="/booking"
               onClick={() => setOpen(false)}
               className="
-                block px-3 py-2
+                block px-3 py-2  
                 rounded-md
-                bg-amber-400
+                bg-secondary
                 text-black
                 text-base font-semibold
-                hover:bg-amber-300
-              
+                hover:bg-secondary-hover
                 text-center
               "
             >

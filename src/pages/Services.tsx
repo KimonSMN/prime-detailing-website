@@ -286,11 +286,11 @@ const Services = () => {
   /* --- split into two groups --- */
   const protectionAddons = useMemo(
     () => addonCards.filter((a) => PROTECTION_SLUGS.has(a.slug ?? "")),
-    [addonCards]
+    [addonCards],
   );
   const extraAddons = useMemo(
     () => addonCards.filter((a) => EXTRA_ADDON_SLUGS.has(a.slug ?? "")),
-    [addonCards]
+    [addonCards],
   );
 
   if (loading) {
@@ -318,7 +318,7 @@ const Services = () => {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               {t(
                 "services.subtitle",
-                "Choose your core detailing package, then add the protection that suits your goals."
+                "Choose your core detailing package, then add the protection that suits your goals.",
               )}
             </p>
           </div>
@@ -410,7 +410,7 @@ const Services = () => {
                                           {" "}
                                           {t(
                                             "services.labels.startingPrice",
-                                            "Starting price"
+                                            "Starting price",
                                           )}{" "}
                                         </p>
                                       </>
@@ -425,7 +425,7 @@ const Services = () => {
                                         <p className="text-sm text-white text-center">
                                           {t(
                                             "services.labels.startingPrice",
-                                            "Starting price"
+                                            "Starting price",
                                           )}
                                         </p>
                                       </>
@@ -448,7 +448,7 @@ const Services = () => {
                                 <p className="text-sm text-muted-foreground">
                                   {t(
                                     "services.labels.duration",
-                                    "Estimated hours"
+                                    "Estimated hours",
                                   )}
                                 </p>
                               </>
@@ -473,13 +473,13 @@ const Services = () => {
                                 key={idx}
                                 className={`flex gap-2 ${
                                   isRequirement
-                                    ? "text-amber-300 font-semibold"
+                                    ? "text-secondary font-semibold"
                                     : "text-muted-foreground"
                                 }`}
                               >
                                 {isRequirement ? (
                                   <>
-                                    <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-amber-400" />
+                                    <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-secondary" />
                                     <span className="flex-1">{feature}</span>
                                   </>
                                 ) : (
@@ -517,7 +517,7 @@ const Services = () => {
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
                   {t(
                     "services.items.addons.subtitle",
-                    "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating."
+                    "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating.",
                   )}
                 </p>
               </div>
@@ -536,7 +536,7 @@ const Services = () => {
                           t("services.addon.quickApply", "Quick application"),
                           t(
                             "services.addon.hydrophobic",
-                            "Improves hydrophobic performance"
+                            "Improves hydrophobic performance",
                           ),
                         ];
 
@@ -570,7 +570,7 @@ const Services = () => {
                               <span>
                                 {t(
                                   "services.socialProof.popular",
-                                  "Popular among clients"
+                                  "Popular among clients",
                                 )}
                               </span>
                             </div>
@@ -662,17 +662,17 @@ const Services = () => {
                           t("services.addon.degrease", "Degrease & rinse"),
                           t(
                             "services.addon.dressPlastics",
-                            "Dress engine plastics"
+                            "Dress engine plastics",
                           ),
                         ]
                       : [
                           t(
                             "services.addon.restoreClarity",
-                            "Restore lens clarity"
+                            "Restore lens clarity",
                           ),
                           t(
                             "services.addon.uvProtection",
-                            "UV protection applied"
+                            "UV protection applied",
                           ),
                         ];
 

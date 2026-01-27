@@ -128,7 +128,7 @@ export default function BeforeAfterStrip({
         <div className="mt-6 text-center">
           <a
             href={galleryUrl}
-            className="inline-flex items-center gap-2 rounded-xl border bg-amber-400 px-5 py-3 text-black font-medium hover:opacity-95 transition"
+            className="inline-flex items-center gap-2 rounded-xl border bg-secondary px-5 py-3 text-black font-medium hover:opacity-95 transition"
             aria-label={t("gallery.ariaOpen", "Open full detailing gallery")}
           >
             {remaining > 0

@@ -145,7 +145,7 @@ export default function MobileSwipeComparison() {
 
   // --- sizes / classes ---
   const ROW_HEIGHT = "h-[48px]";
-  const GROUP_HEIGHT = "h-[28px]";
+  const GROUP_HEIGHT = "h-[48px] ";
   const BORDER = "border-t border-zinc-800";
 
   const groupCellLeft = `px-3 ${GROUP_HEIGHT} ${BORDER} flex items-center text-[10px] uppercase text-secondary`;
@@ -161,7 +161,7 @@ export default function MobileSwipeComparison() {
       <div className="grid grid-cols-[1fr_90px_1fr] border-b border-zinc-800 text-xs font-semibold">
         <div className="p-3 text-zinc-400">Feature</div>
         <div className="p-3 text-center">Maintenance</div>
-        <div className="p-3 text-center text-secondary">
+        <div className="p-3 text-center text-secondary ">
           {swipePackages[activeIndex].title}
         </div>
       </div>

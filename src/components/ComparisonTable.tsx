@@ -165,7 +165,7 @@ const ComparisonTable = () => {
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-2 sm:px-4 pt-6 pb-1 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-white"
+                    className="px-2 sm:px-4 sm:py-4 py-4 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-secondary"
                   >
                     {group.title}
                   </td>
@@ -175,7 +175,7 @@ const ComparisonTable = () => {
                 {group.rows.map((row) => (
                   <tr
                     key={row.label}
-                    className="border-t border-zinc-800 hover:bg-zinc-900/40"
+                    className="border-t border-b border-zinc-800 hover:bg-zinc-900/40"
                   >
                     <td className="p-2 sm:p-4 text-zinc-200 leading-tight">
                       {row.label}

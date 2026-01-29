@@ -1,65 +1,60 @@
-import { useEffect } from "react";
+// src/App.tsx
+import React, { Suspense } from "react";
 
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { HelmetProvider } from "react-helmet-async";
+
+import TopNavbar from "./components/TopNavbar";
 import { Hreflang } from "./components/Hreflang";
 
+// ✅ Only the home page is eager (best for initial load / LCP)
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
-import AdminBookings from "./pages/AdminBookings";
-import Services from "./pages/Services";
-import TopNavbar from "./components/TopNavbar";
-import Booking from "./pages/Booking";
-import Gallery from "./pages/Gallery";
-import Footer from "./components/Footer";
-import ServicesNew from "./pages/ServicesNew";
-import FloatingChatbot from "./components/FloatingChatbot";
+
+// ✅ Lazy-load everything else to shrink index-*.js on mobile
+const AdminBookings = React.lazy(() => import("./pages/AdminBookings"));
+const Booking = React.lazy(() => import("./pages/Booking"));
+const Gallery = React.lazy(() => import("./pages/Gallery"));
+const ServicesNew = React.lazy(() => import("./pages/ServicesNew"));
+const NotFound = React.lazy(() => import("./pages/NotFound"));
+
+// ✅ Lazy-load chatbot (usually heavy)
+const FloatingChatbot = React.lazy(() => import("./components/FloatingChatbot"));
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  useEffect(() => {
-    const month = new Date().getMonth(); // 11 = December
-
-    if (month === 11) {
-      // Enable Christmas mode , snowflakes fall
-      document.documentElement.classList.add("christmas");
-    } else {
-      document.documentElement.classList.remove("christmas");
-    }
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <Hreflang />
         <Toaster />
         <Sonner />
 
         <BrowserRouter>
+          <Hreflang />
+
           <TopNavbar />
 
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/admin" element={<AdminBookings />} />
-            <Route path="/booking" element={<Booking />} />
-            <Route path="/gallery" element={<Gallery />} />
+          {/* Keep fallback tiny so it doesn't affect LCP */}
+          <Suspense fallback={null}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/admin" element={<AdminBookings />} />
+              <Route path="/booking" element={<Booking />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/services" element={<ServicesNew />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
 
-            {/* Services */}
-            {/* <Route path="/services" element={<Services />} /> */}
-            <Route path="/services" element={<ServicesNew />} />
-
-            {/* 404 fallback */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <FloatingChatbot />
+            {/* Load chatbot via lazy chunk */}
+            <FloatingChatbot />
+          </Suspense>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
   );
 };
+
 export default App;

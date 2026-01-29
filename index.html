@@ -32,16 +32,6 @@
       hreflang="x-default"
     />
 
-    <!-- Preload LCP image -->
-    <link
-      rel="preload"
-      as="image"
-      href="/hero/hero-720.avif"
-      imagesrcset="/hero/hero-720.avif 720w, /hero/hero-1080.avif 1080w, /hero/hero-1600.avif 1600w"
-      imagesizes="100vw"
-      fetchpriority="high"
-    />
-
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Prime Detailing Cholargos" />
@@ -92,15 +82,25 @@
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#0b1320" />
 
-    <!-- Preconnects -->
+    <!-- ✅ Preload LCP hero image EARLY (SPA: must be in initial HTML) -->
+    <link
+      rel="preload"
+      as="image"
+      href="/hero/hero-720.avif"
+      imagesrcset="/hero/hero-720.avif 720w, /hero/hero-1080.avif 1080w, /hero/hero-1600.avif 1600w"
+      imagesizes="100vw"
+      fetchpriority="high"
+    />
+
+    <!-- Preconnects (keep small) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-    <!-- Google tag preconnects (helps when it does load) -->
+    <!-- ✅ Preconnect for deferred gtag (speeds it up when it loads later) -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
 
-    <!-- Fonts -->
+    <!-- Fonts (non-blocking) -->
     <link
       rel="preload"
       as="style"
@@ -166,57 +166,54 @@
         "sameAs": ["https://www.instagram.com/primedetailing.ath/"]
       }
     </script>
-
-    <!-- ✅ Delay gtag so it doesn't compete with LCP on mobile -->
-    <script>
-      (function () {
-        var ID = "AW-17741990952";
-
-        window.dataLayer = window.dataLayer || [];
-        function gtag() {
-          window.dataLayer.push(arguments);
-        }
-        window.gtag = gtag;
-        gtag("js", new Date());
-
-        var loaded = false;
-        function loadGtag() {
-          if (loaded) return;
-          loaded = true;
-
-          var s = document.createElement("script");
-          s.async = true;
-          s.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(ID);
-          s.onload = function () {
-            gtag("config", ID);
-          };
-          document.head.appendChild(s);
-        }
-
-        // Load on first interaction OR when browser is idle (whichever happens first)
-        ["scroll", "mousemove", "touchstart", "keydown"].forEach(function (evt) {
-          window.addEventListener(evt, loadGtag, { once: true, passive: true });
-        });
-
-        if ("requestIdleCallback" in window) {
-          requestIdleCallback(loadGtag, { timeout: 2500 });
-        } else {
-          window.addEventListener("load", function () {
-            setTimeout(loadGtag, 1200);
-          });
-        }
-      })();
-    </script>
   </head>
 
   <body>
     <div id="root"></div>
 
+    <!-- Only the Vite entry -->
     <script type="module" src="/src/main.tsx"></script>
 
+    <!-- ✅ Defer Google Ads/gtag until idle or first interaction (mobile win) -->
+    <script>
+      (function () {
+        const ID = "AW-17741990952";
+
+        function loadGtag() {
+          if (window.__gtag_loaded) return;
+          window.__gtag_loaded = true;
+
+          const s = document.createElement("script");
+          s.async = true;
+          s.src = "https://www.googletagmanager.com/gtag/js?id=" + ID;
+          document.head.appendChild(s);
+
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          window.gtag = gtag;
+
+          gtag("js", new Date());
+          gtag("config", ID);
+        }
+
+        // Prefer idle time, fallback to small delay
+        if ("requestIdleCallback" in window) {
+          requestIdleCallback(loadGtag, { timeout: 2500 });
+        } else {
+          setTimeout(loadGtag, 1500);
+        }
+
+        // Also load on first interaction
+        ["pointerdown", "keydown", "touchstart", "scroll"].forEach((evt) => {
+          window.addEventListener(evt, loadGtag, { once: true, passive: true });
+        });
+      })();
+    </script>
+
     <noscript>
-      Prime Detailing, Kleious 39 &amp; Aetideon 46, Cholargos 15561 — (+30) 693
-      994 9788
+      Prime Detailing, Kleious 39 &amp; Aetideon 46, Cholargos 15561 — (+30) 693 994 9788
     </noscript>
   </body>
 </html>

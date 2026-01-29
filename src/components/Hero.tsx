@@ -18,20 +18,19 @@ const Hero = () => {
     >
       {/* Background */}
       <div className="absolute inset-0 h-full w-full overflow-hidden">
-        {/* LCP image: responsive + high priority */}
         <picture>
           <source
             type="image/avif"
             srcSet="/hero/hero-720.avif 720w, /hero/hero-1080.avif 1080w, /hero/hero-1600.avif 1600w"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1600px"
+            sizes="100vw"
           />
           <source
             type="image/webp"
             srcSet="/hero/hero-720.webp 720w, /hero/hero-1080.webp 1080w, /hero/hero-1600.webp 1600w"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1600px"
+            sizes="100vw"
           />
           <img
-            src="/hero/hero-1600.webp"
+            src="/hero/hero-720.webp"
             alt=""
             className="
               absolute inset-0 h-full w-full object-cover
@@ -47,14 +46,10 @@ const Hero = () => {
           />
         </picture>
 
-
-        {/* Left-to-right fade to pure black on the left (stronger on mobile) */}
         <div
           className="absolute inset-0 bg-gradient-to-r from-black via-black/50 sm:via-black/80 to-transparent"
           aria-hidden="true"
         />
-
-        {/* Vertical mood overlay */}
         <div
           className="absolute inset-0 bg-gradient-to-b from-zinc-950/70 via-zinc-950/40 to-zinc-900/60"
           aria-hidden="true"
@@ -71,12 +66,10 @@ const Hero = () => {
         "
       >
         <div className="text-center md:text-left max-w-xl sm:max-w-2xl">
-          {/* Small text (top) */}
           <p className="text-sm sm:text-base md:text-lg text-zinc-200/90 font-light tracking-wide mb-3 ml-1">
             Detailing in Cholargos
           </p>
 
-          {/* Headline */}
           <h1
             className="
               text-5xl sm:text-6xl md:text-7xl lg:text-8xl
@@ -90,7 +83,6 @@ const Hero = () => {
             <span className="text-secondary">Every Detail</span>
           </h1>
 
-          {/* CTAs */}
           <div
             className="
               flex flex-col sm:flex-row gap-3 sm:gap-4
@@ -149,7 +141,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Scroll Indicator — hide on small screens */}
       <div
         className="
           hidden md:block
@@ -163,7 +154,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* NoScript fallback */}
       <noscript>
         <div className="sr-only">
           Prime Detailing — Kleious 39 &amp; Aetideon 46, Cholargos 15561 —
@@ -171,7 +161,6 @@ const Hero = () => {
         </div>
       </noscript>
 
-      {/* Snowflakes */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden z-[5] christmas:block hidden">
         <div className="snowflake"></div>
         <div className="snowflake"></div>

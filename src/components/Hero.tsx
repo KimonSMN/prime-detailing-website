@@ -22,13 +22,13 @@ const Hero = () => {
         <picture>
           <source
             type="image/avif"
-            srcSet="/hero/hero-720.avif 720w, /hero/hero-1600.avif 1600w"
-            sizes="100vw"
+            srcSet="/hero/hero-720.avif 720w, /hero/hero-1080.avif 1080w, /hero/hero-1600.avif 1600w"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1600px"
           />
           <source
             type="image/webp"
-            srcSet="/hero/hero-720.webp 720w, /hero/hero-1600.webp 1600w"
-            sizes="100vw"
+            srcSet="/hero/hero-720.webp 720w, /hero/hero-1080.webp 1080w, /hero/hero-1600.webp 1600w"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 100vw, 1600px"
           />
           <img
             src="/hero/hero-1600.webp"
@@ -46,6 +46,7 @@ const Hero = () => {
             decoding="async"
           />
         </picture>
+
 
         {/* Left-to-right fade to pure black on the left (stronger on mobile) */}
         <div

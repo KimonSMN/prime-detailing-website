@@ -5,7 +5,7 @@ const input = "src/assets/icons/hero.png";
 const outDir = "public/hero";
 fs.mkdirSync(outDir, { recursive: true });
 
-const sizes = [720, 1600];
+const sizes = [720, 1080, 1600];
 
 for (const w of sizes) {
   await sharp(input)

@@ -9,7 +9,6 @@ import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import BeforeAfterStrip from "@/components/BeforeAfterStrip";
 
-// ✅ Lazy import heavy components so they don't hurt LCP
 const ReviewsCarousel = React.lazy(() => import("@/components/ReviewsCarousel"));
 const GoogleReviewsEmbed = React.lazy(
   () => import("@/components/GoogleReviewsEmbed"),
@@ -136,16 +135,19 @@ const Index = () => {
         </Suspense>
       </LazyWhenVisible>
 
-      <BeforeAfterStrip
-        heading="Projects"
-        galleryUrl="/gallery"
-        imageIds={[
-          "glc-220d/mercedes-glc220d-1",
-          "bmw-ix1/bmw-ix1-1",
-          "kia-sportage/kia-sportage-1",
-          "bmw-x5/bmw-x5-1",
-        ]}
-      />
+      <LazyWhenVisible>
+        <BeforeAfterStrip
+          heading="Projects"
+          galleryUrl="/gallery"
+          imageIds={[
+            "glc-220d/mercedes-glc220d-1",
+            "bmw-ix1/bmw-ix1-1",
+            "kia-sportage/kia-sportage-1",
+            "bmw-x5/bmw-x5-1",
+          ]}
+        />
+      </LazyWhenVisible>
+
 
       <Footer />
     </div>

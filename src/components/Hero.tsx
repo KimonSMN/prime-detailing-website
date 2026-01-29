@@ -1,8 +1,7 @@
+// src/components/Hero.tsx
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import hat from "../assets/icons/santa-hat.png";
-import hero from "../assets/icons/hero.png";
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -19,16 +18,34 @@ const Hero = () => {
     >
       {/* Background */}
       <div className="absolute inset-0 h-full w-full overflow-hidden">
-        <img
-          src={hero}
-          alt=""
-          className="
-            absolute inset-0 h-full w-full object-cover
-            opacity-50 md:opacity-20 lg:opacity-20 -scale-x-100
-            object-center sm:object-right
-            translate-x-0 sm:translate-x-24
-          "
-        />
+        {/* LCP image: responsive + high priority */}
+        <picture>
+          <source
+            type="image/avif"
+            srcSet="/hero/hero-720.avif 720w, /hero/hero-1600.avif 1600w"
+            sizes="100vw"
+          />
+          <source
+            type="image/webp"
+            srcSet="/hero/hero-720.webp 720w, /hero/hero-1600.webp 1600w"
+            sizes="100vw"
+          />
+          <img
+            src="/hero/hero-1600.webp"
+            alt=""
+            className="
+              absolute inset-0 h-full w-full object-cover
+              opacity-50 md:opacity-20 lg:opacity-20 -scale-x-100
+              object-center sm:object-right
+              translate-x-0 sm:translate-x-24
+            "
+            width={1600}
+            height={900}
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
 
         {/* Left-to-right fade to pure black on the left (stronger on mobile) */}
         <div
@@ -70,21 +87,6 @@ const Hero = () => {
             Perfection in
             <br />
             <span className="text-secondary">Every Detail</span>
-            {/* Optional santa hat */}
-            <span className="relative inline-block align-top ml-2">
-              <img
-                src={hat}
-                alt=""
-                style={{ transform: "scaleX(-1)" }}
-                className="
-                  hidden christmas:block
-                  absolute
-                  -top-5 -left-5 sm:-top-6 sm:-left-6
-                  pointer-events-none select-none
-                  w-12 sm:w-16 md:w-20
-                "
-              />
-            </span>
           </h1>
 
           {/* CTAs */}

@@ -10,9 +10,7 @@ import Footer from "@/components/Footer";
 import BeforeAfterStrip from "@/components/BeforeAfterStrip";
 
 // ✅ Lazy import heavy components so they don't hurt LCP
-const ReviewsCarousel = React.lazy(
-  () => import("@/components/ReviewsCarousel"),
-);
+const ReviewsCarousel = React.lazy(() => import("@/components/ReviewsCarousel"));
 const GoogleReviewsEmbed = React.lazy(
   () => import("@/components/GoogleReviewsEmbed"),
 );
@@ -43,7 +41,7 @@ function LazyWhenVisible({
     );
     io.observe(ref.current);
     return () => io.disconnect();
-  }, [visible]);
+  }, [visible, rootMargin]);
 
   return <div ref={ref}>{visible ? children : null}</div>;
 }
@@ -107,12 +105,12 @@ const Index = () => {
         image={`${BASE_URL}/og-default.webp`}
         jsonLd={businessJsonLd}
         links={[
+          // ✅ Preload the ACTUAL LCP hero image (mobile-first)
           {
             rel: "preload",
             as: "image",
-            href: "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp",
-            imagesrcset:
-              "/gallery/detailing-bmw-ix1-cholargos-2-w480.webp 480w",
+            href: "/hero/hero-720.avif",
+            imagesrcset: "/hero/hero-720.avif 720w, /hero/hero-1600.avif 1600w",
             imagesizes: "100vw",
           },
         ]}

@@ -5,18 +5,21 @@ import { Resend } from "resend";
 
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
-const ADMIN_TO = process.env.ADMIN_EMAIL!; // keep using this for your email (kimonsmirlianos@gmail.com)
-const FROM =
-  process.env.RESEND_FROM || "Prime Detailing <onboarding@resend.dev>";
-const resend = new Resend(process.env.RESEND_API_KEY!);
+const ADMIN_TO = process.env.ADMIN_EMAIL!;
+const FROM = process.env.RESEND_FROM;
+if (!FROM) throw new Error("Missing RESEND_FROM");
+
+const RESEND_API_KEY = process.env.RESEND_API_KEY!;
+
+const resend = new Resend(RESEND_API_KEY);
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
   auth: { persistSession: false },
 });
 
-/** Basic HTML escaping to avoid user-provided content injecting HTML into emails */
-function escapeHtml(s: string) {
-  return String(s)
+// Basic HTML escaping so user input can't inject HTML into emails
+function escapeHtml(s: unknown) {
+  return String(s ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -24,7 +27,6 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
-/** Format ISO timestamp into Greece-friendly string */
 function formatPreferredAt(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
@@ -43,6 +45,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: "Method not allowed" });
 
   try {
+    // ---- Validate envs early (fail fast) ----
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      return res.status(500).json({ error: "Missing Supabase server env vars" });
+    }
+    if (!RESEND_API_KEY) {
+      return res.status(500).json({ error: "Missing RESEND_API_KEY" });
+    }
+    if (!ADMIN_TO) {
+      return res.status(500).json({ error: "Missing ADMIN_EMAIL" });
+    }
+
     const {
       name,
       email,
@@ -51,8 +64,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       notes,
       preferred_at,
       serviceId,
-      addonIds, // string[]
-      addons, // { id: string; quantity?: number }[]
+      addonIds,
+      addons,
     } = (req.body || {}) as {
       name?: string;
       email?: string;
@@ -93,7 +106,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .single();
     if (upsertErr) throw upsertErr;
 
-    // Create booking (pending)
+    // Create booking
     const { data: booking, error: bookErr } = await supabase
       .from("booking")
       .insert({
@@ -107,37 +120,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       .single();
     if (bookErr) throw bookErr;
 
-    // Link selected service (booking_service) + snapshot price_at_booking (recommended)
+    // Link selected service (booking_service)
     let serviceName: string | null = null;
-    let servicePrice: number | null = null;
-
     if (serviceId) {
-      // Fetch service name + price for email and price snapshot
+      const { error: bsErr } = await supabase.from("booking_service").insert({
+        booking_id: booking.id,
+        service_id: serviceId,
+        quantity: 1,
+      });
+      if (bsErr) throw bsErr;
+
       const { data: svcRow, error: svcErr } = await supabase
         .from("service")
-        .select("name, base_price")
+        .select("name")
         .eq("id", serviceId)
         .maybeSingle();
       if (svcErr) throw svcErr;
 
       serviceName = svcRow?.name ?? null;
-      servicePrice =
-        typeof (svcRow as any)?.base_price === "number"
-          ? (svcRow as any).base_price
-          : svcRow?.base_price != null
-            ? Number(svcRow.base_price)
-            : null;
-
-      const { error: bsErr } = await supabase.from("booking_service").insert({
-        booking_id: booking.id,
-        service_id: serviceId,
-        quantity: 1,
-        price_at_booking: servicePrice, // snapshot (nullable if missing)
-      });
-      if (bsErr) throw bsErr;
     }
 
-    // Link selected add-ons (booking_addon)
+    // Link selected add-ons (booking_addon) + build details for email
     let addonRowsForEmail:
       | {
           id: string;
@@ -149,7 +152,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       | [] = [];
 
     if (normalizedAddons.length > 0) {
-      // Insert rows
       const rows = normalizedAddons.map((a) => ({
         booking_id: booking.id,
         addon_id: a.id,
@@ -158,7 +160,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { error: baErr } = await supabase.from("booking_addon").insert(rows);
       if (baErr) throw baErr;
 
-      // Fetch add-on details for email
       const ids = normalizedAddons.map((a) => a.id);
       const { data: addonMeta, error: aMetaErr } = await supabase
         .from("addon")
@@ -166,7 +167,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .in("id", ids);
       if (aMetaErr) throw aMetaErr;
 
-      // merge quantity
       addonRowsForEmail = normalizedAddons
         .map((sel) => {
           const meta = addonMeta?.find((m) => m.id === sel.id);
@@ -185,15 +185,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         .filter(Boolean) as typeof addonRowsForEmail;
     }
 
-    // Build Add-ons HTML (for both admin + customer)
     const addonsHtml =
       addonRowsForEmail.length === 0
         ? "<em>None</em>"
         : `<ul>${addonRowsForEmail
             .map((a) => {
+              const qty = a.quantity > 1 ? ` &times;${a.quantity}` : "";
               const price =
                 a.base_price != null ? `${a.base_price.toFixed(2)}€` : "—";
-              const qty = a.quantity > 1 ? ` &times;${a.quantity}` : "";
               const dur = a.duration_min ? ` • +${a.duration_min}m` : "";
               return `<li>${escapeHtml(a.name)}${qty} — ${escapeHtml(
                 price,
@@ -203,11 +202,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const preferredHuman = formatPreferredAt(preferred_at);
 
-    // 1) ADMIN email (keep existing behavior)
-    await resend.emails.send({
+    // -----------------------------
+    // 1) ADMIN email (keep your existing behavior)
+    // -----------------------------
+    const { data: adminData, error: adminError } = await resend.emails.send({
       from: FROM,
       to: [ADMIN_TO],
-      subject: `New Booking: ${name} — ${preferred_at}`,
+      subject: `New Booking: ${name} — ${preferredHuman}`,
       html: `<h2>New Booking</h2>
       <ul>
         <li><b>Name:</b> ${escapeHtml(name)}</li>
@@ -215,13 +216,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         <li><b>Phone:</b> ${escapeHtml(phone)}</li>
         <li><b>Date/Time:</b> ${escapeHtml(preferredHuman)}</li>
         <li><b>Status:</b> pending</li>
-        <li><b>Service:</b> ${
-          serviceName
-            ? `${escapeHtml(serviceName)}${
-                servicePrice != null ? ` — ${servicePrice.toFixed(2)}€` : ""
-              }`
-            : escapeHtml(serviceId ?? "—")
-        }</li>
+        <li><b>Service:</b> ${escapeHtml(serviceName ?? serviceId ?? "—")}</li>
         <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
         <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
         <li><b>Booking ID:</b> ${escapeHtml(booking.id)}</li>
@@ -232,8 +227,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       ...(email ? { reply_to: email } : {}),
     });
 
-    // 2) CUSTOMER confirmation email (new)
-    await resend.emails.send({
+    if (adminError) {
+      console.error("Resend ADMIN email error:", adminError);
+      // fail so you see it in logs and UI doesn't lie
+      return res.status(502).json({
+        error: "Failed to send admin email",
+        details: adminError,
+      });
+    }
+    console.log("Resend ADMIN email sent:", adminData);
+
+    // -----------------------------
+    // 2) CLIENT confirmation email (new)
+    // -----------------------------
+    const { data: clientData, error: clientError } = await resend.emails.send({
       from: FROM,
       to: [email],
       subject: "We received your booking request — Prime Detailing",
@@ -241,37 +248,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         <div style="font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.5">
           <h2>Booking request received ✅</h2>
           <p>Hi ${escapeHtml(name)},</p>
-          <p>
-            We received your booking request and we’ll confirm it shortly.
-          </p>
+          <p>We received your booking request and we’ll confirm it shortly.</p>
 
           <h3>Details</h3>
           <ul>
             <li><b>Date/Time requested:</b> ${escapeHtml(preferredHuman)}</li>
-            <li><b>Service:</b> ${
-              serviceName
-                ? `${escapeHtml(serviceName)}${
-                    servicePrice != null
-                      ? ` — ${servicePrice.toFixed(2)}€`
-                      : ""
-                  }`
-                : "—"
-            }</li>
-            <li><b>Add-ons:</b> ${addonsHtml}</li>
+            <li><b>Service:</b> ${escapeHtml(serviceName ?? "—")}</li>
             <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
             <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
           </ul>
 
-          <p style="margin-top:16px">
-            If you need to change anything, reply to this email.
-          </p>
+          <h3>Add-ons</h3>
+          ${addonsHtml}
 
+          <p style="margin-top:16px">If you need to change anything, reply to this email.</p>
           <p>— Prime Detailing</p>
         </div>
       `,
-      // Replies go to you (admin), not to Resend sender
+      // replies go to you (no mailbox needed on the domain)
       reply_to: ADMIN_TO,
     });
+
+    if (clientError) {
+      console.error("Resend CLIENT email error:", clientError);
+      return res.status(502).json({
+        error: "Failed to send client email",
+        details: clientError,
+      });
+    }
+    console.log("Resend CLIENT email sent:", clientData);
 
     return res.status(200).json({ ok: true, booking_id: booking.id });
   } catch (err: any) {

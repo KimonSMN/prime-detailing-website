@@ -30,6 +30,10 @@ function escapeHtml(s: unknown) {
 function formatPreferredAt(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return iso;
+
+  // Add +2 hours (your requested fix)
+  const dPlus2 = new Date(d.getTime() + 2 * 60 * 60 * 1000);  
+
   return new Intl.DateTimeFormat("el-GR", {
     weekday: "long",
     year: "numeric",
@@ -37,7 +41,7 @@ function formatPreferredAt(iso: string) {
     day: "2-digit",
     hour: "2-digit",
     minute: "2-digit",
-  }).format(d);
+  }).format(dPlus2);
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -241,33 +245,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 2) CLIENT confirmation email (new)
     // -----------------------------
     const { data: clientData, error: clientError } = await resend.emails.send({
-      from: FROM,
-      to: [email],
-      subject: "We received your booking request — Prime Detailing",
-      html: `
-        <div style="font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.5">
-          <h2>Booking request received ✅</h2>
-          <p>Hi ${escapeHtml(name)},</p>
-          <p>We received your booking request and we’ll confirm it shortly.</p>
+  from: FROM,
+  to: [email],
+  subject: "Booking Confirmed ✅ — Prime Detailing Cholargos",
+  html: `
+    <div style="font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.5">
+      <h2>Booking Confirmed ✅</h2>
 
-          <h3>Details</h3>
-          <ul>
-            <li><b>Date/Time requested:</b> ${escapeHtml(preferredHuman)}</li>
-            <li><b>Service:</b> ${escapeHtml(serviceName ?? "—")}</li>
-            <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
-            <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
-          </ul>
+      <p>Hi ${escapeHtml(name)},</p>
 
-          <h3>Add-ons</h3>
-          ${addonsHtml}
+      <p>
+        Your booking has been confirmed. We look forward to seeing you!
+      </p>
 
-          <p style="margin-top:16px">If you need to change anything, reply to this email.</p>
-          <p>— Prime Detailing</p>
-        </div>
-      `,
-      // replies go to you (no mailbox needed on the domain)
-      replyTo: ADMIN_TO,
-    });
+      <h3>Details</h3>
+      <ul>
+        <li><b>Date/Time:</b> ${escapeHtml(preferredHuman)}</li>
+        <li><b>Service:</b> ${escapeHtml(serviceName ?? "—")}</li>
+        <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
+        <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
+      </ul>
+
+      <h3>Add-ons</h3>
+      ${addonsHtml}
+
+      <p style="margin-top:16px">
+        If you need to change anything, call us on <b>+30 693 994 9788</b>.
+      </p>
+
+      <p><b>Prime Detailing Cholargos</b></p>
+    </div>
+  `,
+  replyTo: ADMIN_TO,
+});
+
 
     if (clientError) {
       console.error("Resend CLIENT email error:", clientError);

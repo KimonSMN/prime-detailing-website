@@ -6,8 +6,9 @@ import { Resend } from "resend";
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const ADMIN_TO = process.env.ADMIN_EMAIL!;
-const FROM =
-  process.env.RESEND_FROM || "Prime Detailing <onboarding@resend.dev>";
+const FROM = process.env.RESEND_FROM!;
+if (!FROM) throw new Error("Missing RESEND_FROM");
+
 const RESEND_API_KEY = process.env.RESEND_API_KEY!;
 
 const resend = new Resend(RESEND_API_KEY);

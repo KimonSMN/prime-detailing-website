@@ -6,9 +6,8 @@ import { Resend } from "resend";
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const ADMIN_TO = process.env.ADMIN_EMAIL!;
-const FROM = process.env.RESEND_FROM;
-if (!FROM) throw new Error("Missing RESEND_FROM");
-
+const FROM =
+  process.env.RESEND_FROM || "Prime Detailing <onboarding@resend.dev>";
 const RESEND_API_KEY = process.env.RESEND_API_KEY!;
 
 const resend = new Resend(RESEND_API_KEY);
@@ -224,7 +223,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       <h3>Selected Add-ons</h3>
       ${addonsHtml}
       `,
-      ...(email ? { reply_to: email } : {}),
+      ...(email ? { replyTo: email } : {}),
     });
 
     if (adminError) {
@@ -266,7 +265,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         </div>
       `,
       // replies go to you (no mailbox needed on the domain)
-      reply_to: ADMIN_TO,
+      replyTo: ADMIN_TO,
     });
 
     if (clientError) {

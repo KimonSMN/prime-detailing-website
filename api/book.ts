@@ -245,39 +245,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // 2) CLIENT confirmation email (new)
     // -----------------------------
     const { data: clientData, error: clientError } = await resend.emails.send({
-  from: FROM,
-  to: [email],
-  subject: "Booking Confirmed ✅ — Prime Detailing Cholargos",
-  html: `
-    <div style="font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.5">
-      <h2>Booking Confirmed ✅</h2>
+    from: FROM,
+    to: [email],
+    subject: "Booking Confirmed ✅ — Prime Detailing Cholargos",
+    html: `
+      <div style="font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial; line-height:1.5">
+        <h2>Booking Confirmed ✅</h2>
 
-      <p>Hi ${escapeHtml(name)},</p>
+        <p>Hi ${escapeHtml(name)},</p>
 
-      <p>
-        Your booking has been confirmed. We look forward to seeing you!
-      </p>
+        <p>
+          Your booking has been confirmed. We look forward to seeing you!
+        </p>
 
-      <h3>Details</h3>
-      <ul>
-        <li><b>Date/Time:</b> ${escapeHtml(preferredHuman)}</li>
-        <li><b>Service:</b> ${escapeHtml(serviceName ?? "—")}</li>
-        <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
-        <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
-      </ul>
+        <h3>Details</h3>
+        <ul>
+          <li><b>Date/Time:</b> ${escapeHtml(preferredHuman)}</li>
+          <li><b>Service:</b> ${escapeHtml(serviceName ?? "—")}</li>
+          <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
+          <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
+        </ul>
 
-      <h3>Add-ons</h3>
-      ${addonsHtml}
+        <h3>Add-ons</h3>
+        ${addonsHtml}
 
-      <p style="margin-top:16px">
-        If you need to change anything, call us on <b>+30 693 994 9788</b>.
-      </p>
+        <p style="margin-top:16px">
+          If you need to change anything, call us on <b>+30 693 994 9788</b>.
+        </p>
 
-      <p><b>Prime Detailing Cholargos</b></p>
-    </div>
-  `,
-  replyTo: ADMIN_TO,
-});
+        <p><b>Prime Detailing Cholargos</b></p>
+      </div>
+    `,
+    replyTo: ADMIN_TO,
+  });
 
 
     if (clientError) {

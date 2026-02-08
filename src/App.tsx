@@ -82,12 +82,12 @@ const App = () => {
             </Routes>
           </Suspense>
 
-          {/* Chatbot loads only after interaction/timeout */}
+          {/* Chatbot loads only after interaction/timeout
           <MountAfterInteraction timeoutMs={4000}>
             <Suspense fallback={null}>
               <FloatingChatbot />
             </Suspense>
-          </MountAfterInteraction>
+          </MountAfterInteraction> */}
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

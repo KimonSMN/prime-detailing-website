@@ -316,7 +316,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       to: [email],
       subject: "Booking Confirmed ✅ — Prime Detailing Cholargos",
       html: `
-  <div style="margin:0;padding:0;background:#f6f7fb;">
+ <div style="margin:0;padding:0;background:#f6f7fb;">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
     Η κράτησή σας επιβεβαιώθηκε — Prime Detailing Cholargos
   </div>
@@ -437,21 +437,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                             </tr>
 
                             <tr>
-                              <!-- Removed dotted line + keep content left-aligned -->
                               <td style="padding-top:12px;">
-                                <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;font-size:12px;color:#64748b;margin-top:12px;margin-bottom:4px;">
-                                  Όχημα
-                                </div>
-                                <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;font-size:13px;font-weight:650;color:#0f172a;text-align:left;">
-                                  ${escapeHtml(vehicleInfo ?? "—")}
-                                </div>
-
-                                <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;font-size:12px;color:#64748b;margin-top:10px;margin-bottom:4px;">
-                                  Σημειώσεις
-                                </div>
-                                <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;font-size:13px;color:#0f172a;white-space:pre-wrap;text-align:left;margin:0;padding:0;">
-                                  ${escapeHtml(notes ?? "—")}
-                                </div>
+                               
                               </td>
                             </tr>
 
@@ -486,7 +473,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     </tr>
   </table>
 </div>
-
       `,
       replyTo: ADMIN_TO,
     });

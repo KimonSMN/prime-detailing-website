@@ -371,7 +371,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                     <div style="font-size:14px;line-height:1.6;">
                       Γεια σου <b>${escapeHtml(name)}</b>,
                       <br />
-                      Σε περιμένουμε! Παρακάτω θα βρεις τα στοιχεία της κράτησής σου.
+                      Σε περιμένουμε! Παρακάτω θα βρεις τα στοιχεία της κράτησης σου.
                     </div>
                   </td>
                 </tr>

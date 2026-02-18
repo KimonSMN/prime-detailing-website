@@ -1,765 +1,449 @@
-// src/pages/Services.tsx
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  Car,
-  Shield,
-  Palette,
-  Sparkles,
-  Droplets,
-  Crown,
-  Wrench,
-  Lightbulb,
-  Flame,
-} from "lucide-react";
-import { useTranslation } from "react-i18next";
-import { NavLink } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { TriangleAlert } from "lucide-react";
-import Footer from "../components/Footer";
-/* ---------------- Types from DB ---------------- */
-type ServiceRow = {
-  id: string;
-  name: string;
-  base_price: number | string | null;
-  duration_min: number | null; // shown on Services page
-  active: boolean | null;
-};
+import React from "react";
 
-type AddonRow = {
-  id: string;
-  slug: string | null; // use for icon & mapping
-  name: string;
-  base_price: number | string | null;
-  duration_min: number | null;
-  active: boolean | null;
-};
+/**
+ * Services Page (React + Tailwind)
+ * - Prices start with "From $X"
+ * - Includes a dummy comparison table text (since you have the real one)
+ * - Paint Correction + Ceramic Coatings live in a "Special" section with horizontal scroll
+ */
 
-/* ---------------- Local service ids used by i18n ---------------- */
-type ServiceId =
-  | "maintenanceWash"
-  | "fullDetail"
-  | "paintCorrection"
-  | "mobileDetail";
-
-const FULL_DETAIL_SUGGESTED_ADDON_SLUG = "sprayWax";
-
-/* Fallback copy if i18n keys are missing */
-const serviceCopyFallback: Record<
-  ServiceId,
-  { title: string; description: string; features: string[]; defaultIcon: any }
-> = {
-  maintenanceWash: {
-    title: "Maintenance wash",
+const detailServices = [
+  {
+    name: "Exterior Detail",
+    price: 15,
     description:
-      "Maintenance wash for a clean look without decontamination or deep interior extraction.",
-    features: [
-      "Contactless pre-wash & safe contact hand wash",
-      "Wheels & tires cleaned and dressed",
-      "Streak-free exterior glass cleaning",
-      "Quick interior surface wipe-down",
-      "Floors vacuumed",
-      "No clay bar / no tar or sap removal",
-      "No deep carpet/seat extraction",
-    ],
-    defaultIcon: Droplets,
+      "A quick refresh to bring back a clean, glossy exterior look.",
+    highlights: ["Safe wash", "Wheel & tire cleaning", "Exterior wipe-down"],
+    badge: "Popular",
   },
-  fullDetail: {
-    title: "Full Exterior & Interior Detail",
+  {
+    name: "Maintenance Detail",
+    price: 30,
     description:
-      "Deep clean and decontamination inside & out, resetting the car’s look and feel.",
-    features: [
-      "Contactless pre-wash & safe contact hand wash",
-      "Clay bar decontamination + tar/sap removal",
-      "Wheels & tires deep cleaned and dressed",
-      "Crystal-clear glass (inside & out)",
-      "Full interior vacuum (including carpets)",
-      "Specialized carpet cleaning for stubborn dirt",
-      "Air vents, plastics & trims cleaned with UV protection",
-      "Leather surfaces cleaned & conditioned",
-      "Fabric seats deep cleaned with extraction machine (wet-vac) where needed",
-    ],
-    defaultIcon: Car,
+      "Ideal for keeping your car consistently clean between deep details.",
+    highlights: ["Light interior tidy", "Exterior wash", "Quick protection"],
   },
-  mobileDetail: {
-    title: "Mobile Detailing",
+  {
+    name: "Full Interior & Exterior Detail",
+    price: 50,
     description:
-      "We come to your location for a full professional detailing session. The client must provide water access and electricity.",
-    features: [
-      "Professional on-site detailing at your location",
-      "Full exterior wash & decontamination",
-      "Interior vacuuming & surface cleaning",
-      "Glass cleaning (inside & out)",
-      "Wheels & tires cleaned and dressed",
-      "Client must provide: water supply & electricity access (20–30m cable)",
-    ],
-    defaultIcon: Car,
+      "A complete reset inside and out for a noticeably cleaner finish.",
+    highlights: ["Interior vacuum", "Exterior wash", "Deep clean touchpoints"],
   },
-  paintCorrection: {
-    title: "Paint Correction",
+  {
+    name: "Ultimate Detail",
+    price: 60,
     description:
-      "Machine polishing to remove swirls/light scratches and restore depth and clarity. Ideal prep before long-term coatings.",
-    features: [
-      "Contactless pre-wash & safe contact hand wash",
-      "Full decontamination: clay bar + tar/sap removal",
-      "Multi-stage machine polishing tailored to paint condition",
-      "Improves gloss, clarity and color depth",
-      "Panel wipe to prepare for protection",
-      "Recommended: add a sealant or ceramic for long-term lock-in",
-    ],
-    defaultIcon: Palette,
+      "Our most thorough detail package for maximum clean and shine.",
+    highlights: ["Deep interior clean", "Enhanced exterior finish", "Detailing trim"],
+    badge: "Best Value",
   },
-};
+];
 
-/* Map DB services by fuzzy name → our i18n service ids */
-function mapServiceIdByName(name: string): ServiceId | null {
-  const n = name.toLowerCase();
-  if (/(maintenance).*(wash)/i.test(name) || n.includes("maintenance wash"))
-    return "maintenanceWash";
-  if (/(full).*(detail)/i.test(name) || n.includes("interior detail"))
-    return "fullDetail";
-  if (n.includes("paint correction")) return "paintCorrection";
-  if (n.includes("mobile detailing") || n.includes("mobile detail"))
-    return "mobileDetail";
-  return null;
-}
+const protectionAddOns = [
+  {
+    name: "Wax (lasts ~1 month)",
+    price: 10,
+    description: "Classic warm gloss with short-term protection.",
+  },
+  {
+    name: "Spray Sealant (lasts ~3 months)",
+    price: 20,
+    description: "Fast, durable protection with great hydrophobic performance.",
+  },
+];
 
-/* Add-on icon by slug */
-function addonIconBySlug(slug?: string | null) {
-  switch (slug) {
-    case "sprayWax":
-      return Droplets;
-    case "premiumWax":
-      return Palette;
-    case "nanoSealant":
-      return Shield;
-    case "proCeramic":
-      return Crown;
-    case "engineBay":
-      return Wrench;
-    case "headlightRestoration":
-      return Lightbulb;
-    default:
-      return Sparkles;
-  }
-}
+const extras = [
+  {
+    name: "Headlight Restoration",
+    price: 20,
+    description: "Improves clarity and appearance for safer night driving.",
+  },
+  {
+    name: "Engine Bay Detailing",
+    price: 20,
+    description: "Careful cleaning for a neat, refreshed engine bay look.",
+  },
+];
 
-/* Format minutes to hours (compact) */
-function minutesToHoursLabel(min?: number | null) {
-  if (!min || min <= 0) return "";
-  const hours = Math.round((Number(min) / 60) * 10) / 10;
-  const pretty = Number.isInteger(hours) ? `${hours}` : `${hours}`;
-  return `${pretty}`;
-}
+const paintCorrectionOptions = [
+  {
+    title: "1-Step Paint Correction",
+    price: 100,
+    description: "Boost gloss and reduce light swirls for a cleaner finish.",
+    tag: "Correction",
+  },
+  {
+    title: "2-Step Paint Correction",
+    price: 200,
+    description: "More defect removal + higher clarity and depth.",
+    tag: "Correction",
+  },
+  {
+    title: "3-Step Paint Correction",
+    price: 300,
+    description: "Maximum refinement for the highest gloss and clarity possible.",
+    tag: "Correction",
+  },
+];
 
-/* --- NEW: grouping for add-ons --- */
-const PROTECTION_SLUGS = new Set([
-  "sprayWax",
-  "premiumWax",
-  "nanoSealant",
-  "proCeramic",
-]);
+const ceramicCoatingOptions = [
+  {
+    title: "Ceramic Coating (2 years)",
+    price: 120,
+    description: "Strong protection with impressive water beading and gloss.",
+    tag: "Ceramic",
+  },
+  {
+    title: "Ceramic Coating (3 years)",
+    price: 150,
+    description: "Enhanced longevity and durability.",
+    tag: "Ceramic",
+  },
+  {
+    title: "Ceramic Coating (4 years)",
+    price: 200,
+    description: "Longer-term coating performance with easier maintenance.",
+    tag: "Ceramic",
+  },
+  {
+    title: "Ceramic Coating (50 months)",
+    price: 250,
+    description: "Extended protection for drivers who want maximum longevity.",
+    tag: "Ceramic",
+  },
+];
 
-const EXTRA_ADDON_SLUGS = new Set([
-  "engineBay",
-  "headlightRestoration", // headlight polishing/restoration
-]);
-
-const Services = () => {
-  const { t } = useTranslation();
-
-  const [dbServices, setDbServices] = useState<ServiceRow[]>([]);
-  const [dbAddons, setDbAddons] = useState<AddonRow[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  /* Load dynamic prices/durations from Supabase */
-  useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const [srv, add] = await Promise.all([
-        supabase
-          .from("service")
-          .select("id,name,base_price,duration_min,active")
-          .eq("active", true)
-          .order("name"),
-        supabase
-          .from("addon")
-          .select("id,slug,name,base_price,duration_min,active")
-          .eq("active", true)
-          .order("name"),
-      ]);
-      if (!srv.error) setDbServices(srv.data ?? []);
-      if (!add.error) setDbAddons(add.data ?? []);
-      setLoading(false);
-    })();
-  }, []);
-
-  /* Build a map of dynamic price/duration for our services */
-  const dynamicServices = useMemo(() => {
-    const base: Record<
-      ServiceId,
-      { id: ServiceId; priceFrom?: number; durationMin?: number; icon: any }
-    > = {
-      maintenanceWash: {
-        id: "maintenanceWash",
-        icon: serviceCopyFallback.maintenanceWash.defaultIcon,
-      },
-      fullDetail: {
-        id: "fullDetail",
-        icon: serviceCopyFallback.fullDetail.defaultIcon,
-      },
-      mobileDetail: {
-        id: "mobileDetail",
-        icon: serviceCopyFallback.mobileDetail.defaultIcon,
-      },
-      paintCorrection: {
-        id: "paintCorrection",
-        icon: serviceCopyFallback.paintCorrection.defaultIcon,
-      },
-    };
-
-    for (const s of dbServices) {
-      const mapped = mapServiceIdByName(s.name);
-      if (mapped) {
-        base[mapped].priceFrom =
-          s.base_price == null ? undefined : Number(s.base_price);
-        base[mapped].durationMin =
-          s.duration_min == null ? undefined : Number(s.duration_min);
-      }
-    }
-    return base;
-  }, [dbServices]);
-
-  /* Add-ons from DB → with icon, i18n title/features — SORTED BY PRICE ASC */
-  const addonCards = useMemo(() => {
-    const arr = dbAddons.map((a) => {
-      const Icon = addonIconBySlug(a.slug ?? undefined);
-      const keyFromSlug =
-        a.slug && `services.items.addons.items.${a.slug}.title`;
-      const title =
-        (keyFromSlug && t(keyFromSlug)) ||
-        a.name ||
-        t("services.items.addons.title", "Protection Options");
-
-      const features =
-        (a.slug &&
-          (t(`services.items.addons.items.${a.slug}.features`, {
-            returnObjects: true,
-          }) as unknown as string[])) ||
-        [];
-
-      const priceFrom =
-        a.base_price == null
-          ? undefined
-          : Number.parseFloat(String(a.base_price));
-
-      return {
-        id: a.id,
-        slug: a.slug,
-        title,
-        features,
-        priceFrom,
-        durationMin:
-          a.duration_min == null ? undefined : Number(a.duration_min),
-        Icon,
-      };
-    });
-
-    // sort by price ascending (null/undefined -> last), name tiebreaker
-    arr.sort((a, b) => {
-      const ap = a.priceFrom ?? Number.POSITIVE_INFINITY;
-      const bp = b.priceFrom ?? Number.POSITIVE_INFINITY;
-      if (ap !== bp) return ap - bp;
-      return (a.title || "").localeCompare(b.title || "");
-    });
-
-    return arr;
-  }, [dbAddons, t]);
-
-  /* --- split into two groups --- */
-  const protectionAddons = useMemo(
-    () => addonCards.filter((a) => PROTECTION_SLUGS.has(a.slug ?? "")),
-    [addonCards],
-  );
-  const extraAddons = useMemo(
-    () => addonCards.filter((a) => EXTRA_ADDON_SLUGS.has(a.slug ?? "")),
-    [addonCards],
-  );
-
-  if (loading) {
-    return (
-      <section id="services" className="py-20 px-4">
-        <div className="max-w-6xl mx-auto text-center opacity-70">
-          {t("common.loading", "Loading...")}
-        </div>
-      </section>
-    );
-  }
-
+function Price({ value }) {
   return (
-    <section id="services" className="min-h-screen flex flex-col">
-      <div className="flex-grow py-20 px-4 max-w-6xl mx-auto">
-        <div className="max-w-6xl mx-auto">
-          {/* ---------- SERVICES ---------- */}
-          <div className="text-center mb-16 animate-fade-in">
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              {t("services.title.prefix", "Our")}{" "}
-              <span className="bg-gold-gradient bg-clip-text text-transparent">
-                {t("services.title.accent", "Services")}
-              </span>
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              {t(
-                "services.subtitle",
-                "Choose your core detailing package, then add the protection that suits your goals.",
-              )}
-            </p>
-          </div>
+    <div className="flex items-baseline gap-2">
+      <span className="text-sm text-white/60">From</span>
+      <span className="text-2xl font-semibold tracking-tight">${value}</span>
+    </div>
+  );
+}
 
-          <div className="flex flex-wrap justify-center gap-8">
-            {(Object.keys(serviceCopyFallback) as ServiceId[])
-              .filter((svcId) => svcId !== "mobileDetail") // TEMP: hide Mobile Detailing
-              .map((svcId, index) => {
-                const copy = serviceCopyFallback[svcId];
-                const dyn = dynamicServices[svcId];
-                const IconComponent = dyn.icon || Sparkles;
+function Badge({ children }) {
+  return (
+    <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-white/80">
+      {children}
+    </span>
+  );
+}
 
-                const title = t(`services.items.${svcId}.title`) || copy.title;
-                const description =
-                  t(`services.items.${svcId}.description`) || copy.description;
+function Card({ title, price, description, highlights, badge }) {
+  return (
+    <div className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-6 shadow-sm backdrop-blur transition hover:border-white/20">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h3 className="text-lg font-semibold tracking-tight">{title}</h3>
+          {badge ? (
+            <div className="mt-2">
+              <Badge>{badge}</Badge>
+            </div>
+          ) : null}
+        </div>
+        <Price value={price} />
+      </div>
 
-                let features =
-                  (t(`services.items.${svcId}.features`, {
-                    returnObjects: true,
-                  }) as unknown as string[]) || copy.features;
-                if (!Array.isArray(features) || features.length === 0) {
-                  features = copy.features;
-                }
+      <p className="mt-3 text-sm text-white/70">{description}</p>
 
-                const priceFrom = dyn.priceFrom;
-                const durationH = dyn.durationMin
-                  ? minutesToHoursLabel(dyn.durationMin)
-                  : undefined;
+      {highlights?.length ? (
+        <ul className="mt-5 space-y-2 text-sm text-white/70">
+          {highlights.map((h) => (
+            <li key={h} className="flex gap-2">
+              <span className="mt-1 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-white/50" />
+              <span>{h}</span>
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
-                /* 🎄 CHRISTMAS DISCOUNT */
-                const isChristmas =
-                  document.documentElement.classList.contains("christmas");
-                const discountPrice =
-                  isChristmas && priceFrom != null
-                    ? Math.round(priceFrom * 0.8)
-                    : null;
+      <div className="pointer-events-none absolute -right-20 -top-20 h-40 w-40 rounded-full bg-white/10 blur-3xl transition-opacity group-hover:opacity-80" />
+    </div>
+  );
+}
 
-                return (
-                  <Card
-                    key={svcId}
-                    className={`
-                    relative w-full md:w-[45%] lg:w-[30%] bg-card border-border 
-                    transition-all duration-300 flex flex-col
-                  `}
-                    style={{ animationDelay: `${index * 0.2}s` }}
-                  >
-                    <CardHeader className="text-center pb-4">
-                      {/* 🎄 CHRISTMAS BADGE */}
-                      {isChristmas && (
-                        <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                          <div className="flex items-center gap-1 bg-red-600 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-md">
-                            -20% Christmas Offer
-                          </div>
-                        </div>
-                      )}
-                      <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
-                        <copy.defaultIcon className="w-8 h-8 text-primary-foreground" />
-                      </div>
-                      <CardTitle className="text-2xl font-bold text-foreground">
-                        {title}
-                      </CardTitle>
-                      <CardDescription className="text-lg text-muted-foreground">
-                        {description}
-                      </CardDescription>
-                    </CardHeader>
+function SmallRow({ name, price, description }) {
+  return (
+    <div className="flex flex-col gap-2 rounded-xl border border-white/10 bg-white/5 p-5 transition hover:border-white/20">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="font-medium">{name}</div>
+          <div className="mt-1 text-sm text-white/70">{description}</div>
+        </div>
+        <Price value={price} />
+      </div>
+    </div>
+  );
+}
 
-                    {/* PRICE BLOCK */}
-                    <CardContent className="space-y-6 flex flex-col flex-grow">
-                      {(priceFrom != null || durationH) && (
-                        <div className="flex justify-between items-center text-center">
-                          <div>
-                            {priceFrom != null && (
-                              <>
-                                {priceFrom != null && (
-                                  <div className="text-left">
-                                    {/* CHRISTMAS MODE */}
-                                    {discountPrice != null ? (
-                                      <>
-                                        <p className="text-3xl font-semibold color-primary ">
-                                          {t("services.labels.start", "From")}{" "}
-                                          <span className="line-through text-muted-foreground">
-                                            {priceFrom}€
-                                          </span>{" "}
-                                          <span className="text-3xl font-bold text-red-400">
-                                            {discountPrice}€
-                                          </span>
-                                        </p>
-                                        <p className="text-sm text-white text-center">
-                                          {" "}
-                                          {t(
-                                            "services.labels.startingPrice",
-                                            "Starting price",
-                                          )}{" "}
-                                        </p>
-                                      </>
-                                    ) : (
-                                      /* NORMAL PRICE (non-Christmas) */
-                                      <>
-                                        <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                                          {t("services.fromPrice", {
-                                            price: `${priceFrom}€`,
-                                          })}
-                                        </p>
-                                        <p className="text-sm text-white text-center">
-                                          {t(
-                                            "services.labels.startingPrice",
-                                            "Starting price",
-                                          )}
-                                        </p>
-                                      </>
-                                    )}
-                                  </div>
-                                )}
-                              </>
-                            )}
-                          </div>
+function ScrollRail({ title, subtitle, items }) {
+  return (
+    <section className="mt-10">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
+          {subtitle ? (
+            <p className="mt-2 text-sm text-white/70">{subtitle}</p>
+          ) : null}
+        </div>
 
-                          {/* duration  */}
-                          <div>
-                            {durationH && (
-                              <>
-                                <p className="text-lg font-semibold text-foreground">
-                                  {t("services.durationHours", {
-                                    hours: durationH,
-                                  })}
-                                </p>
-                                <p className="text-sm text-muted-foreground">
-                                  {t(
-                                    "services.labels.duration",
-                                    "Estimated hours",
-                                  )}
-                                </p>
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      <div className="space-y-2 flex-grow">
-                        <h4 className="font-semibold text-foreground flex items-center gap-2">
-                          <Sparkles className="w-4 h-4 text-primary" />
-                          {t("services.whatsIncluded", "What’s included")}
-                        </h4>
-                        <ul className="space-y-1">
-                          {features.map((feature, idx) => {
-                            const isRequirement =
-                              svcId === "mobileDetail" &&
-                              idx === features.length - 1;
-
-                            return (
-                              <li
-                                key={idx}
-                                className={`flex gap-2 ${
-                                  isRequirement
-                                    ? "text-secondary font-semibold"
-                                    : "text-muted-foreground"
-                                }`}
-                              >
-                                {isRequirement ? (
-                                  <>
-                                    <TriangleAlert className="w-4 h-4 mt-0.5 flex-shrink-0 text-secondary" />
-                                    <span className="flex-1">{feature}</span>
-                                  </>
-                                ) : (
-                                  <>
-                                    <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                                    <span className="flex-1">{feature}</span>
-                                  </>
-                                )}
-                              </li>
-                            );
-                          })}
-                        </ul>
-                      </div>
-
-                      <div className="mt-auto">
-                        <NavLink to={`/booking?serviceId=${svcId}`}>
-                          <Button variant="hero" className="w-full">
-                            {t("services.bookThis", "Book this")}
-                          </Button>
-                        </NavLink>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-          </div>
-
-          {/* ---------- 2) PROTECTION OPTIONS ---------- */}
-          {protectionAddons.length > 0 && (
-            <>
-              <div className="text-center mt-20 mb-12">
-                <h3 className="text-3xl font-bold">
-                  {t("services.items.addons.title", "Protection Options")}
-                </h3>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  {t(
-                    "services.items.addons.subtitle",
-                    "Enhance longevity and gloss with waxes, nano-sealant, or ceramic coating.",
-                  )}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-8">
-                {protectionAddons.map((addon, index) => {
-                  const TitleIcon = addon.Icon;
-                  const durationH = addon.durationMin
-                    ? minutesToHoursLabel(addon.durationMin)
-                    : undefined;
-
-                  const features =
-                    addon.features && addon.features.length > 0
-                      ? addon.features
-                      : [
-                          t("services.addon.quickApply", "Quick application"),
-                          t(
-                            "services.addon.hydrophobic",
-                            "Improves hydrophobic performance",
-                          ),
-                        ];
-
-                  return (
-                    <Card
-                      key={addon.id}
-                      className={`relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col
-                    ${
-                      addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG
-                        ? "animate-flameBurst"
-                        : ""
-                    }`}
-                      style={{ animationDelay: `${index * 0.15}s` }}
-                    >
-                      <CardHeader className="text-center pb-4">
-                        <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                          <TitleIcon className="w-8 h-8 text-primary-foreground" />
-                        </div>
-
-                        <CardTitle className="text-xl font-bold text-foreground">
-                          {addon.title}
-                        </CardTitle>
-
-                        {addon.slug === FULL_DETAIL_SUGGESTED_ADDON_SLUG && (
-                          <div className="absolute top-3 right-3 z-20 pointer-events-none">
-                            <div
-                              className="flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-600 text-white text-xs font-semibold px-3 py-1 shadow-md
-                            transform rotate-6"
-                            >
-                              <Flame className="w-3.5 h-3.5" />
-                              <span>
-                                {t(
-                                  "services.socialProof.popular",
-                                  "Popular among clients",
-                                )}
-                              </span>
-                            </div>
-                          </div>
-                        )}
-
-                        {(addon.priceFrom != null || durationH) && (
-                          <div className="mt-3 flex items-center justify-center gap-4">
-                            {addon.priceFrom != null && (
-                              <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                                {t("services.fromPrice", {
-                                  price: `${addon.priceFrom}€`,
-                                })}
-                              </p>
-                            )}
-                            {durationH && (
-                              <p className="text-sm text-muted-foreground">
-                                {t("services.durationHours", {
-                                  hours: durationH,
-                                })}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </CardHeader>
-
-                      <CardContent className="space-y-6 flex flex-col flex-grow">
-                        <div className="space-y-2 flex-grow">
-                          <h4 className="font-semibold text-foreground flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-primary" />
-                            {t("services.whatsIncluded", "What’s included")}
-                          </h4>
-                          <ul className="space-y-1">
-                            {features.map((feature, idx) => (
-                              <li
-                                key={idx}
-                                className="text-muted-foreground flex gap-2"
-                              >
-                                <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                                <span className="flex-1">{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="mt-auto">
-                          <NavLink
-                            to={`/booking?${
-                              addon.slug
-                                ? `addonSlug=${addon.slug}`
-                                : `addonId=${addon.id}`
-                            }`}
-                          >
-                            <Button variant="secondary" className="w-full">
-                              {t("services.bookThis", "Add to booking")}
-                            </Button>
-                          </NavLink>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </>
-          )}
-
-          {/* ---------- 3) ADD-ONS  ---------- */}
-          {extraAddons.length > 0 && (
-            <>
-              <div className="text-center mt-20 mb-12">
-                <h3 className="text-3xl font-bold">
-                  {t("services.extras.title")}
-                </h3>
-                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  {t("services.extras.subtitle")}
-                </p>
-              </div>
-
-              <div className="flex flex-wrap justify-center gap-8">
-                {extraAddons.map((addon, index) => {
-                  const TitleIcon = addon.Icon;
-                  const durationH = addon.durationMin
-                    ? minutesToHoursLabel(addon.durationMin)
-                    : undefined;
-
-                  const fallbackFeatures =
-                    addon.slug === "engineBay"
-                      ? [
-                          t("services.addon.degrease", "Degrease & rinse"),
-                          t(
-                            "services.addon.dressPlastics",
-                            "Dress engine plastics",
-                          ),
-                        ]
-                      : [
-                          t(
-                            "services.addon.restoreClarity",
-                            "Restore lens clarity",
-                          ),
-                          t(
-                            "services.addon.uvProtection",
-                            "UV protection applied",
-                          ),
-                        ];
-
-                  const features =
-                    addon.features && addon.features.length > 0
-                      ? addon.features
-                      : fallbackFeatures;
-
-                  return (
-                    <Card
-                      key={addon.id}
-                      className="relative overflow-hidden w-full md:w-[45%] lg:w-[30%] bg-card border-border hover:bg-card-hover transition-all duration-300 hover:shadow-elegant group animate-slide-up flex flex-col"
-                      style={{ animationDelay: `${index * 0.15}s` }}
-                    >
-                      <CardHeader className="text-center pb-4">
-                        <div className="w-16 h-16 bg-gold-gradient rounded-full flex items-center justify-center mx-auto mb-4 group-hover:animate-glow-pulse">
-                          <TitleIcon className="w-8 h-8 text-primary-foreground" />
-                        </div>
-
-                        <CardTitle className="text-xl font-bold text-foreground">
-                          {addon.title}
-                        </CardTitle>
-
-                        {(addon.priceFrom != null || durationH) && (
-                          <div className="mt-3 flex items-center justify-center gap-4">
-                            {addon.priceFrom != null && (
-                              <p className="text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent">
-                                {t("services.fromPrice", {
-                                  price: `${addon.priceFrom}€`,
-                                })}
-                              </p>
-                            )}
-                            {durationH && (
-                              <p className="text-sm text-muted-foreground">
-                                {t("services.durationHours", {
-                                  hours: durationH,
-                                })}
-                              </p>
-                            )}
-                          </div>
-                        )}
-                      </CardHeader>
-
-                      <CardContent className="space-y-6 flex flex-col flex-grow">
-                        <div className="space-y-2 flex-grow">
-                          <h4 className="font-semibold text-foreground flex items-center gap-2">
-                            <Sparkles className="w-4 h-4 text-primary" />
-                            {t("services.whatsIncluded", "What’s included")}
-                          </h4>
-                          <ul className="space-y-1">
-                            {features.map((feature, idx) => (
-                              <li
-                                key={idx}
-                                className="text-muted-foreground flex gap-2"
-                              >
-                                <span className="relative mt-1.5 flex-shrink-0 w-1.5 h-1.5 bg-primary rounded-full" />
-                                <span className="flex-1">{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-
-                        <div className="mt-auto">
-                          <NavLink
-                            to={`/booking?${
-                              addon.slug
-                                ? `addonSlug=${addon.slug}`
-                                : `addonId=${addon.id}`
-                            }`}
-                          >
-                            <Button variant="secondary" className="w-full">
-                              {t("services.bookThis", "Add to booking")}
-                            </Button>
-                          </NavLink>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            </>
-          )}
+        <div className="hidden text-xs text-white/60 md:block">
+          Scroll →
         </div>
       </div>
-      <Footer />
+
+      <div className="mt-5 -mx-4 overflow-x-auto px-4 pb-2">
+        <div className="flex min-w-max gap-4">
+          {items.map((it) => (
+            <div
+              key={it.title}
+              className="w-[280px] shrink-0 rounded-2xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-5 transition hover:border-white/20"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <div className="text-sm text-white/70">{it.tag}</div>
+                  <div className="mt-1 font-semibold leading-snug">
+                    {it.title}
+                  </div>
+                </div>
+                <Price value={it.price} />
+              </div>
+              <p className="mt-3 text-sm text-white/70">{it.description}</p>
+              <div className="mt-4 text-xs text-white/50">
+                * Final pricing depends on vehicle size & condition.
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
-};
+}
 
-export default Services;
+export default function Services() {
+  return (
+    <div className="min-h-screen bg-zinc-950 text-white">
+      {/* Top glow */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-white/10 to-transparent" />
+
+      <main className="relative mx-auto w-full max-w-6xl px-4 py-14 sm:py-16">
+        {/* Header */}
+        <header className="flex flex-col gap-4">
+          <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+            <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
+            Services & Pricing
+          </div>
+
+          <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
+            Clean. Protect. Restore.
+          </h1>
+
+          <p className="max-w-2xl text-sm leading-relaxed text-white/70 sm:text-base">
+            Choose a detail package, then add protection or extras. All prices start
+            at the listed amount and may vary based on vehicle size and condition.
+          </p>
+
+          <div className="mt-2 flex flex-wrap gap-2">
+            <a
+              href="#details"
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-white/20"
+            >
+              View Details
+            </a>
+            <a
+              href="#special"
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-white/20"
+            >
+              Special Services
+            </a>
+            <a
+              href="#addons"
+              className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/80 transition hover:border-white/20"
+            >
+              Add-ons & Extras
+            </a>
+          </div>
+        </header>
+
+        {/* Detail services */}
+        <section id="details" className="mt-12">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight">
+                Detail Packages
+              </h2>
+              <p className="mt-2 text-sm text-white/70">
+                Pick a package that matches your needs and how often you maintain your vehicle.
+              </p>
+            </div>
+            <div className="hidden text-xs text-white/60 sm:block">
+              Starting prices shown
+            </div>
+          </div>
+
+          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {detailServices.map((s) => (
+              <Card
+                key={s.name}
+                title={s.name}
+                price={s.price}
+                description={s.description}
+                highlights={s.highlights}
+                badge={s.badge}
+              />
+            ))}
+          </div>
+        </section>
+
+        {/* Dummy comparison table text */}
+        <section className="mt-10">
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-6">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-lg font-semibold tracking-tight">
+                Package Comparison
+              </h3>
+              <Badge>Placeholder</Badge>
+            </div>
+
+            <p className="mt-3 text-sm text-white/70">
+              Dummy comparison table text goes here. (Replace this section with your real
+              comparison table showing what each detail service includes.)
+            </p>
+
+            <div className="mt-5 overflow-hidden rounded-xl border border-white/10">
+              <div className="grid grid-cols-4 bg-white/5 text-xs text-white/70">
+                <div className="p-3 font-medium">Feature</div>
+                <div className="p-3 font-medium">Exterior</div>
+                <div className="p-3 font-medium">Full</div>
+                <div className="p-3 font-medium">Ultimate</div>
+              </div>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="grid grid-cols-4 border-t border-white/10 text-sm"
+                >
+                  <div className="p-3 text-white/70">Dummy row {i + 1}</div>
+                  <div className="p-3 text-white/60">—</div>
+                  <div className="p-3 text-white/60">—</div>
+                  <div className="p-3 text-white/60">—</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-4 text-xs text-white/50">
+              * This is placeholder content only.
+            </div>
+          </div>
+        </section>
+
+        {/* Special services */}
+        <section id="special" className="mt-12">
+          <div className="rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-transparent p-6 sm:p-8">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <div className="inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70">
+                  <span className="h-1.5 w-1.5 rounded-full bg-white/60" />
+                  Special Services
+                </div>
+                <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+                  Correction & Coatings
+                </h2>
+                <p className="mt-2 max-w-2xl text-sm text-white/70">
+                  For noticeable gloss improvements and longer-term protection, choose an option below.
+                </p>
+              </div>
+
+              <div className="mt-3 text-xs text-white/60 sm:mt-0">
+                Swipe/scroll to see all options
+              </div>
+            </div>
+
+            <ScrollRail
+              title="Paint Correction"
+              subtitle="Multiple stages depending on condition and desired finish."
+              items={paintCorrectionOptions}
+            />
+
+            <ScrollRail
+              title="Ceramic Coatings"
+              subtitle="Longer protection options with increasing durability."
+              items={ceramicCoatingOptions}
+            />
+          </div>
+        </section>
+
+        {/* Add-ons & extras */}
+        <section id="addons" className="mt-12">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight">
+                Protection Add-ons
+              </h2>
+              <p className="mt-2 text-sm text-white/70">
+                Add protection to enhance gloss and make cleaning easier.
+              </p>
+
+              <div className="mt-5 space-y-3">
+                {protectionAddOns.map((a) => (
+                  <SmallRow
+                    key={a.name}
+                    name={a.name}
+                    price={a.price}
+                    description={a.description}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <h2 className="text-xl font-semibold tracking-tight">Extras</h2>
+              <p className="mt-2 text-sm text-white/70">
+                Targeted services to restore key areas.
+              </p>
+
+              <div className="mt-5 space-y-3">
+                {extras.map((e) => (
+                  <SmallRow
+                    key={e.name}
+                    name={e.name}
+                    price={e.price}
+                    description={e.description}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer CTA */}
+        <section className="mt-14">
+          <div className="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+            <div>
+              <h3 className="text-lg font-semibold tracking-tight">
+                Ready to book?
+              </h3>
+              <p className="mt-1 text-sm text-white/70">
+                Send your vehicle info and preferred date — we’ll confirm pricing and availability.
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              <button className="rounded-xl bg-white px-5 py-2.5 text-sm font-semibold text-zinc-950 transition hover:opacity-90">
+                Book Now
+              </button>
+              <button className="rounded-xl border border-white/10 bg-transparent px-5 py-2.5 text-sm font-semibold text-white/80 transition hover:border-white/20">
+                Get a Quote
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-6 text-xs text-white/50">
+            Disclaimer: All services are priced “From” and may vary by vehicle size, condition, and requested results.
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}

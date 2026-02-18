@@ -12,6 +12,7 @@ import { Hreflang } from "./components/Hreflang";
 
 // Home stays eager
 import Index from "./pages/Index";
+import Services from "./pages/Services";
 
 // Route-split everything else
 const AdminBookings = React.lazy(() => import("./pages/AdminBookings"));
@@ -21,43 +22,8 @@ const ServicesNew = React.lazy(() => import("./pages/ServicesNew"));
 const NotFound = React.lazy(() => import("./pages/NotFound"));
 
 // Chatbot split
-const FloatingChatbot = React.lazy(() => import("./components/FloatingChatbot"));
 
 const queryClient = new QueryClient();
-
-function MountAfterInteraction({
-  children,
-  timeoutMs = 3000,
-}: {
-  children: React.ReactNode;
-  timeoutMs?: number;
-}) {
-  const [on, setOn] = React.useState(false);
-
-  React.useEffect(() => {
-    const enable = () => setOn(true);
-
-    const events: (keyof WindowEventMap)[] = [
-      "pointerdown",
-      "touchstart",
-      "keydown",
-      "scroll",
-    ];
-
-    events.forEach((e) =>
-      window.addEventListener(e, enable, { once: true, passive: true }),
-    );
-
-    const t = window.setTimeout(enable, timeoutMs);
-
-    return () => {
-      window.clearTimeout(t);
-      events.forEach((e) => window.removeEventListener(e, enable));
-    };
-  }, [timeoutMs]);
-
-  return on ? <>{children}</> : null;
-}
 
 const App = () => {
   return (
@@ -79,15 +45,11 @@ const App = () => {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/services" element={<ServicesNew />} />
               <Route path="*" element={<NotFound />} />
+              <Route path="/test" element={<Services />} />
+
             </Routes>
           </Suspense>
-
-          {/* Chatbot loads only after interaction/timeout
-          <MountAfterInteraction timeoutMs={4000}>
-            <Suspense fallback={null}>
-              <FloatingChatbot />
-            </Suspense>
-          </MountAfterInteraction> */}
+          
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

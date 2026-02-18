@@ -1,4 +1,6 @@
 import ServiceCard from "@/components/ServiceCard";
+import ServiceTileCard from "@/components/ServiceTileCard";
+
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Footer from "../components/Footer";
 import SeasonalPackage from "@/components/SeasonalPackage";
@@ -270,7 +272,7 @@ const ServicesNew = () => {
             onMoreDetails={scrollToComparison}
           />
         </div>
-        <div className="mt-20 max-w-6xl mx-auto">
+        {/* <div className="mt-20 max-w-6xl mx-auto">
           <div className="text-center mb-10">
             <h2 className="text-3xl font-bold">Special Services</h2>
             <p className="text-zinc-400 mt-2">
@@ -280,7 +282,7 @@ const ServicesNew = () => {
           </div>
 
           <SpecialistServiceCard />
-        </div>
+        </div> */}
         {/* Seasonal Package */}
         {/* <div>
           <SeasonalPackage />

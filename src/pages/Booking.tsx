@@ -107,6 +107,7 @@ const Booking = () => {
   const PROTECTION_SLUGS = ["liquidWax", "spraySealant"] as const;
 
   const CERAMIC_SLUGS = [
+    "ceramicCoating12",
     "ceramicCoating24",
     "ceramicCoating36",
     "ceramicCoating48",

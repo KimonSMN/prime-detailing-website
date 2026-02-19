@@ -409,6 +409,8 @@
           "finalNote": "Final price depends on vehicle size and paint condition. Paint correction may be required.",
           "estimatedTime": "Estimated time: {{time}}",
           "options": {
+            "ceramicCoating12": "12 months",
+
             "ceramicCoating24": "24 months",
             "ceramicCoating36": "36 months",
             "ceramicCoating48": "48 months",
@@ -529,6 +531,7 @@
       "ceramic": {
         "title": "Ceramic Coating",
         "options": {
+          "m12": "12 months",
           "m24": "24 months",
           "m36": "36 months",
           "m48": "48 months",

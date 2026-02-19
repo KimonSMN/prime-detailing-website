@@ -99,6 +99,11 @@ const PROTECTION_NON_CERAMIC: ProtectionMeta[] = [
 
 const CERAMIC_OPTIONS_META = [
   {
+    slug: "ceramicCoating12",
+    labelKey: "servicesNew.protection.ceramic.options.m12",
+    Icon: Shield,
+  },
+  {
     slug: "ceramicCoating24",
     labelKey: "servicesNew.protection.ceramic.options.m24",
     Icon: Shield,

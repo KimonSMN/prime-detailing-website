@@ -46,7 +46,6 @@ function formatMinutes(
   t?: (k: string, d?: any) => string,
 ) {
   if (!min || min <= 0) return null;
-  // keep it simple + consistent with your current UI
   return t
     ? t("servicesNew.protection.meta.estimatedTime", { min })
     : `~${min} min`;
@@ -80,6 +79,9 @@ type AddonMeta = {
   featuresKey: string;
 };
 
+/**
+ * Keep non-ceramic items as-is (these can still show price).
+ */
 const PROTECTION_NON_CERAMIC: ProtectionMeta[] = [
   {
     slug: "liquidWax",
@@ -97,33 +99,17 @@ const PROTECTION_NON_CERAMIC: ProtectionMeta[] = [
   },
 ];
 
-const CERAMIC_OPTIONS_META = [
-  {
-    slug: "ceramicCoating12",
-    labelKey: "servicesNew.protection.ceramic.options.m12",
-    Icon: Shield,
-  },
-  {
-    slug: "ceramicCoating24",
-    labelKey: "servicesNew.protection.ceramic.options.m24",
-    Icon: Shield,
-  },
-  {
-    slug: "ceramicCoating36",
-    labelKey: "servicesNew.protection.ceramic.options.m36",
-    Icon: Crown,
-  },
-  {
-    slug: "ceramicCoating48",
-    labelKey: "servicesNew.protection.ceramic.options.m48",
-    Icon: Crown,
-  },
-  {
-    slug: "ceramicCoating50",
-    labelKey: "servicesNew.protection.ceramic.options.m50",
-    Icon: Crown,
-  },
-] as const;
+/**
+ * Only ONE ceramic option, and we will NOT show price.
+ * (We still fetch from DB so the name/description can stay consistent.)
+ */
+const CERAMIC_SINGLE_OPTION = {
+  slug: "ceramicCoating50",
+  title: "Ceramic Coating Protection",
+  descKey: "servicesNew.protection.ceramic.desckey",
+
+  Icon: Crown,
+} as const;
 
 const ADDON_ORDER: AddonMeta[] = [
   {
@@ -148,10 +134,6 @@ const ServicesNew = () => {
 
   const [addons, setAddons] = useState<AddonRow[]>([]);
   const [addonsLoading, setAddonsLoading] = useState(true);
-
-  const [selectedCeramicSlug, setSelectedCeramicSlug] = useState<string | null>(
-    null,
-  );
 
   const scrollToComparison = useCallback(() => {
     document
@@ -186,34 +168,39 @@ const ServicesNew = () => {
       return {
         ...meta,
         title: row?.name || meta.fallbackTitle,
-        price: toNumber(row?.base_price),
+        price: toNumber(row?.base_price), // keep price for non-ceramic
         durationMin: row?.duration_min ?? undefined,
         existsInDb: Boolean(row),
       };
     }).filter((x) => x.existsInDb);
   }, [addonBySlug]);
 
-  const ceramicOptions = useMemo(() => {
-    return CERAMIC_OPTIONS_META.map((m) => {
-      const row = addonBySlug.get(m.slug);
-      return {
-        slug: m.slug,
-        labelKey: m.labelKey,
-        Icon: m.Icon,
-        title: row?.name || `Ceramic Coating`,
-        price: toNumber(row?.base_price),
-        durationMin: row?.duration_min ?? undefined,
-        existsInDb: Boolean(row),
-      };
-    }).filter((x) => x.existsInDb);
-  }, [addonBySlug]);
+  /**
+   * Single ceramic card, NO price shown, and with a note that pricing is on-site.
+   * We keep duration if you want (or remove duration too if you prefer).
+   */
+const ceramicCard = useMemo(() => {
+  const row = addonBySlug.get(CERAMIC_SINGLE_OPTION.slug);
+  if (!row) return null;
 
-  // pick a default ceramic option when loaded
-  useEffect(() => {
-    if (!selectedCeramicSlug && ceramicOptions.length > 0) {
-      setSelectedCeramicSlug(ceramicOptions[0].slug);
-    }
-  }, [ceramicOptions, selectedCeramicSlug]);
+  return {
+    slug: CERAMIC_SINGLE_OPTION.slug,
+    Icon: CERAMIC_SINGLE_OPTION.Icon,
+    descKey: t(CERAMIC_SINGLE_OPTION.descKey),
+    title: t(
+      "servicesNew.protection.ceramic.title",
+    ),
+
+    // REQUIRED by CardBase:
+
+    // show special price label (translated)
+    price: t(
+      "servicesNew.protection.priceOnArrangement",
+    ),
+
+    durationMin: row?.duration_min ?? undefined,
+  };
+}, [addonBySlug, t]);
 
   const addonCards = useMemo(() => {
     return ADDON_ORDER.map((meta) => {
@@ -277,21 +264,6 @@ const ServicesNew = () => {
             onMoreDetails={scrollToComparison}
           />
         </div>
-        {/* <div className="mt-20 max-w-6xl mx-auto">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold">Special Services</h2>
-            <p className="text-zinc-400 mt-2">
-              Advanced treatments for vehicles that need correction, not just
-              cleaning.
-            </p>
-          </div>
-
-          <SpecialistServiceCard />
-        </div> */}
-        {/* Seasonal Package */}
-        {/* <div>
-          <SeasonalPackage />
-        </div> */}
 
         {/* ---------------- Protection + Add-ons ---------------- */}
         <div className="mt-16">
@@ -318,18 +290,18 @@ const ServicesNew = () => {
               />
             ))}
 
-            {ceramicOptions.length > 0 && (
-              <CeramicSelectorCard
-                t={t}
-                titleKey="servicesNew.protection.ceramic.title"
-                finalNoteKey="servicesNew.protection.meta.finalNote"
-                addSelectedCtaKey="servicesNew.protection.cta.addSelectedCeramic"
-                estimatedTimeKey="servicesNew.protection.meta.estimatedTime"
-                options={ceramicOptions}
-                selectedSlug={selectedCeramicSlug}
-                setSelectedSlug={setSelectedCeramicSlug}
-                HeaderIcon={Crown}
-              />
+            {/* Single ceramic coating (NO price) */}
+            {ceramicCard && (
+              <div className="flex flex-col gap-3">
+                <MinimalServiceCard
+                  key={ceramicCard.title}
+                  item={ceramicCard}
+                  t={t}
+                  ctaKey="servicesNew.protection.cta.addToBooking"
+                  estimatedTimeKey="servicesNew.protection.meta.estimatedTime"
+                  showFeatures={false}
+                />
+              </div>
             )}
           </div>
 
@@ -380,6 +352,7 @@ const ServicesNew = () => {
           </div>
         </div>
       </div>
+
       {/* CTA Section */}
       <section className="py-20 px-6 bg-card border-t border-border">
         <div className="max-w-6xl mx-auto text-center">

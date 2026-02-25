@@ -47,9 +47,11 @@ export function MinimalServiceCard({
 
   const priceValue = Number.isFinite(priceNum) ? priceNum : item.price;
 
-  const priceText = hasPrice
-    ? t("servicesNew.fromPrice", { price: priceValue })
-    : t("servicesNew.fromPriceEmpty");
+   const priceText = !hasPrice
+    ? t("servicesNew.fromPriceEmpty") // e.g. "Από -" (your current behavior)
+    : typeof item.price === "string"
+      ? item.price // <-- allow a direct label like "Price upon arrangement."
+      : t("servicesNew.fromPrice", { price: item.price });
 
   const durText = approxHoursFromMinutes(item.durationMin);
 
@@ -61,7 +63,7 @@ export function MinimalServiceCard({
       border border-zinc-800 bg-zinc-900/60
       flex flex-col hover:border-zinc-400 transition
 
-      md:min-h-[300px]
+      md:min-h-[250px]
     `,
         className,
       ].join(" ")}

@@ -26,7 +26,7 @@ import { Helmet } from "react-helmet-async";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 
-// ADDED: needed for OLD time selection UI
+// OLD time selection UI
 import {
   Select,
   SelectContent,
@@ -105,23 +105,12 @@ const Booking = () => {
 
   // --- Protection / Ceramic / Extras grouping by slug ---
   const PROTECTION_SLUGS = ["liquidWax", "spraySealant"] as const;
-
-  const CERAMIC_SLUGS = [
-    "ceramicCoating12",
-    "ceramicCoating24",
-    "ceramicCoating36",
-    "ceramicCoating48",
-    "ceramicCoating50",
-  ] as const;
-
+  const CERAMIC_SLUG = "ceramicCoating12" as const;
   const EXTRA_SLUGS = ["headlightRestoration", "engineBay"] as const;
 
   const [selectedProtectionSlug, setSelectedProtectionSlug] = useState<
     string | null
   >(null);
-  const [selectedCeramicSlug, setSelectedCeramicSlug] = useState<string | null>(
-    null,
-  );
 
   // Map rows for fast lookup
   const addonBySlug = useMemo(() => {
@@ -138,11 +127,8 @@ const Booking = () => {
     [addonBySlug],
   );
 
-  const ceramicRows = useMemo(
-    () =>
-      CERAMIC_SLUGS.map((slug) => addonBySlug.get(slug)).filter(
-        Boolean,
-      ) as AddonRow[],
+  const ceramicRow = useMemo(
+    () => addonBySlug.get(CERAMIC_SLUG) ?? null,
     [addonBySlug],
   );
 
@@ -162,15 +148,13 @@ const Booking = () => {
       setSelectedAddonIds((prev) => {
         const next = new Set(prev);
 
-        // enforce exclusivity: protection OR ceramic (one ceramic option)
+        // enforce exclusivity: protection OR ceramic
         for (const s of PROTECTION_SLUGS) {
           const r = addonBySlug.get(s);
           if (r) next.delete(r.id);
         }
-        for (const s of CERAMIC_SLUGS) {
-          const r = addonBySlug.get(s);
-          if (r) next.delete(r.id);
-        }
+        const ceramic = addonBySlug.get(CERAMIC_SLUG);
+        if (ceramic) next.delete(ceramic.id);
 
         next.add(row.id);
         return next;
@@ -178,6 +162,27 @@ const Booking = () => {
     },
     [addonBySlug],
   );
+
+  const onToggleCeramic = useCallback(() => {
+    if (!ceramicRow?.id || !ceramicRow.slug) return;
+
+    const isSelected = selectedAddonIds.has(ceramicRow.id);
+
+    if (isSelected) {
+      setSelectedAddonIds((prev) => {
+        const next = new Set(prev);
+        next.delete(ceramicRow.id);
+        return next;
+      });
+      setFormData((p) => ({ ...p, time: "" }));
+      return;
+    }
+
+    // select ceramic and clear protection highlight (exclusivity enforced by selectSingleBySlug)
+    setSelectedProtectionSlug(null);
+    selectSingleBySlug(ceramicRow.slug);
+    setFormData((p) => ({ ...p, time: "" }));
+  }, [ceramicRow, selectedAddonIds, selectSingleBySlug]);
 
   const [isCalOpen, setIsCalOpen] = useState(false);
 
@@ -249,13 +254,6 @@ const Booking = () => {
   );
 
   const totalSelectedPrice = servicePrice + addonsTotalPrice;
-
-  const formatPrice = (val: number) =>
-    new Intl.NumberFormat(i18n.language, {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0,
-    }).format(val);
 
   // localized date label
   const fmtDate = (d?: Date) =>
@@ -442,35 +440,10 @@ const Booking = () => {
       }
 
       setSelectedProtectionSlug(slug);
-      setSelectedCeramicSlug(null);
       selectSingleBySlug(slug);
       setFormData((p) => ({ ...p, time: "" }));
     },
     [addonBySlug, selectSingleBySlug, selectedProtectionSlug],
-  );
-
-  const onPickCeramic = useCallback(
-    (slug: string) => {
-      if (selectedCeramicSlug === slug) {
-        setSelectedCeramicSlug(null);
-        const row = addonBySlug.get(slug);
-        if (row) {
-          setSelectedAddonIds((prev) => {
-            const next = new Set(prev);
-            next.delete(row.id);
-            return next;
-          });
-        }
-        setFormData((p) => ({ ...p, time: "" }));
-        return;
-      }
-
-      setSelectedCeramicSlug(slug);
-      setSelectedProtectionSlug(null);
-      selectSingleBySlug(slug);
-      setFormData((p) => ({ ...p, time: "" }));
-    },
-    [addonBySlug, selectSingleBySlug, selectedCeramicSlug],
   );
 
   /* ---------------- submit ---------------- */
@@ -562,7 +535,6 @@ const Booking = () => {
       }));
       setSelectedAddonIds(new Set());
       setSelectedProtectionSlug(null);
-      setSelectedCeramicSlug(null);
     } catch (err: any) {
       toast({
         title: t("booking.toast.fail.title"),
@@ -662,6 +634,13 @@ const Booking = () => {
     </div>
   );
 
+  const ceramicPriceLabel = t(
+    "booking.ui.protection.ceramic.priceUponArrangement",
+    i18n.language?.startsWith("el")
+      ? "Τιμή κατόπιν συνεννοήσεως"
+      : "Price upon arrangement",
+  );
+
   return (
     <section className="min-h-screen bg-secondary/20">
       <Helmet>
@@ -730,7 +709,7 @@ const Booking = () => {
                 <div className="text-sm text-muted-foreground">
                   {t(
                     "booking.ui.protection.pickOne",
-                    "Pick one: wax / sealant or one ceramic coating option.",
+                    "Pick one: wax / sealant or ceramic coating.",
                   )}
                 </div>
 
@@ -784,9 +763,18 @@ const Booking = () => {
                   </div>
                 )}
 
-                {/* ONE Ceramic card with options */}
-                {ceramicRows.length > 0 && (
-                  <div className="rounded-2xl border border-border bg-card p-5">
+                {/* Ceramic coating (single pick, no price number shown) */}
+                {ceramicRow && (
+                  <button
+                    type="button"
+                    onClick={onToggleCeramic}
+                    className={cn(
+                      "w-full rounded-2xl border p-5 text-left transition hover:border-secondary-hover/40",
+                      selectedAddonIds.has(ceramicRow.id)
+                        ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40"
+                        : "border-border bg-card",
+                    )}
+                  >
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <div className="flex items-center gap-2 font-semibold">
@@ -796,66 +784,26 @@ const Booking = () => {
                             "Ceramic Coating",
                           )}
                         </div>
+
                         <div className="text-sm text-muted-foreground mt-1">
+                          {ceramicPriceLabel}
+                        </div>
+
+                        <div className="mt-2 text-xs text-muted-foreground">
                           {t(
-                            "booking.ui.protection.ceramic.subtitle",
-                            "Choose durability.",
+                            "booking.ui.protection.ceramic.finalNote",
+                            "Final price depends on vehicle size and paint condition. Paint correction may be required.",
                           )}
                         </div>
                       </div>
+
+                      <div className="pt-0.5 text-xs text-muted-foreground">
+                        {selectedAddonIds.has(ceramicRow.id)
+                          ? t("booking.ui.protection.selected", "Selected")
+                          : ""}
+                      </div>
                     </div>
-
-                    <div className="mt-4 space-y-2">
-                      {ceramicRows.map((a) => {
-                        const active = selectedCeramicSlug === a.slug;
-
-                        const label = a.slug
-                          ? t(
-                              `booking.ui.protection.ceramic.options.${a.slug}`,
-                              a.slug,
-                            )
-                          : t("booking.ui.protection.ceramic.title", "Ceramic");
-
-                        return (
-                          <button
-                            key={a.id}
-                            type="button"
-                            onClick={() => a.slug && onPickCeramic(a.slug)}
-                            className={cn(
-                              "w-full rounded-xl border px-3 py-3 text-left transition",
-                              active
-                                ? "border-secondary bg-secondary/10"
-                                : "border-border hover:border-secondary/60",
-                            )}
-                          >
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="font-semibold">{label}</div>
-                              <div className="font-bold text-secondary">
-                                {formatEuro(a.base_price)}
-                              </div>
-                            </div>
-                            {a.duration_min ? (
-                              <div className="mt-1 text-xs text-muted-foreground">
-                                {t(
-                                  "booking.ui.protection.ceramic.estimatedTime",
-                                  {
-                                    time: fmtHours(a.duration_min),
-                                  },
-                                )}
-                              </div>
-                            ) : null}
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    <div className="mt-3 text-xs text-muted-foreground">
-                      {t(
-                        "booking.ui.protection.ceramic.finalNote",
-                        "Final price depends on vehicle size and paint condition. Paint correction may be required.",
-                      )}
-                    </div>
-                  </div>
+                  </button>
                 )}
               </div>
 

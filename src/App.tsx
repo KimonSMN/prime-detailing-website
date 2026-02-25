@@ -12,7 +12,7 @@ import { Hreflang } from "./components/Hreflang";
 
 // Home stays eager
 import Index from "./pages/Index";
-import Services from "./pages/Services";
+
 
 // Route-split everything else
 const AdminBookings = React.lazy(() => import("./pages/AdminBookings"));
@@ -45,7 +45,6 @@ const App = () => {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/services" element={<ServicesNew />} />
               <Route path="*" element={<NotFound />} />
-              <Route path="/test" element={<Services />} />
 
             </Routes>
           </Suspense>

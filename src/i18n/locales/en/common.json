@@ -529,6 +529,8 @@
         "finalNote": "Final price depends on vehicle size and paint condition. Paint correction may be required for best results."
       },
       "ceramic": {
+        "desckey": "Lasts 12-50 months",
+
         "title": "Ceramic Coating",
         "options": {
           "m12": "12 months",
@@ -538,6 +540,7 @@
           "m50": "50 months"
         }
       },
+      "priceOnArrangement": "Price upon arrangement",  
       "cards": {
         "liquidWax": {
           "description": "Lasts 1 month",

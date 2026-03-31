@@ -5,7 +5,7 @@
       "id": "bmw-118",
       "title": "Bmw 118"
     },
-    "alt": "Bmw 118 1",
+    "alt": "bmw 118 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -14,18 +14,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-118/bmw-118-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-118/bmw-118-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-118/bmw-118-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-1-w960.avif"
       }
     ]
   },
@@ -35,7 +40,7 @@
       "id": "bmw-118",
       "title": "Bmw 118"
     },
-    "alt": "Bmw 118 2",
+    "alt": "bmw 118 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -44,18 +49,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-118/bmw-118-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-118/bmw-118-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-118/bmw-118-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-2-w960.avif"
       }
     ]
   },
@@ -65,7 +75,7 @@
       "id": "bmw-118",
       "title": "Bmw 118"
     },
-    "alt": "Bmw 118 3",
+    "alt": "bmw 118 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -74,18 +84,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-118/bmw-118-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-118/bmw-118-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-118/bmw-118-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-3-w960.avif"
       }
     ]
   },
@@ -95,7 +110,7 @@
       "id": "bmw-118",
       "title": "Bmw 118"
     },
-    "alt": "Bmw 118 4",
+    "alt": "bmw 118 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -104,18 +119,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-118/bmw-118-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-118/bmw-118-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-118/bmw-118-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-118/bmw-118-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-118/bmw-118-4-w960.avif"
       }
     ]
   },
@@ -125,7 +145,7 @@
       "id": "bmw-120",
       "title": "Bmw 120"
     },
-    "alt": "Bmw 120 1",
+    "alt": "bmw 120 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -134,18 +154,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-120/bmw-120-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-120/bmw-120-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-120/bmw-120-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-1-w960.avif"
       }
     ]
   },
@@ -155,7 +180,7 @@
       "id": "bmw-120",
       "title": "Bmw 120"
     },
-    "alt": "Bmw 120 2",
+    "alt": "bmw 120 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -164,18 +189,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-120/bmw-120-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-120/bmw-120-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-120/bmw-120-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-2-w960.avif"
       }
     ]
   },
@@ -185,7 +215,7 @@
       "id": "bmw-120",
       "title": "Bmw 120"
     },
-    "alt": "Bmw 120 3",
+    "alt": "bmw 120 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -194,18 +224,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-120/bmw-120-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-120/bmw-120-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-120/bmw-120-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-3-w960.avif"
       }
     ]
   },
@@ -215,7 +250,7 @@
       "id": "bmw-120",
       "title": "Bmw 120"
     },
-    "alt": "Bmw 120 4",
+    "alt": "bmw 120 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -224,18 +259,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-120/bmw-120-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-120/bmw-120-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-120/bmw-120-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-4-w960.avif"
       }
     ]
   },
@@ -245,7 +285,7 @@
       "id": "bmw-120",
       "title": "Bmw 120"
     },
-    "alt": "Bmw 120 5",
+    "alt": "bmw 120 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -254,18 +294,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-120/bmw-120-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-120/bmw-120-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-120/bmw-120-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-5-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-120/bmw-120-5-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-120/bmw-120-5-w960.avif"
       }
     ]
   },
@@ -275,7 +320,7 @@
       "id": "bmw-ix1",
       "title": "BMW iX1"
     },
-    "alt": "Bmw Ix1 1",
+    "alt": "bmw ix1 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -284,18 +329,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-ix1/bmw-ix1-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-ix1/bmw-ix1-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-ix1/bmw-ix1-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-1-w960.avif"
       }
     ]
   },
@@ -305,7 +355,7 @@
       "id": "bmw-ix1",
       "title": "BMW iX1"
     },
-    "alt": "Bmw Ix1 2",
+    "alt": "bmw ix1 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -314,18 +364,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-ix1/bmw-ix1-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-ix1/bmw-ix1-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-ix1/bmw-ix1-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-2-w960.avif"
       }
     ]
   },
@@ -335,7 +390,7 @@
       "id": "bmw-ix1",
       "title": "BMW iX1"
     },
-    "alt": "Bmw Ix1 3",
+    "alt": "bmw ix1 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -344,18 +399,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-ix1/bmw-ix1-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-ix1/bmw-ix1-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-ix1/bmw-ix1-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-3-w960.avif"
       }
     ]
   },
@@ -365,7 +425,7 @@
       "id": "bmw-ix1",
       "title": "BMW iX1"
     },
-    "alt": "Bmw Ix1 4",
+    "alt": "bmw ix1 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -374,18 +434,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-ix1/bmw-ix1-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-ix1/bmw-ix1-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-ix1/bmw-ix1-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-4-w960.avif"
       }
     ]
   },
@@ -395,7 +460,7 @@
       "id": "bmw-ix1",
       "title": "BMW iX1"
     },
-    "alt": "Bmw Ix1 5",
+    "alt": "bmw ix1 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -404,18 +469,338 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-ix1/bmw-ix1-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-ix1/bmw-ix1-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-ix1/bmw-ix1-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-5-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-ix1/bmw-ix1-5-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_2339",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 2339",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16422277
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2339-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2339-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-ix1/bmw-ix1-5-w1920.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2339-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2339-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_2341",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 2341",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16751527
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2341-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2341-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2341-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2341-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_2342",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 2342",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 12931231
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2342-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2342-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2342-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2342-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_2391",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 2391",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18146506
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2391-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2391-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2391-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2391-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_2399",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 2399",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18756798
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2399-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2399-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2399-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2399-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_2402",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 2402",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18572294
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2402-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_2402-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2402-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_2402-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_4097",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 4097",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2930482
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_4097-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_4097-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_4097-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_4097-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_4103",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 4103",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2201061
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_4103-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_4103-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_4103-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_4103-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x1-2025-gray/img_4105",
+    "project": {
+      "id": "bmw-x1-2025-gray",
+      "title": "BMW X1 2025 Gray "
+    },
+    "alt": "IMG 4105",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2349338
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_4105-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x1-2025-gray/img_4105-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_4105-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x1-2025-gray/img_4105-w960.avif"
       }
     ]
   },
@@ -425,7 +810,7 @@
       "id": "bmw-x5",
       "title": "BMW X5"
     },
-    "alt": "Bmw X5 1",
+    "alt": "bmw x5 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -434,18 +819,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-x5/bmw-x5-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-x5/bmw-x5-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-x5/bmw-x5-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-1-w960.avif"
       }
     ]
   },
@@ -455,7 +845,7 @@
       "id": "bmw-x5",
       "title": "BMW X5"
     },
-    "alt": "Bmw X5 2",
+    "alt": "bmw x5 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -464,18 +854,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-x5/bmw-x5-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-x5/bmw-x5-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-x5/bmw-x5-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-2-w960.avif"
       }
     ]
   },
@@ -485,7 +880,7 @@
       "id": "bmw-x5",
       "title": "BMW X5"
     },
-    "alt": "Bmw X5 3",
+    "alt": "bmw x5 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -494,18 +889,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-x5/bmw-x5-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-x5/bmw-x5-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-x5/bmw-x5-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-3-w960.avif"
       }
     ]
   },
@@ -515,7 +915,7 @@
       "id": "bmw-x5",
       "title": "BMW X5"
     },
-    "alt": "Bmw X5 4",
+    "alt": "bmw x5 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -524,18 +924,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-x5/bmw-x5-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-x5/bmw-x5-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-x5/bmw-x5-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-4-w960.avif"
       }
     ]
   },
@@ -545,7 +950,7 @@
       "id": "bmw-x5",
       "title": "BMW X5"
     },
-    "alt": "Bmw X5 5",
+    "alt": "bmw x5 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -554,18 +959,933 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/bmw-x5/bmw-x5-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5/bmw-x5-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/bmw-x5/bmw-x5-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-5-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5/bmw-x5-5-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x5-2018/bmw-x5-1",
+    "project": {
+      "id": "bmw-x5-2018",
+      "title": "BMW X5 2018"
+    },
+    "alt": "bmw x5 1",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 19027656
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1920,
-        "url": "/gallery/bmw-x5/bmw-x5-5-w1920.webp"
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-1-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-1-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x5-2018/bmw-x5-2",
+    "project": {
+      "id": "bmw-x5-2018",
+      "title": "BMW X5 2018"
+    },
+    "alt": "bmw x5 2",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16455755
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-2-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-2-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-2-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x5-2018/bmw-x5-3",
+    "project": {
+      "id": "bmw-x5-2018",
+      "title": "BMW X5 2018"
+    },
+    "alt": "bmw x5 3",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16709515
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-3-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-3-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-3-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x5-2018/bmw-x5-4",
+    "project": {
+      "id": "bmw-x5-2018",
+      "title": "BMW X5 2018"
+    },
+    "alt": "bmw x5 4",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3524992
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-4-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-4-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-4-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "bmw-x5-2018/bmw-x5-5",
+    "project": {
+      "id": "bmw-x5-2018",
+      "title": "BMW X5 2018"
+    },
+    "alt": "bmw x5 5",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18354126
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-5-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-5-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/bmw-x5-2018/bmw-x5-5-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5313",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5313",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16200072
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5313-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5313-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5313-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5313-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5316",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5316",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 13824835
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5316-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5316-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5316-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5316-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5334",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5334",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 17650023
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5334-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5334-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5334-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5334-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5338",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5338",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 12824892
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5338-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5338-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5338-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5338-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5340",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5340",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 14806457
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5340-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5340-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5340-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5340-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5344",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5344",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2771248
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5344-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5344-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5344-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5344-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "cupra-terramar/img_5346",
+    "project": {
+      "id": "cupra-terramar",
+      "title": "Cupra Terramar"
+    },
+    "alt": "IMG 5346",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 13764759
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5346-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/cupra-terramar/img_5346-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5346-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/cupra-terramar/img_5346-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4735",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4735",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18326722
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4735-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4735-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4735-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4735-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4744",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4744",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 17802085
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4744-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4744-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4744-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4744-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4752",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4752",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3071505
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4752-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4752-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4752-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4752-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4758",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4758",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 12359882
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4758-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4758-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4758-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4758-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4760",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4760",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3256661
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4760-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4760-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4760-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4760-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4761",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4761",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2918133
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4761-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4761-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4761-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4761-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-black/img_4763",
+    "project": {
+      "id": "gla-200-black",
+      "title": "GLA 200 Black"
+    },
+    "alt": "IMG 4763",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 13825992
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4763-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-black/img_4763-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4763-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-black/img_4763-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/edited-photo-(1)",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "edited photo (1)",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 26789940
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/edited-photo-(1)-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/edited-photo-(1)-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/edited-photo-(1)-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/edited-photo-(1)-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/edited-photo-(2)",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "edited photo (2)",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 26688560
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/edited-photo-(2)-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/edited-photo-(2)-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/edited-photo-(2)-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/edited-photo-(2)-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/edited-photo",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "edited photo",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 27420644
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/edited-photo-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/edited-photo-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/edited-photo-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/edited-photo-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/img_4905",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "IMG 4905",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2761698
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4905-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4905-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4905-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4905-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/img_4906",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "IMG 4906",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3056118
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4906-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4906-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4906-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4906-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/img_4909",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "IMG 4909",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3095178
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4909-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4909-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4909-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4909-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "gla-200-gray/img_4913",
+    "project": {
+      "id": "gla-200-gray",
+      "title": "GLA 200 Gray"
+    },
+    "alt": "IMG 4913",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4121690
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4913-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/gla-200-gray/img_4913-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4913-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/gla-200-gray/img_4913-w960.avif"
       }
     ]
   },
@@ -575,7 +1895,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 1",
+    "alt": "mercedes glc220d 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -584,18 +1904,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-1-w960.avif"
       }
     ]
   },
@@ -605,7 +1930,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 2",
+    "alt": "mercedes glc220d 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -614,18 +1939,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-2-w960.avif"
       }
     ]
   },
@@ -635,7 +1965,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 3",
+    "alt": "mercedes glc220d 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -644,18 +1974,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-3-w960.avif"
       }
     ]
   },
@@ -665,7 +2000,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 4",
+    "alt": "mercedes glc220d 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -674,18 +2009,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-4-w960.avif"
       }
     ]
   },
@@ -695,7 +2035,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 5",
+    "alt": "mercedes glc220d 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -704,18 +2044,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-5-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-5-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-5-w960.avif"
       }
     ]
   },
@@ -725,7 +2070,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 6",
+    "alt": "mercedes glc220d 6",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -734,18 +2079,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-6-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-6-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-6-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-6-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-6-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-6-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-6-w960.avif"
       }
     ]
   },
@@ -755,7 +2105,7 @@
       "id": "glc-220d",
       "title": "GLC 220d "
     },
-    "alt": "Mercedes Glc220d 7",
+    "alt": "mercedes glc220d 7",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -764,18 +2114,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/glc-220d/mercedes-glc220d-7-w640.webp"
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-7-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/glc-220d/mercedes-glc220d-7-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/glc-220d/mercedes-glc220d-7-w1280.webp"
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-7-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/glc-220d/mercedes-glc220d-7-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/glc-220d/mercedes-glc220d-7-w960.avif"
       }
     ]
   },
@@ -785,7 +2140,7 @@
       "id": "kia-sportage",
       "title": "Kia Sportage"
     },
-    "alt": "Kia Sportage 1",
+    "alt": "kia sportage 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -794,18 +2149,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/kia-sportage/kia-sportage-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/kia-sportage/kia-sportage-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/kia-sportage/kia-sportage-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-1-w960.avif"
       }
     ]
   },
@@ -815,7 +2175,7 @@
       "id": "kia-sportage",
       "title": "Kia Sportage"
     },
-    "alt": "Kia Sportage 2",
+    "alt": "kia sportage 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -824,18 +2184,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/kia-sportage/kia-sportage-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/kia-sportage/kia-sportage-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/kia-sportage/kia-sportage-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-2-w960.avif"
       }
     ]
   },
@@ -845,7 +2210,7 @@
       "id": "kia-sportage",
       "title": "Kia Sportage"
     },
-    "alt": "Kia Sportage 3",
+    "alt": "kia sportage 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -854,18 +2219,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/kia-sportage/kia-sportage-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/kia-sportage/kia-sportage-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/kia-sportage/kia-sportage-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-3-w960.avif"
       }
     ]
   },
@@ -875,7 +2245,7 @@
       "id": "kia-sportage",
       "title": "Kia Sportage"
     },
-    "alt": "Kia Sportage 4",
+    "alt": "kia sportage 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -884,18 +2254,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/kia-sportage/kia-sportage-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/kia-sportage/kia-sportage-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/kia-sportage/kia-sportage-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-4-w960.avif"
       }
     ]
   },
@@ -905,7 +2280,7 @@
       "id": "kia-sportage",
       "title": "Kia Sportage"
     },
-    "alt": "Kia Sportage 5",
+    "alt": "kia sportage 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -914,18 +2289,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/kia-sportage/kia-sportage-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/kia-sportage/kia-sportage-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/kia-sportage/kia-sportage-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-5-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/kia-sportage/kia-sportage-5-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/kia-sportage/kia-sportage-5-w960.avif"
       }
     ]
   },
@@ -935,7 +2315,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 1",
+    "alt": "mazda yaris 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -944,18 +2324,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-1-w960.avif"
       }
     ]
   },
@@ -965,7 +2350,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 2",
+    "alt": "mazda yaris 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -974,18 +2359,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-2-w960.avif"
       }
     ]
   },
@@ -995,7 +2385,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 3",
+    "alt": "mazda yaris 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1004,18 +2394,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-3-w960.avif"
       }
     ]
   },
@@ -1025,7 +2420,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 4",
+    "alt": "mazda yaris 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1034,18 +2429,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-4-w960.avif"
       }
     ]
   },
@@ -1055,7 +2455,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 5",
+    "alt": "mazda yaris 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1064,18 +2464,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-5-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-5-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-5-w960.avif"
       }
     ]
   },
@@ -1085,7 +2490,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 6",
+    "alt": "mazda yaris 6",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1094,18 +2499,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-6-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-6-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-6-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-6-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-6-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-6-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-6-w960.avif"
       }
     ]
   },
@@ -1115,7 +2525,7 @@
       "id": "mazda-yaris",
       "title": "Mazda yaris"
     },
-    "alt": "Mazda Yaris 7",
+    "alt": "mazda yaris 7",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1124,18 +2534,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/mazda-yaris/mazda-yaris-7-w640.webp"
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-7-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/mazda-yaris/mazda-yaris-7-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/mazda-yaris/mazda-yaris-7-w1280.webp"
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-7-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/mazda-yaris/mazda-yaris-7-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/mazda-yaris/mazda-yaris-7-w960.avif"
       }
     ]
   },
@@ -1145,7 +2560,7 @@
       "id": "renault-captur-2",
       "title": "Renault Captur 2"
     },
-    "alt": "Renault Captur2 1",
+    "alt": "renault captur2 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1154,18 +2569,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/renault-captur-2/renault-captur2-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/renault-captur-2/renault-captur2-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/renault-captur-2/renault-captur2-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-1-w960.avif"
       }
     ]
   },
@@ -1175,7 +2595,7 @@
       "id": "renault-captur-2",
       "title": "Renault Captur 2"
     },
-    "alt": "Renault Captur2 2",
+    "alt": "renault captur2 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1184,18 +2604,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/renault-captur-2/renault-captur2-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/renault-captur-2/renault-captur2-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/renault-captur-2/renault-captur2-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-2-w960.avif"
       }
     ]
   },
@@ -1205,7 +2630,7 @@
       "id": "renault-captur-2",
       "title": "Renault Captur 2"
     },
-    "alt": "Renault Captur2 3",
+    "alt": "renault captur2 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1214,18 +2639,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/renault-captur-2/renault-captur2-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/renault-captur-2/renault-captur2-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/renault-captur-2/renault-captur2-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-3-w960.avif"
       }
     ]
   },
@@ -1235,7 +2665,7 @@
       "id": "renault-captur-2",
       "title": "Renault Captur 2"
     },
-    "alt": "Renault Captur2 4",
+    "alt": "renault captur2 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1244,18 +2674,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/renault-captur-2/renault-captur2-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/renault-captur-2/renault-captur2-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-4-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/renault-captur-2/renault-captur2-4-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-4-w960.avif"
       }
     ]
   },
@@ -1265,7 +2700,7 @@
       "id": "renault-captur-2",
       "title": "Renault Captur 2"
     },
-    "alt": "Renault Captur2 5",
+    "alt": "renault captur2 5",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1274,18 +2709,23 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/renault-captur-2/renault-captur2-5-w640.webp"
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-5-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-5-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/renault-captur-2/renault-captur2-5-w1280.webp"
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-5-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/renault-captur-2/renault-captur2-5-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-5-w960.avif"
       }
     ]
   },
@@ -1295,7 +2735,7 @@
       "id": "renault-captur-2",
       "title": "Renault Captur 2"
     },
-    "alt": "Renault Captur2 6",
+    "alt": "renault captur2 6",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1304,28 +2744,733 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/renault-captur-2/renault-captur2-6-w640.webp"
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-6-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/renault-captur-2/renault-captur2-6-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/renault-captur-2/renault-captur2-6-w1280.webp"
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-6-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/renault-captur-2/renault-captur2-6-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/renault-captur-2/renault-captur2-6-w960.avif"
       }
     ]
   },
   {
-    "id": "volvo-xc40/volvo-xc-40-1",
+    "id": "tiguan-r-line/img_5109",
     "project": {
-      "id": "volvo-xc40",
-      "title": "Volvo XC40"
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
     },
-    "alt": "Volvo Xc 40 1",
+    "alt": "IMG 5109",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16593593
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5109-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5109-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5109-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5109-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5115",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5115",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 18041299
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5115-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5115-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5115-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5115-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5116",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5116",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16467126
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5116-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5116-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5116-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5116-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5119",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5119",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 16514435
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5119-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5119-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5119-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5119-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5120",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5120",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2675932
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5120-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5120-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5120-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5120-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5121",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5121",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2579164
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5121-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5121-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5121-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5121-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5122",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5122",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2838241
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5122-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5122-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5122-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5122-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5123",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5123",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3964512
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5123-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5123-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5123-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5123-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "tiguan-r-line/img_5124",
+    "project": {
+      "id": "tiguan-r-line",
+      "title": "Tiguan R Line"
+    },
+    "alt": "IMG 5124",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4000524
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5124-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/tiguan-r-line/img_5124-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5124-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/tiguan-r-line/img_5124-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5234",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5234",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3005816
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5234-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5234-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5234-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5234-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5235",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5235",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 17420506
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5235-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5235-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5235-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5235-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5239",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5239",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3346766
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5239-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5239-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5239-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5239-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5240",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5240",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 2801853
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5240-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5240-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5240-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5240-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5715",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5715",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4855165
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5715-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5715-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5715-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5715-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5724",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5724",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 3921911
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5724-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5724-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5724-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5724-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5725",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5725",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 4033894
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5725-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5725-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5725-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5725-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5737",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5737",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 4257320
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5737-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5737-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5737-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5737-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5743",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5743",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4922564
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5743-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5743-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5743-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5743-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5744",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5744",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4958252
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5744-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5744-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5744-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5744-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-1/img_5746",
+    "project": {
+      "id": "volvo-xc40-1",
+      "title": "Volvo XC40_1"
+    },
+    "alt": "IMG 5746",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4915094
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5746-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-1/img_5746-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5746-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-1/img_5746-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "volvo-xc40-2/volvo-xc-40-1",
+    "project": {
+      "id": "volvo-xc40-2",
+      "title": "Volvo XC40_2"
+    },
+    "alt": "volvo xc 40 1",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1334,28 +3479,33 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-1-w640.webp"
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-1-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-1-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-1-w1280.webp"
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-1-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-1-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-1-w960.avif"
       }
     ]
   },
   {
-    "id": "volvo-xc40/volvo-xc-40-2",
+    "id": "volvo-xc40-2/volvo-xc-40-2",
     "project": {
-      "id": "volvo-xc40",
-      "title": "Volvo XC40"
+      "id": "volvo-xc40-2",
+      "title": "Volvo XC40_2"
     },
-    "alt": "Volvo Xc 40 2",
+    "alt": "volvo xc 40 2",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1364,28 +3514,33 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-2-w640.webp"
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-2-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-2-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-2-w1280.webp"
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-2-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-2-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-2-w960.avif"
       }
     ]
   },
   {
-    "id": "volvo-xc40/volvo-xc-40-3",
+    "id": "volvo-xc40-2/volvo-xc-40-3",
     "project": {
-      "id": "volvo-xc40",
-      "title": "Volvo XC40"
+      "id": "volvo-xc40-2",
+      "title": "Volvo XC40_2"
     },
-    "alt": "Volvo Xc 40 3",
+    "alt": "volvo xc 40 3",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1394,28 +3549,33 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-3-w640.webp"
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-3-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-3-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-3-w1280.webp"
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-3-w960.webp"
       },
       {
-        "format": "webp",
-        "width": 1920,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-3-w1920.webp"
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-3-w960.avif"
       }
     ]
   },
   {
-    "id": "volvo-xc40/volvo-xc-40-4",
+    "id": "volvo-xc40-2/volvo-xc-40-4",
     "project": {
-      "id": "volvo-xc40",
-      "title": "Volvo XC40"
+      "id": "volvo-xc40-2",
+      "title": "Volvo XC40_2"
     },
-    "alt": "Volvo Xc 40 4",
+    "alt": "volvo xc 40 4",
     "original": {
       "width": 3024,
       "height": 4032,
@@ -1424,18 +3584,268 @@
     "variants": [
       {
         "format": "webp",
-        "width": 640,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-4-w640.webp"
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-4-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-4-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1280,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-4-w1280.webp"
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-4-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/volvo-xc40-2/volvo-xc-40-4-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5159",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5159",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 3737543
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5159-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5159-w480.avif"
       },
       {
         "format": "webp",
-        "width": 1920,
-        "url": "/gallery/volvo-xc40/volvo-xc-40-4-w1920.webp"
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5159-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5159-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5161",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5161",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 4975837
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5161-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5161-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5161-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5161-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5168",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5168",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 5047859
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5168-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5168-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5168-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5168-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5176",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5176",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 5224927
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5176-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5176-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5176-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5176-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5179",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5179",
+    "original": {
+      "width": 3024,
+      "height": 4032,
+      "bytes": 5411295
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5179-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5179-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5179-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5179-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5183",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5183",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 4067856
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5183-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5183-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5183-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5183-w960.avif"
+      }
+    ]
+  },
+  {
+    "id": "yaris-cross-ceramic-coated/img_5186",
+    "project": {
+      "id": "yaris-cross-ceramic-coated",
+      "title": "Yaris Cross Ceramic Coated"
+    },
+    "alt": "IMG 5186",
+    "original": {
+      "width": 2268,
+      "height": 4032,
+      "bytes": 3701694
+    },
+    "variants": [
+      {
+        "format": "webp",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5186-w480.webp"
+      },
+      {
+        "format": "avif",
+        "width": 480,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5186-w480.avif"
+      },
+      {
+        "format": "webp",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5186-w960.webp"
+      },
+      {
+        "format": "avif",
+        "width": 960,
+        "url": "/gallery/yaris-cross-ceramic-coated/img_5186-w960.avif"
       }
     ]
   }

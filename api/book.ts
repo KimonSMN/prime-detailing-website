@@ -27,14 +27,20 @@ function escapeHtml(s: unknown) {
     .replaceAll("'", "&#039;");
 }
 
-function toPlus2Date(iso: string) {
+// function toPlus2Date(iso: string) {
+//   const d = new Date(iso);
+//   if (Number.isNaN(d.getTime())) return null;
+//   return new Date(d.getTime() + 2 * 60 * 60 * 1000);
+// }
+
+function toLocalDate(iso: string) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return null;
-  return new Date(d.getTime() + 2 * 60 * 60 * 1000);
+  return d;
 }
 
 function formatPreferredAt(iso: string) {
-  const dPlus2 = toPlus2Date(iso);
+  const dPlus2 = toLocalDate(iso);
   if (!dPlus2) return iso;
 
   return new Intl.DateTimeFormat("el-GR", {
@@ -229,7 +235,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const preferredHuman = formatPreferredAt(preferred_at);
 
     // Split date/time strings (also +2h)
-    const preferredPlus2 = toPlus2Date(preferred_at);
+    const preferredPlus2 = toLocalDate(preferred_at);
 
     const dateStr = preferredPlus2
       ? new Intl.DateTimeFormat("el-GR", {

@@ -17,6 +17,7 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+
     async function loadImages() {
       setLoading(true);
 
@@ -53,7 +54,7 @@ export default function Gallery() {
           // Sort images
           files.sort((a, b) => a.name.localeCompare(b.name));
 
-          const mapped = files.map((file) => {
+          const mapped: ManifestItem[] = files.map((file) => {
             const path = `${folder.name}/${file.name}`;
 
             const { data } = supabase.storage
@@ -63,7 +64,11 @@ export default function Gallery() {
             return {
               id: path,
               src: data.publicUrl,
-              project: folder.name,
+              alt: folder.name,
+              project: {
+                id: folder.name,
+                title: folder.name,
+              },
             };
           });
 

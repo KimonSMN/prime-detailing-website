@@ -324,7 +324,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       html: `
  <div style="margin:0;padding:0;background:#f6f7fb;">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
-    Η κράτησή σας επιβεβαιώθηκε — Prime Detailing Cholargos
+    Η κράτηση σας επιβεβαιώθηκε — Prime Detailing Cholargos
   </div>
 
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">

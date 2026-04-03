@@ -1,14 +1,13 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { supabase } from "@/lib/supabaseClient";
-import {
-  ResponsivePicture,
-  ManifestItem,
-} from "@/components/ResponsivePicture";
 import ProjectGalleryModal from "@/components/ProjectGalleryModal";
 import { groupProjects, Project } from "@/components/groupProjects";
 
 const INITIAL_VISIBLE = 4;
 const LOAD_MORE_STEP = 4;
+
+// List the 4 projects you want to feature first (use folder names)
+const FEATURED_PROJECTS = ["Volvo XC40 Ceramic Coated", "GLC 220d", "BMW X1 2025 Gray", "Audi A1 Ceramic Coated"];
 
 export default function Gallery() {
   const [items, setItems] = useState<ManifestItem[]>([]);
@@ -17,7 +16,6 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-
     async function loadImages() {
       setLoading(true);
 
@@ -51,28 +49,36 @@ export default function Gallery() {
             continue;
           }
 
-          // Sort images
+          // Sort images alphabetically
           files.sort((a, b) => a.name.localeCompare(b.name));
 
-          const mapped: ManifestItem[] = files.map((file) => {
-            const path = `${folder.name}/${file.name}`;
+          // Use Promise.all to create signed URLs for private bucket
+          const mapped: ManifestItem[] = await Promise.all(
+            files.map(async (file) => {
+              const path = `${folder.name}/${file.name}`;
+              const { data: signedData, error: signedError } =
+                await supabase.storage
+                  .from("images")
+                  .createSignedUrl(path, 60); // URL valid for 60 seconds
 
-            const { data } = supabase.storage
-              .from("images")
-              .getPublicUrl(path);
+              if (signedError || !signedData) {
+                console.error("Error creating signed URL:", signedError);
+                return null;
+              }
 
-            return {
-              id: path,
-              src: data.publicUrl,
-              alt: folder.name,
-              project: {
-                id: folder.name,
-                title: folder.name,
-              },
-            };
-          });
+              return {
+                id: path,
+                src: signedData.signedUrl,
+                alt: folder.name,
+                project: {
+                  id: folder.name,
+                  title: folder.name,
+                },
+              };
+            })
+          );
 
-          allItems.push(...mapped);
+          allItems.push(...(mapped.filter(Boolean) as ManifestItem[]));
         }
 
         setItems(allItems);
@@ -87,7 +93,19 @@ export default function Gallery() {
     loadImages();
   }, []);
 
-  const projects = useMemo(() => groupProjects(items), [items]);
+  // Group projects
+  const projects = useMemo(() => {
+    const grouped = groupProjects(items);
+
+    // Featured first
+    const featured = FEATURED_PROJECTS.map((id) =>
+      grouped.find((p) => p.id === id)
+    ).filter(Boolean) as Project[];
+
+    const others = grouped.filter((p) => !FEATURED_PROJECTS.includes(p.id));
+
+    return [...featured, ...others];
+  }, [items]);
 
   const visibleProjects = projects.slice(0, visibleCount);
   const hasMore = visibleCount < projects.length;
@@ -191,5 +209,38 @@ export default function Gallery() {
         </>
       )}
     </section>
+  );
+}
+
+export type ManifestItem = {
+  id: string;
+  src: string;
+  alt: string;
+  project?: { id: string; title: string };
+};
+
+export function ResponsivePicture({
+  item,
+  eager = false,
+  className,
+}: {
+  item: ManifestItem;
+  eager?: boolean;
+  className?: string;
+}) {
+  return (
+    <img
+      src={item.src}
+      alt={item.alt}
+      loading={eager ? "eager" : "lazy"}
+      fetchPriority={eager ? "high" : "auto"}
+      decoding="async"
+      className={className}
+      style={{
+        width: "100%",
+        height: "auto",
+        display: "block",
+      }}
+    />
   );
 }

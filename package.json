@@ -4,11 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "prebuild": "node scripts/make-gallery-variants.mjs",
     "build": "vite build",
-    "build:gallery": "node scripts/build-gallery-supabase.js",
     "postbuild": "node generate-sitemap.js",
-    "images:variants": "node scripts/make-gallery-variants.mjs",
     "dev": "vite",
     "preview": "vite preview",
     "lint": "eslint ."

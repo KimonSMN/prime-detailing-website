@@ -117,7 +117,13 @@ const TopNavbar = () => {
             <NavLink
               to="/"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium ${
+                  isActive
+                    ? "text-secondary"
+                    : "text-foreground hover:text-secondary"
+                }`
+              }
             >
               Home
             </NavLink>
@@ -125,7 +131,13 @@ const TopNavbar = () => {
             <NavLink
               to="/services"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium ${
+                  isActive
+                    ? "text-secondary"
+                    : "text-foreground hover:text-secondary"
+                }`
+              }
             >
               Services
             </NavLink>
@@ -133,7 +145,13 @@ const TopNavbar = () => {
             <NavLink
               to="/gallery"
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 text-base font-medium text-foreground hover:text-secondary"
+              className={({ isActive }) =>
+                `block px-3 py-2 text-base font-medium ${
+                  isActive
+                    ? "text-secondary"
+                    : "text-foreground hover:text-secondary"
+                }`
+              }
             >
               Gallery
             </NavLink>
@@ -141,15 +159,21 @@ const TopNavbar = () => {
             <NavLink
               to="/booking"
               onClick={() => setOpen(false)}
-              className="
-                block px-3 py-2  
-                rounded-md
-                bg-secondary
-                text-black
-                text-base font-semibold
-                hover:bg-secondary-hover
-                text-center
-              "
+              className={({ isActive }) =>
+                `
+                  block px-3 py-2
+                  rounded-md
+                  text-base font-semibold
+                  text-center
+                  border
+                  transition
+                  ${
+                    isActive
+                      ? "bg-secondary border-secondary text-black hover:bg-secondary-hover"
+                      : "border-secondary text-foreground hover:bg-secondary/10 hover:text-secondary"
+                  }
+                `
+              }
             >
               Book an Appointment
             </NavLink>

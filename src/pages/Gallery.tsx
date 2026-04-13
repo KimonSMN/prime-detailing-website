@@ -7,7 +7,12 @@ const INITIAL_VISIBLE = 4;
 const LOAD_MORE_STEP = 4;
 
 // List the 4 projects you want to feature first (use folder names)
-const FEATURED_PROJECTS = ["Volvo XC40 Ceramic Coated", "GLC 220d", "BMW X1 2025 Gray", "Audi A1 Ceramic Coated"];
+const FEATURED_PROJECTS = [
+  "Defender",
+  "Audi R8",
+  "Volvo XC40 Ceramic Coated",
+  "GLC 220d",
+];
 
 export default function Gallery() {
   const [items, setItems] = useState<ManifestItem[]>([]);
@@ -16,8 +21,11 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function loadImages() {
       setLoading(true);
+      setItems([]);
 
       try {
         // 1. Get folders (projects)
@@ -27,14 +35,29 @@ export default function Gallery() {
 
         if (error || !folders) {
           console.error("Error fetching folders:", error);
-          setItems([]);
+          if (isMounted) setItems([]);
           return;
         }
 
-        // Sort folders alphabetically
-        folders.sort((a, b) => a.name.localeCompare(b.name));
+        // Keep featured folders first, then sort the rest alphabetically.
+        const featuredOrder = new Map(
+          FEATURED_PROJECTS.map((name, index) => [name, index]),
+        );
 
-        let allItems: ManifestItem[] = [];
+        folders.sort((a, b) => {
+          const aName = a.name ?? "";
+          const bName = b.name ?? "";
+          const aFeaturedRank =
+            featuredOrder.get(aName) ?? Number.MAX_SAFE_INTEGER;
+          const bFeaturedRank =
+            featuredOrder.get(bName) ?? Number.MAX_SAFE_INTEGER;
+
+          if (aFeaturedRank !== bFeaturedRank) {
+            return aFeaturedRank - bFeaturedRank;
+          }
+
+          return aName.localeCompare(bName);
+        });
 
         // 2. Loop each folder
         for (const folder of folders) {
@@ -57,9 +80,7 @@ export default function Gallery() {
             files.map(async (file) => {
               const path = `${folder.name}/${file.name}`;
               const { data: signedData, error: signedError } =
-                await supabase.storage
-                  .from("images")
-                  .createSignedUrl(path, 60); // URL valid for 60 seconds
+                await supabase.storage.from("images").createSignedUrl(path, 60); // URL valid for 60 seconds
 
               if (signedError || !signedData) {
                 console.error("Error creating signed URL:", signedError);
@@ -75,22 +96,31 @@ export default function Gallery() {
                   title: folder.name,
                 },
               };
-            })
+            }),
           );
 
-          allItems.push(...(mapped.filter(Boolean) as ManifestItem[]));
-        }
+          const folderItems = mapped.filter(Boolean) as ManifestItem[];
 
-        setItems(allItems);
+          if (!isMounted || folderItems.length === 0) {
+            continue;
+          }
+
+          // Append each folder as soon as it is ready so cards render progressively.
+          setItems((prev) => [...prev, ...folderItems]);
+        }
       } catch (err) {
         console.error("Gallery load error:", err);
-        setItems([]);
+        if (isMounted) setItems([]);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     }
 
     loadImages();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Group projects
@@ -99,7 +129,7 @@ export default function Gallery() {
 
     // Featured first
     const featured = FEATURED_PROJECTS.map((id) =>
-      grouped.find((p) => p.id === id)
+      grouped.find((p) => p.id === id),
     ).filter(Boolean) as Project[];
 
     const others = grouped.filter((p) => !FEATURED_PROJECTS.includes(p.id));
@@ -118,96 +148,100 @@ export default function Gallery() {
         </div>
       )}
 
-      {!loading && (
-        <>
-          <div className="max-w-6xl mx-auto grid gap-6 grid-cols-1 md:grid-cols-2">
-            {visibleProjects.map((project, idx) => {
-              const cover = project.items[0];
+      <>
+        <div className="max-w-6xl mx-auto grid gap-6 grid-cols-1 md:grid-cols-2">
+          {visibleProjects.map((project, idx) => {
+            const cover = project.items[0];
 
-              return (
-                <div
-                  key={project.id}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => setActiveProject(project)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      setActiveProject(project);
-                    }
-                  }}
-                  className="
-                    group
-                    relative
-                    overflow-hidden
-                    rounded-2xl
-                    border
-                    bg-card
-                    text-left
-                    cursor-pointer
-                    touch-manipulation
-                    focus:outline-none
-                    hover:border-secondary-hover
-                    hover:border-2
-                    transition
-                  "
-                >
-                  <ResponsivePicture
-                    item={cover}
-                    eager={idx < 2}
-                    className="w-full h-auto object-cover"
-                  />
-
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                  <div className="pointer-events-none absolute bottom-0 left-0 right-0 text-white bg-black/60 px-4 py-3 backdrop-blur-sm">
-                    <h3 className="text-lg font-bold leading-tight">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm opacity-80">
-                      {project.items.length} photos
-                    </p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Load more */}
-          {hasMore && (
-            <div className="mt-12 flex justify-center">
-              <button
-                onClick={() =>
-                  setVisibleCount((c) =>
-                    Math.min(c + LOAD_MORE_STEP, projects.length)
-                  )
-                }
+            return (
+              <div
+                key={project.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => setActiveProject(project)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    setActiveProject(project);
+                  }
+                }}
                 className="
-                  rounded-xl
+                  group
+                  relative
+                  overflow-hidden
+                  rounded-2xl
                   border
-                  border-secondary
-                  px-6
-                  py-3
-                  text-secondary
-                  font-semibold
-                  hover:bg-secondary
-                  hover:text-black
+                  bg-card
+                  text-left
+                  cursor-pointer
+                  touch-manipulation
+                  focus:outline-none
+                  hover:border-secondary-hover
+                  hover:border-2
                   transition
                 "
               >
-                Load more
-              </button>
-            </div>
-          )}
+                <ResponsivePicture
+                  item={cover}
+                  eager={idx < 2}
+                  className="w-full h-auto object-cover"
+                />
 
-          {activeProject && (
-            <ProjectGalleryModal
-              title={activeProject.title}
-              items={activeProject.items}
-              onClose={() => setActiveProject(null)}
-            />
-          )}
-        </>
-      )}
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 text-white bg-black/60 px-4 py-3 backdrop-blur-sm">
+                  <h3 className="text-lg font-bold leading-tight">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm opacity-80">
+                    {project.items.length} photos
+                  </p>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {!loading && projects.length === 0 && (
+          <div className="mt-8 text-center text-muted-foreground">
+            No gallery projects available.
+          </div>
+        )}
+
+        {/* Load more */}
+        {hasMore && (
+          <div className="mt-12 flex justify-center">
+            <button
+              onClick={() =>
+                setVisibleCount((c) =>
+                  Math.min(c + LOAD_MORE_STEP, projects.length),
+                )
+              }
+              className="
+                rounded-xl
+                border
+                border-secondary
+                px-6
+                py-3
+                text-secondary
+                font-semibold
+                hover:bg-secondary
+                hover:text-black
+                transition
+              "
+            >
+              Load more
+            </button>
+          </div>
+        )}
+
+        {activeProject && (
+          <ProjectGalleryModal
+            title={activeProject.title}
+            items={activeProject.items}
+            onClose={() => setActiveProject(null)}
+          />
+        )}
+      </>
     </section>
   );
 }

@@ -265,6 +265,39 @@ const ceramicCard = useMemo(() => {
           />
         </div>
 
+        {/* Paint Correction & Ceramic Package */}
+        <div className="mt-14 mb-16">
+          <div className="max-w-3xl mx-auto">
+            <div className="bg-card border border-amber-500/35 rounded-xl shadow-lg">
+              <div className="p-6 md:p-8 text-center">
+                
+
+                <h2 className="text-2xl md:text-3xl font-bold mb-4 leading-tight text-foreground">
+                  {t("servicesNew.cards.paintCorrectionCeramic.title", "Paint Correction & Ceramic Coating")}
+                </h2>
+
+                {/* <p className="text-zinc-300 mb-4 max-w-2xl mx-auto">
+                  {t("servicesNew.cards.paintCorrectionCeramic.description", "Transform your vehicle with our comprehensive paint correction and professional ceramic coating protection.")}
+                </p> */}
+
+                <div className="inline-flex items-center gap-2 mb-4 px-3 py-1 bg-amber-500/10 border border-amber-500/30 rounded-full text-amber-300 text-xs font-medium">
+                  <span>{t("servicesNew.protection.priceOnArrangement", "Premium Service")}</span>
+                </div>
+                
+                <div className="flex justify-center items-center gap-2 text-amber-300 mb-4 text-sm">
+                  <span>{t("servicesNew.cards.paintCorrectionCeramic.duration", "2-3 Days")}</span>
+                </div>
+
+                <Button asChild size="lg" className="bg-amber-600 hover:bg-amber-700 text-white font-semibold">
+                  <Link to="/booking">
+                    {t("servicesNew.protection.cta.addToBooking", "Book Now")}
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* ---------------- Protection + Add-ons ---------------- */}
         <div className="mt-16">
           {/* Protection title */}

@@ -634,7 +634,7 @@ const Booking = () => {
     </div>
   );
 
-  const ceramicPriceLabel = t(
+  const arrangementPriceLabel = t(
     "booking.ui.protection.ceramic.priceUponArrangement",
     i18n.language?.startsWith("el")
       ? "Τιμή κατόπιν συνεννοήσεως"
@@ -663,6 +663,10 @@ const Booking = () => {
             <div className="grid md:grid-cols-2 gap-4">
               {sortedServices.map((s) => {
                 const active = s.id === formData.serviceId;
+                const isPriceOnArrangementService =
+                  /paint\s*correction|διορθωση\s*βαφη|διόρθωση\s*βαφή|διόρθωσης\s*βαφής/i.test(
+                    s.name,
+                  );
                 return (
                   <button
                     key={s.id}
@@ -680,8 +684,9 @@ const Booking = () => {
                       <div>
                         <h3 className="font-semibold text-lg">{s.name}</h3>
                         <p className="text-sm text-muted-foreground mt-1">
-                          {t("booking.meta.from")} {formatEuro(s.base_price)} ·{" "}
-                          {t("booking.meta.approx")} {fmtHours(s.duration_min)}
+                          {isPriceOnArrangementService
+                            ? `${arrangementPriceLabel} · ${t("booking.meta.approx")} ${fmtHours(s.duration_min)}`
+                            : `${t("booking.meta.from")} ${formatEuro(s.base_price)} · ${t("booking.meta.approx")} ${fmtHours(s.duration_min)}`}
                         </p>
                       </div>
                     </div>
@@ -786,7 +791,7 @@ const Booking = () => {
                         </div>
 
                         <div className="text-sm text-muted-foreground mt-1">
-                          {ceramicPriceLabel}
+                          {arrangementPriceLabel}
                         </div>
 
                         <div className="mt-2 text-xs text-muted-foreground">

@@ -80,11 +80,11 @@ const TopNavbar = () => {
               to="/booking"
               className="
                 rounded-full
-                bg-secondary
+                bg-blue-500
                 text-black
                 px-5 py-2
                 text-base font-semibold
-                hover:bg-secondary-hover
+                hover:bg-blue-600
                 transition
               "
             >

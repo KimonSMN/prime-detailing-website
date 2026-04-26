@@ -576,13 +576,23 @@ const Booking = () => {
   };
 
   const sortedServices = useMemo(() => {
-    const copy = [...services];
-    copy.sort(
+  return services
+    .filter((s) => {
+      const name = s.name.toLowerCase();
+      // Excludes "Enhancement" and "Correction" in both English and Greek
+      return (
+        !name.includes("enhancement") &&
+        !name.includes("correction") &&
+        !name.includes("βελτίωση") &&
+        !name.includes("ολική") &&
+        !name.includes("διόρθωση")
+      );
+    })
+    .sort(
       (a, b) =>
         (Number(a.base_price ?? 0) || 0) - (Number(b.base_price ?? 0) || 0),
     );
-    return copy;
-  }, [services]);
+}, [services]);
 
   const step1Done = !!formData.serviceId;
   const step2Done = step1Done;

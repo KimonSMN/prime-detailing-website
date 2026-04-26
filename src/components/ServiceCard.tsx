@@ -37,7 +37,7 @@ const ServiceCard = ({
       </h3>
 
       {/* Price */}
-      <p className="  text-base text-zinc-300 mb-4">
+      <p className="text-base text-zinc-300 mb-4">
         {price} {duration}
       </p>
 

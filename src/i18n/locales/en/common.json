@@ -496,7 +496,7 @@
     "details": "More details",
     "fromPrice": "From {{price}}€",
     "fromPriceEmpty": "From —",
-    "heading": "Detailing Packages",
+    "heading": "Paint Correction & Ceramic Coating",
     "subheading": "Clear pricing. Honest work.",
     "cards": {
       "maintenance": {
@@ -597,5 +597,37 @@
       "cta": "Book Now",
       "note": "*Often required before ceramic coating services. Final pricing may vary based on paint condition."
     }
+  },
+  "step1": {
+    "title": "Choose your treatment"
+  },
+  "step2": {
+    "title": "Car Information",
+    "carModel": "Car Brand & Model (e.g. Porsche 911)",
+    "carColor": "Car Color"
+  },
+  "step3": {
+    "title": "Contact Details",
+    "fullName": "Full Name",
+    "phone": "Phone Number",
+    "email": "Email Address"
+  },
+  "servicesPaint": {
+    "enhancement": "Paint Enhancement & Protection",
+    "fullCorrection": "Full Paint Correction & Ceramic Coating"
+  },
+  "common": {
+    "continue": "Continue",
+    "sending": "Sending...",
+    "requestQuote": "Request My Quote",
+    "backHome": "Back to Home"
+  },
+  "success": {
+    "title": "Thank You!",
+    "message": "We have received your request for {{service}}. A specialist will contact you at {{phone}} within 24 hours."
+  },
+  "error": {
+    "title": "Error",
+    "submitFailed": "Failed to submit quote request"
   }
 }

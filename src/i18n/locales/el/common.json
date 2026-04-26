@@ -505,8 +505,8 @@
 
     "fromPrice": "Απο {{price}}€",
     "fromPriceEmpty": "Απο —",
-    "heading": "Detailing Packages",
-    "subheading": "Clear pricing. Honest work.",
+    "heading": "Γυάλισμα & Κεραμική Επίστρωση",
+    "subheading": "Αποκαταστήστε το χρώμα του αυτοκινήτου σας, αφαιρέστε σημάδια από στροβιλισμούς και γρατσουνιές και προστατέψτε το με κεραμική επίστρωση μακράς διαρκείας.",
     "cards": {
       "maintenance": {
         "title": "Πλύσιμο Συντήρησης",
@@ -608,5 +608,38 @@
       "cta": "Κλείσε Ραντεβού",
       "note": "*Απαιτείται συχνά πριν από τις υπηρεσίες κεραμικής επίστρωσης. Η τελική τιμή ενδέχεται να διαφέρει ανάλογα με την κατάσταση του χρώματος."
     }
-  }
+  },
+  "step1": {
+      "title": "Επιλέξτε την υπηρεσία σας"
+    },
+    "step2": {
+      "title": "Πληροφορίες αυτοκινήτου",
+      "carModel": "Μάρκα & Μοντέλο (π.χ. Porsche 911)",
+      "carColor": "Χρώμα αυτοκινήτου"
+    },
+    "step3": {
+      "title": "Στοιχεία επικοινωνίας",
+      "fullName": "Ονοματεπώνυμο",
+      "phone": "Τηλέφωνο",
+      "email": "Email"
+    },
+    "servicesPaint": {
+      "enhancement": "Paint Enhancement & Protection",
+      "fullCorrection": "Full Paint Correction & Ceramic Coating"
+    },
+    "common": {
+      "continue": "Συνέχεια",
+      "sending": "Αποστολή...",
+      "requestQuote": "Ζητήστε προσφορά",
+      "backHome": "Επιστροφή στην αρχική"
+    },
+    "success": {
+      "title": "Ευχαριστούμε!",
+      "message":
+        "Λάβαμε το αίτημά σας για {{service}}. Ένας ειδικός θα επικοινωνήσει μαζί σας στο {{phone}} εντός 24 ωρών."
+    },
+    "error": {
+      "title": "Σφάλμα",
+      "submitFailed": "Αποτυχία αποστολής αιτήματος"
+    }
 }

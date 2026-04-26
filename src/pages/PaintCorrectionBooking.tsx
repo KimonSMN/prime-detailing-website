@@ -65,7 +65,7 @@ const PaintCorrectionBooking = () => {
         <div className="w-20 h-20 bg-green-500/20 text-green-500 rounded-full flex items-center justify-center mx-auto">
           <Check size={40} />
         </div>
-        <h2 className="text-3xl font-bold italic">{t("success.title")}</h2>
+        <h2 className="text-3xl font-bold">{t("success.title")}</h2>
         <p className="text-zinc-400 text-lg">
           {t("success.description") /* Ensure you add this to your translation files */}
         </p>

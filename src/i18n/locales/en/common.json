@@ -623,8 +623,8 @@
     "backHome": "Back to Home"
   },
   "success": {
-    "title": "Thank You!",
-    "message": "We have received your request for {{service}}. A specialist will contact you at {{phone}} within 24 hours."
+  "title": "Request Sent!",
+  "description": "We will contact you within the next 24 hours."
   },
   "error": {
     "title": "Error",

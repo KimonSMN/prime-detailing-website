@@ -45,7 +45,7 @@ const App = () => {
           {/* Keep route suspense minimal */}
           <Suspense fallback={null}>
             <Routes>
-              <Route path="/" element={<Index/>} />
+              <Route path="/" element={<Index />} />
 
               <Route path="/admin" element={<AdminBookings />} />
               <Route path="/booking" element={<Booking />} />

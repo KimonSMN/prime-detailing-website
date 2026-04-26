@@ -185,7 +185,7 @@ const Services = () => {
                 </p>
 
                 <Link
-                  to={`/booking?service=${fullCorrection.id}`}
+                  to={`/paint-correction-booking`}
                   className="block w-full text-center rounded-lg bg-white text-black py-4 px-6 text-sm font-bold hover:bg-zinc-200 transition"
                 >
                   {i18n.language === "el" ? "Ζητήστε Προσφορά" : "Request a Quote"}
@@ -224,14 +224,14 @@ const Services = () => {
                 <div className="flex flex-row w-full border-t border-zinc-800 p-6 gap-3">
                   <Link
                     to={`/booking?service=${service.id}`}
-                    className="flex-1 flex items-center justify-center rounded-lg bg-white text-black py-3 px-2 text-sm font-semibold hover:bg-zinc-200 transition"
+                    className="flex-1 flex items-center justify-center text-center rounded-lg bg-white text-black py-3 px-2 text-sm font-semibold hover:bg-zinc-200 transition"
                   >
                     {t("servicesNew.book", "Book Now")}
                   </Link>
 
                   <Link
                     to={getDetailsLink(service)}
-                    className="flex-1 flex items-center justify-center rounded-lg border border-zinc-700 py-3 text-sm text-zinc-300 hover:bg-zinc-800 transition"
+                    className="flex-1 flex items-center justify-center text-center rounded-lg border border-zinc-700 py-3 px-2 text-sm text-zinc-300 hover:bg-zinc-800 transition"
                   >
                     {t("servicesNew.details", "More details")}
                   </Link>

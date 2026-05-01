@@ -777,49 +777,6 @@ const Booking = () => {
                     })}
                   </div>
                 )}
-
-                {/* Ceramic coating (single pick, no price number shown) */}
-                {ceramicRow && (
-                  <button
-                    type="button"
-                    onClick={onToggleCeramic}
-                    className={cn(
-                      "w-full rounded-2xl border p-5 text-left transition hover:border-secondary-hover/40",
-                      selectedAddonIds.has(ceramicRow.id)
-                        ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40"
-                        : "border-border bg-card",
-                    )}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <div className="flex items-center gap-2 font-semibold">
-                          <Crown className="h-4 w-4 text-secondary" />
-                          {t(
-                            "booking.ui.protection.ceramic.title",
-                            "Ceramic Coating",
-                          )}
-                        </div>
-
-                        <div className="text-sm text-muted-foreground mt-1">
-                          {arrangementPriceLabel}
-                        </div>
-
-                        <div className="mt-2 text-xs text-muted-foreground">
-                          {t(
-                            "booking.ui.protection.ceramic.finalNote",
-                            "Final price depends on vehicle size and paint condition. Paint correction may be required.",
-                          )}
-                        </div>
-                      </div>
-
-                      <div className="pt-0.5 text-xs text-muted-foreground">
-                        {selectedAddonIds.has(ceramicRow.id)
-                          ? t("booking.ui.protection.selected", "Selected")
-                          : ""}
-                      </div>
-                    </div>
-                  </button>
-                )}
               </div>
 
               {/* Add-ons / Extras (multi select) */}

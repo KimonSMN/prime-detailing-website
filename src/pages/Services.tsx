@@ -97,11 +97,11 @@ const Services = () => {
   const getHeroTitle = (type: "enhancement" | "correction") => {
     if (type === "enhancement") {
       return i18n.language === "el"
-        ? "Paint Enhancement & Protection"
+        ? "Οπτική Βελτίωση & Προστασία"
         : "Paint Enhancement & Protection";
     }
     return i18n.language === "el"
-      ? "Full Paint Correction & Ceramic Coating"
+      ? "Ολική Διόρθωση & Κεραμική Επίστρωση"
       : "Full Paint Correction & Ceramic Coating";
   };
 

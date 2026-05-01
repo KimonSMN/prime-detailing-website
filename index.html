@@ -1,26 +1,22 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="el-GR">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Primary SEO -->
-    <title>Prime Detailing | Εξειδικευμένο Detailing Studio στον Χολαργό</title>
+    <title>Prime Detailing | Detailing στον Χολαργό</title>
     <meta
       name="description"
-      content="Επαγγελματικός καθαρισμός αυτοκινήτου στο Χολαργό: Εξωτερικός & εσωτερικός καθαρισμός, βιολογικός καθαρισμός, γυάλισμα, κεραμική επίστρωση. Κλείστε ραντεβού online."
+      content="Επαγγελματικό detailing αυτοκινήτου στον Χολαργό: βιολογικός καθαρισμός, γυάλισμα, κεραμική επίστρωση. Κλείστε ραντεβού online."
     />
-    <meta name="author" content="Prime Detailing" />
     <meta name="robots" content="index,follow,max-image-preview:large" />
+
+    <!-- Canonical -->
     <link rel="canonical" href="https://prime-detailing-cholargos.com/" />
 
-    <!-- Language alternates -->
-    <link
-      rel="alternate"
-      href="https://prime-detailing-cholargos.com/?lng=en"
-      hreflang="en"
-    />
+    <!-- Hreflang (FIXED) -->
     <link
       rel="alternate"
       href="https://prime-detailing-cholargos.com/?lng=el"
@@ -28,61 +24,41 @@
     />
     <link
       rel="alternate"
+      href="https://prime-detailing-cholargos.com/?lng=en"
+      hreflang="en"
+    />
+    <link
+      rel="alternate"
       href="https://prime-detailing-cholargos.com/"
       hreflang="x-default"
     />
 
+    <!-- Geo SEO -->
+    <meta name="geo.region" content="GR-ATT" />
+    <meta name="geo.placename" content="Cholargos" />
+    <meta name="geo.position" content="37.999296;23.7968089" />
+    <meta name="ICBM" content="37.999296, 23.7968089" />
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Prime Detailing Cholargos" />
-    <meta property="og:url" content="https://prime-detailing-cholargos.com/" />
-    <meta
-      property="og:title"
-      content="Prime Detailing Cholargos — Car Detailing in Athens"
-    />
+    <meta property="og:title" content="Prime Detailing Cholargos" />
     <meta
       property="og:description"
-      content="Professional car detailing in Cholargos, Athens. Hand wash, paint correction, and ceramic coating. Book online."
+      content="Professional car detailing στον Χολαργό. Ceramic coating, paint correction & deep interior cleaning."
     />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:locale:alternate" content="el_GR" />
-    <meta
-      property="og:image"
-      content="https://prime-detailing-cholargos.com/og-default.webp"
-    />
-    <meta
-      property="og:image:secure_url"
-      content="https://prime-detailing-cholargos.com/og-default.webp"
-    />
-    <meta
-      property="og:image:alt"
-      content="Prime Detailing — showroom shine after professional detailing"
-    />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
+    <meta property="og:url" content="https://prime-detailing-cholargos.com/" />
+    <meta property="og:image" content="/og-default.webp" />
+    <meta property="og:locale" content="el_GR" />
+    <meta property="og:locale:alternate" content="en_US" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta
-      name="twitter:title"
-      content="Prime Detailing Cholargos — Car Detailing in Athens"
-    />
-    <meta
-      name="twitter:description"
-      content="Hand wash & interior deep clean, paint correction, ceramic coating. Book online for a showroom shine."
-    />
-    <meta
-      name="twitter:image"
-      content="https://prime-detailing-cholargos.com/og-default.webp"
-    />
 
-    <!-- Icons / PWA basics -->
-    <link rel="icon" href="/favicon.ico" sizes="any" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <!-- Icons -->
+    <link rel="icon" href="/favicon.ico" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#0b1320" />
 
-    <!-- ✅ Preload LCP hero image EARLY (SPA: must be in initial HTML) -->
+    <!-- LCP Image preload -->
     <link
       rel="preload"
       as="image"
@@ -92,15 +68,12 @@
       fetchpriority="high"
     />
 
-    <!-- Preconnects (keep small) -->
+    <!-- Preconnect -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- ✅ Preconnect for deferred gtag (speeds it up when it loads later) -->
     <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
-    <link rel="preconnect" href="https://www.google-analytics.com" crossorigin />
 
-    <!-- Fonts (non-blocking) -->
+    <!-- Fonts -->
     <link
       rel="preload"
       as="style"
@@ -112,24 +85,17 @@
       media="print"
       onload="this.media='all'"
     />
-    <noscript>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Roboto:wght@400;600;700&display=swap"
-      />
-    </noscript>
 
-    <!-- Structured Data -->
+    <!-- Structured Data (UPGRADED) -->
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "AutomotiveBusiness",
+        "@type": ["AutomotiveBusiness", "LocalBusiness"],
         "name": "Prime Detailing Cholargos",
         "url": "https://prime-detailing-cholargos.com/",
         "image": "https://prime-detailing-cholargos.com/og-default.webp",
-        "logo": "https://prime-detailing-cholargos.com/favicon.ico",
-        "email": "kimonsmirlianos@gmail.com",
-        "telephone": "+30-693-994-9788",
+        "telephone": "+306939949788",
+        "priceRange": "€€",
         "address": {
           "@type": "PostalAddress",
           "streetAddress": "Kleious 39, Aetideon 46",
@@ -143,27 +109,18 @@
           "latitude": 37.999296,
           "longitude": 23.7968089
         },
-        "areaServed": ["Cholargos", "Athens"],
-        "priceRange": "€€",
-        "currenciesAccepted": "EUR",
-        "paymentAccepted": "Cash, Card",
-        "acceptsReservations": "True",
-        "openingHoursSpecification": [
-          {
-            "@type": "OpeningHoursSpecification",
-            "dayOfWeek": [
-              "Monday",
-              "Tuesday",
-              "Wednesday",
-              "Thursday",
-              "Friday",
-              "Saturday"
-            ],
-            "opens": "08:00",
-            "closes": "16:00"
-          }
+        "hasMap": "https://maps.google.com/?q=37.999296,23.7968089",
+        "sameAs": [
+          "https://www.instagram.com/primedetailing.ath/"
         ],
-        "sameAs": ["https://www.instagram.com/primedetailing.ath/"]
+        "openingHoursSpecification": {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": [
+            "Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"
+          ],
+          "opens": "08:00",
+          "closes": "16:00"
+        }
       }
     </script>
   </head>
@@ -171,10 +128,21 @@
   <body>
     <div id="root"></div>
 
-    <!-- Only the Vite entry -->
+    <!-- SEO fallback -->
+    <noscript>
+      <h1>Car Detailing στον Χολαργό</h1>
+      <p>
+        Βιολογικός καθαρισμός, γυάλισμα και κεραμική επίστρωση αυτοκινήτου στον Χολαργό.
+      </p>
+      <p>
+        Prime Detailing — Kleious 39 & Aetideon 46 — (+30) 693 994 9788
+      </p>
+    </noscript>
+
+    <!-- App -->
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- ✅ Defer Google Ads/gtag until idle or first interaction (mobile win) -->
+    <!-- Smart Analytics Load -->
     <script>
       (function () {
         const ID = "AW-17741990952";
@@ -189,25 +157,19 @@
           document.head.appendChild(s);
 
           window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
+          function gtag(){dataLayer.push(arguments);}
           window.gtag = gtag;
 
           gtag("js", new Date());
           gtag("config", ID);
         }
 
-        // Load on first interaction
-        ["pointerdown", "keydown", "touchstart", "scroll"].forEach((evt) => {
-          window.addEventListener(evt, loadGtag, { once: true, passive: true });
+        ["pointerdown","scroll","touchstart"].forEach(e => {
+          window.addEventListener(e, loadGtag, { once:true, passive:true });
         });
 
-        // Optional safety fallback (later, so Lighthouse often doesn't count it)
-        setTimeout(loadGtag, 8000);
+        setTimeout(loadGtag, 4000);
       })();
     </script>
-
-    <noscript>
-      Prime Detailing, Kleious 39 &amp; Aetideon 46, Cholargos 15561 — (+30) 693 994 9788
-    </noscript>
   </body>
 </html>

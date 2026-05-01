@@ -36,7 +36,7 @@ const Maintenance = () => {
         <div className="space-y-6 mb-12">
           <p className="text-lg leading-relaxed text-zinc-300">
             {isGreek 
-              ? "Το πλύσιμο συντήρησης διατηρεί το αυτοκίνητό σας σε άριστη κατάσταση και συστήνεται ανά 2 εβδομάδες, ώστε να διατηρείται η καθαριότητα και η προστασία του οχήματος χωρίς να συσσωρεύονται ρύποι."
+              ? "Το πλύσιμο συντήρησης διατηρεί το αυτοκίνητο σας σε άριστη κατάσταση και συστήνεται ανά 2 εβδομάδες, ώστε να διατηρείται η καθαριότητα και η προστασία του οχήματος χωρίς να συσσωρεύονται ρύποι."
               : "A maintenance wash keeps your vehicle in excellent condition and is recommended every 2 weeks to maintain cleanliness and protection without allowing dirt buildup."
             }
           </p>

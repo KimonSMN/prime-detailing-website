@@ -50,14 +50,14 @@ const App = () => {
               <Route path="/admin" element={<AdminBookings />} />
               <Route path="/booking" element={<Booking />} />
               <Route path="/gallery" element={<Gallery />} />
-              {/* <Route path="/services" element={<ServicesNew />} /> */}
               <Route path="/services" element={<Services />} />
               {/* <Route path="/services-cool" element={<CoolServices />} /> */}
+              {/* <Route path="/services" element={<ServicesNew />} /> */}
 
               <Route path="/paint-correction-booking" element={<PaintCorrectionBooking />} />
 
 
-              <Route path="/paint-correction" element={<PaintCorrection />} />
+              {/* <Route path="/paint-correction" element={<PaintCorrection />} /> */}
               <Route path="/ultimate-detail" element={<Ultimate />} />
               <Route path="/full-detail" element={<FullDetail />} />
               <Route path="/maintenance-wash" element={<Maintenance />} />

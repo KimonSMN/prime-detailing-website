@@ -661,7 +661,6 @@ const Booking = () => {
         vehicleType: "",
       }));
       setSelectedAddonIds(new Set());
-      setSelectedProtectionSlug(null);
     } catch (err: any) {
       toast({
         title: t("booking.toast.fail.title"),

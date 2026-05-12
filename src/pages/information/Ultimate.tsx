@@ -48,12 +48,11 @@ const Ultimate = () => {
               {isGreek ? "Εξωτερικό" : "Exterior"}
             </h2>
             <ul className="space-y-3 text-zinc-300 text-md">
-              <li>• {isGreek ? "Προπλύση χωρίς επαφή" : "Contactless pre-wash"}</li>
-              <li>• {isGreek ? "Πλύσιμο στο χέρι" : "Detailed hand wash"}</li>
-              <li>• {isGreek ? "Καθαρισμός ζαντών (μέσα & έξω)" : "Deep wheel cleaning (in & out)"}</li>
-              <li>• {isGreek ? "Αφαίρεση πίσσας / ρετσινιού" : "Tar & resin removal"}</li>
-              <li>• {isGreek ? "Συντηρητικό εξωτερικών πλαστικών" : "Exterior plastics dressing"}</li>
-              <li>• {isGreek ? "Προστασία ελαστικών" : "Tire protection"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Προπλύση χωρίς επαφή" : "Contactless pre-wash"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Πλύσιμο στο χέρι" : "Detailed hand wash"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Καθαρισμός ζαντών (μέσα & έξω)" : "Deep wheel cleaning (in & out)"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Αφαίρεση πίσσας / ρετσινιού" : "Tar & resin removal"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Προστασία ελαστικών" : "Tire protection"}</li>
             </ul>
           </section>
 
@@ -63,12 +62,12 @@ const Ultimate = () => {
               {isGreek ? "Εσωτερικό" : "Interior"}
             </h2>
             <ul className="space-y-3 text-zinc-300 text-md">
-              <li>• {isGreek ? "Βαθύς καθαρισμός μοκετών & καθισμάτων" : "Deep carpet & seat cleaning"}</li>
-              <li>• {isGreek ? "Σαπούνισμα όλων των επιφανειών" : "Interior surface scrubbing"}</li>
-              <li>• {isGreek ? "Καθαρισμός & φροντίδα δέρματος" : "Leather cleaning & care"}</li>
-              <li>• {isGreek ? "Καθαρισμός μαρσπιέ & πορτμπαγκάζ" : "Door sills & trunk cleaning"}</li>
-              <li>• {isGreek ? "Καθαρισμός τζαμιών" : "Glass cleaning"}</li>
-              <li>• {isGreek ? "Αρωματισμός καμπίνας" : "Interior deodorizing"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Βαθύς καθαρισμός μοκετών & καθισμάτων" : "Deep carpet & seat cleaning"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Σαπούνισμα όλων των επιφανειών" : "Interior surface scrubbing"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Καθαρισμός & φροντίδα δέρματος" : "Leather cleaning & care"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Καθαρισμός μαρσπιέ & πορτμπαγκάζ" : "Door sills & trunk cleaning"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Καθαρισμός τζαμιών" : "Glass cleaning"}</li>
+              <li><span className="text-blue-400 text-lg">•</span> {isGreek ? "Αρωματισμός καμπίνας" : "Interior deodorizing"}</li>
             </ul>
           </section>
         </div>
@@ -82,15 +81,22 @@ const Ultimate = () => {
             <li className="flex items-start">
               <span className="text-blue-400 mr-2">•</span>
               {isGreek 
-                ? "Προστατευτικό spray sealant εξωτερικού (διάρκεια έως 3 μήνες)" 
-                : "Exterior spray sealant protection (up to 3 months duration)"}
+                ? "Προστατευτικό spray sealant εξωτερικού" 
+                : "Exterior spray sealant protection"}
             </li>
             <li className="flex items-start">
               <span className="text-blue-400 mr-2">•</span>
               {isGreek 
-                ? "Πλήρες πακέτο προστασίας εσωτερικών επιφανειών (UV προστασία & αντιστατικές ιδιότητες)" 
-                : "Full interior surface protection package (UV protection & anti-static)"}
+                ? "Προστατευτικό για εσωτερικές πλαστικές επιφάνειες" 
+                : "Interior plastic protectant"}
             </li>
+            <li className="flex items-start">
+              <span className="text-blue-400 mr-2">•</span>
+              {isGreek 
+                ? "Συντηρητικό εξωτερικών πλαστικών" 
+                : "Exterior plastics dressing"}
+            </li>
+
           </ul>
         </div>
 

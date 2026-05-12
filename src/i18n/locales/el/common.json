@@ -402,7 +402,38 @@
     "notEnoughRoom": "δεν υπάρχει αρκετός χρόνος",
 
     "addons": {
-      "empty": "Δεν υπάρχουν διαθέσιμα extras."
+      "empty": "Δεν υπάρχουν διαθέσιμα extras.",
+      "spraySealant": {
+        "name": "Spray Sealant",
+        "desc": "Δίνει γυαλάδα, υδροφοβικότητα και προστασία στο οχήμα σας."
+      },
+      "trimCoating": {
+        "name": "Κεραμικη Επίστρωση Trim",
+        "desc": "Αναζωογονεί τα ξεθωριασμένα πλαστικά και τα διατηρεί σαν καινούργια."
+      },
+      "windowCoating": {
+        "name": "Κεραμικη Επίστρωση Παραθύρων",
+        "desc": "Απωθεί το νερό από τα τζάμια, βελτιώνοντας την ορατότητα και την ασφάλεια στη οδήγηση με βροχή."
+      },
+      "exteriorTrimRestoration": {
+        "name": "Αποκατάσταση Εξωτερικών Trim",
+        "desc": "Επαναφέρει ξεθωριασμένα εξωτερικά πλαστικά και τα προστατεύει από την UV ακτινοβολία."
+      },
+      "fullProtection": {
+        "name": "Πακέτο Πλήρους Προστασίας",
+        "desc": "Περιλαμβάνει spray sealant, προστατευτικό για εσωτερικά πλαστικά, conditioner για δερμάτινες επιφάνειες και αποκατάσταση εξωτερικών πλαστικών."
+      },
+      "longevity": {
+        "title": "Διάρκεια έως",
+        "items": {
+          "liquidWax": "1 μήνας",
+          "spraySealant": "3 μήνες",
+          "trimCoating": "36 μήνες",
+          "windowCoating": "18 μήνες",
+          "exteriorTrimRestoration": "3 μήνες"
+
+        }
+      }
     },
 
     "ui": {
@@ -610,11 +641,14 @@
     }
   },
   "step1": {
-      "title": "Επιλέξτε την υπηρεσία σας"
+      "title": "Επιλέξτε πακέτο"
     },
     "step2": {
       "title": "Πληροφορίες αυτοκινήτου",
-      "carModel": "Μάρκα & Μοντέλο (π.χ. Porsche 911)",
+      "carVehicleInfo": "Μαρκα, Μοντέλο, Έτος (π.χ. Porsche 911 2015)",
+      "carBrand": "Μάρκα Αυτοκινήτου",
+      "carModel": "Μοντέλο Αυτοκινήτου",
+      "carYear": "Έτος Κατασκευής",
       "carColor": "Χρώμα αυτοκινήτου"
     },
     "step3": {
@@ -624,8 +658,19 @@
       "email": "Email"
     },
     "servicesPaint": {
-      "enhancement": "Paint Enhancement & Protection",
-      "fullCorrection": "Full Paint Correction & Ceramic Coating"
+      "enhancement": "Οπτική Βελτίωση & Προστασία",
+      "fullCorrection": "Ολική Διόρθωση & Κεραμική Επίστρωση"
+    },
+    "paintCorrection": {
+      "step1": {
+        "hint": "Διαλέξτε τη βασική υπηρεσία"
+      },
+      "step2": {
+        "hint": "Δώστε τα στοιχεία του οχήματος"
+      },
+      "step3": {
+        "hint": "Τα στοιχεία επικοινωνίας σας"
+      }
     },
     "common": {
       "continue": "Συνέχεια",

@@ -44,25 +44,27 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const {
       serviceType,
-      carModel,
+      carVehicleInfo,
       carColor,
       fullName,
       phone,
       email,
     } = (req.body || {}) as {
       serviceType?: string;
-      carModel?: string;
+      carVehicleInfo?: string;
       carColor?: string;
       fullName?: string;
       phone?: string;
       email?: string;
     };
 
-    if (!serviceType || !carModel || !fullName || !phone || !email) {
+    const vehicleInfo = carVehicleInfo?.trim();
+
+    if (!serviceType || !vehicleInfo || !carColor || !fullName || !phone || !email) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const carInfo = carColor ? `${carModel} (${carColor})` : carModel;
+    const carInfo = `${vehicleInfo} - ${carColor.trim()}`;
 
     const { error: leadError } = await supabase.from("correction_leads").insert([
       {

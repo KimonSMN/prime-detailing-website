@@ -50,7 +50,6 @@ const FullDetail = () => {
               <li> <span className="text-blue-400 text-lg">•</span> {isGreek ? "Καθαρισμός ζαντών" : "Wheel cleaning"}</li>
               <li> <span className="text-blue-400 text-lg">•</span> {isGreek ? "Προστασία ελαστικών" : "Tire dressing/protection"}</li>
               <li> <span className="text-blue-400 text-lg">•</span> {isGreek ? "Αφαίρεση πίσσας / ρετσινιού" : "Tar & resin removal"}</li>
-              <li> <span className="text-blue-400 text-lg">•</span> {isGreek ? "Βαθύς καθαρισμός ζάντας" : "Deep wheel cleaning"}</li>
             </ul>
           </section>
 

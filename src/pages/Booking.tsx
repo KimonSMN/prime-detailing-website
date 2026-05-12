@@ -104,13 +104,79 @@ const Booking = () => {
   );
 
   // --- Protection / Ceramic / Extras grouping by slug ---
-  const PROTECTION_SLUGS = ["liquidWax", "spraySealant"] as const;
+  const PROTECTION_SLUGS = [
+    "spraySealant",
+    "exteriorTrimRestoration",
+    "trimCoating",
+    "windowCoating",
+  ] as const;
   const CERAMIC_SLUG = "ceramicCoating12" as const;
   const EXTRA_SLUGS = ["headlightRestoration", "engineBay"] as const;
 
-  const [selectedProtectionSlug, setSelectedProtectionSlug] = useState<
-    string | null
-  >(null);
+  // Static addon details (editable here). Uses inline i18n keys.
+  const ADDON_DETAILS: Record<string, { name: string; desc: string }> = {
+    spraySealant: {
+      name: t("booking.addons.spraySealant.name", "Spray Sealant"),
+      desc: t(
+        "booking.addons.spraySealant.desc",
+        "Lightweight spray sealant — lasts up to 3 months.",
+      ),
+    },
+    trimCoating: {
+      name: t("booking.addons.trimCoating.name", "Trim Ceramic Coating"),
+      desc: t(
+        "booking.addons.trimCoating.desc",
+        "Protects and restores exterior trim surfaces.",
+      ),
+    },
+    windowCoating: {
+      name: t("booking.addons.windowCoating.name", "Window Ceramic Coating"),
+      desc: t(
+        "booking.addons.windowCoating.desc",
+        "Hydrophobic coating for glass — improves visibility in rain.",
+      ),
+    },
+    fullProtection: {
+      name: t("booking.addons.fullProtection.name", "Full Protection Package"),
+      desc: t(
+        "booking.addons.fullProtection.desc",
+        "Includes spray sealant, interior dressing for plastics, interior conditioner for leathers, exterior trim restoration.",
+      ),
+    },
+    exteriorTrimRestoration: {
+      name: t(
+        "booking.addons.exteriorTrimRestoration.name",
+        "Exterior Trim Restoration",
+      ),
+      desc: t(
+        "booking.addons.exteriorTrimRestoration.desc",
+        "Restores faded exterior plastic trims and protects them from UV.",
+      ),
+    },
+  };
+
+  // Conceptual slugs included in the Full Protection Package.
+  const FULL_PROTECTION_SLUGS = [
+    "spraySealant",
+    "interiorDressing",
+    "interiorConditioner",
+    "exteriorTrimRestoration",
+  ];
+
+  // Full Protection Package duration in minutes (2 hours)
+  const FULL_PROTECTION_DURATION = 120;
+
+  // Longevity mapping for protection items (rendered separately, not inside descriptions)
+  const PROTECTION_LONGEVITY: Record<string, string> = {
+    liquidWax: t("booking.addons.longevity.items.liquidWax", "1 month"),
+    spraySealant: t("booking.addons.longevity.items.spraySealant", "3 months"),
+    trimCoating: t("booking.addons.longevity.items.trimCoating", "36 months"),
+    windowCoating: t("booking.addons.longevity.items.windowCoating", "18 months"),
+    exteriorTrimRestoration: t("booking.addons.longevity.items.exteriorTrimRestoration", "6 months"),
+  };
+
+  const [fullProtectionSelected, setFullProtectionSelected] = useState(false);
+  const [fullProtectionMissing, setFullProtectionMissing] = useState<string[]>([]);
 
   // Map rows for fast lookup
   const addonBySlug = useMemo(() => {
@@ -129,6 +195,11 @@ const Booking = () => {
 
   const ceramicRow = useMemo(
     () => addonBySlug.get(CERAMIC_SLUG) ?? null,
+    [addonBySlug],
+  );
+
+  const fullProtectionRow = useMemo(
+    () => addonBySlug.get("fullProtection") ?? null,
     [addonBySlug],
   );
 
@@ -178,11 +249,51 @@ const Booking = () => {
       return;
     }
 
-    // select ceramic and clear protection highlight (exclusivity enforced by selectSingleBySlug)
-    setSelectedProtectionSlug(null);
+    // select ceramic and clear protection highlights (selectSingleBySlug enforces exclusivity)
     selectSingleBySlug(ceramicRow.slug);
     setFormData((p) => ({ ...p, time: "" }));
   }, [ceramicRow, selectedAddonIds, selectSingleBySlug]);
+
+  const toggleFullProtection = useCallback(() => {
+    if (!fullProtectionRow?.id) return;
+
+    if (selectedAddonIds.has(fullProtectionRow.id)) {
+      // Deselect full protection
+      setSelectedAddonIds((prev) => {
+        const next = new Set(prev);
+        next.delete(fullProtectionRow.id);
+        return next;
+      });
+      setFullProtectionSelected(false);
+      setFullProtectionMissing([]);
+      setFormData((p) => ({ ...p, time: "" }));
+      return;
+    }
+
+    // Select Full Protection Package, clear only spray sealant and exterior trim restoration
+    setSelectedAddonIds((prev) => {
+      const next = new Set(prev);
+      // Clear conflicting protections
+      const spraySealantRow = addonBySlug.get("spraySealant");
+      const exteriorTrimRow = addonBySlug.get("exteriorTrimRestoration");
+      if (spraySealantRow?.id) next.delete(spraySealantRow.id);
+      if (exteriorTrimRow?.id) next.delete(exteriorTrimRow.id);
+      next.add(fullProtectionRow.id);
+      return next;
+    });
+
+    const protectionMissing: string[] = [];
+    for (const s of FULL_PROTECTION_SLUGS) {
+      const r = addonBySlug.get(s);
+      if (!r) {
+        protectionMissing.push(ADDON_DETAILS[s]?.name ?? s);
+      }
+    }
+
+    setFullProtectionMissing(protectionMissing);
+    setFullProtectionSelected(true);
+    setFormData((p) => ({ ...p, time: "" }));
+  }, [fullProtectionRow, selectedAddonIds, addonBySlug, ADDON_DETAILS]);
 
   const [isCalOpen, setIsCalOpen] = useState(false);
 
@@ -246,14 +357,24 @@ const Booking = () => {
 
   const addonsTotalPrice = useMemo(
     () =>
-      selectedAddons.reduce(
-        (sum, a) => sum + (Number(a.base_price ?? 0) || 0),
-        0,
-      ),
-    [selectedAddons],
+      selectedAddons
+        .filter((a) => fullProtectionRow?.id !== a.id) // Exclude full protection from addons price
+        .reduce(
+          (sum, a) => sum + (Number(a.base_price ?? 0) || 0),
+          0,
+        ),
+    [selectedAddons, fullProtectionRow],
   );
 
-  const totalSelectedPrice = servicePrice + addonsTotalPrice;
+  const fullProtectionPrice = useMemo(
+    () =>
+      fullProtectionRow && selectedAddonIds.has(fullProtectionRow.id)
+        ? Number(fullProtectionRow.base_price ?? 0) || 0
+        : 0,
+    [fullProtectionRow, selectedAddonIds],
+  );
+
+  const totalSelectedPrice = servicePrice + addonsTotalPrice + fullProtectionPrice;
 
   // localized date label
   const fmtDate = (d?: Date) =>
@@ -425,25 +546,31 @@ const Booking = () => {
 
   const onPickProtection = useCallback(
     (slug: string) => {
-      if (selectedProtectionSlug === slug) {
-        setSelectedProtectionSlug(null);
-        const row = addonBySlug.get(slug);
-        if (row) {
-          setSelectedAddonIds((prev) => {
-            const next = new Set(prev);
-            next.delete(row.id);
-            return next;
-          });
-        }
-        setFormData((p) => ({ ...p, time: "" }));
-        return;
-      }
+      const row = addonBySlug.get(slug);
+      if (!row) return;
 
-      setSelectedProtectionSlug(slug);
-      selectSingleBySlug(slug);
+      setSelectedAddonIds((prev) => {
+        const next = new Set(prev);
+        if (next.has(row.id)) {
+          next.delete(row.id);
+        } else {
+          // when selecting a protection, ensure ceramic is cleared
+          const ceramic = addonBySlug.get(CERAMIC_SLUG);
+          if (ceramic) next.delete(ceramic.id);
+          // Clear full protection only when selecting spray sealant or exterior trim restoration
+          if ((slug === "spraySealant" || slug === "exteriorTrimRestoration") && fullProtectionRow?.id) {
+            next.delete(fullProtectionRow.id);
+          }
+          next.add(row.id);
+        }
+        return next;
+      });
+
+      setFullProtectionSelected(false);
+      setFullProtectionMissing([]);
       setFormData((p) => ({ ...p, time: "" }));
     },
-    [addonBySlug, selectSingleBySlug, selectedProtectionSlug],
+    [addonBySlug, fullProtectionRow, selectSingleBySlug],
   );
 
   /* ---------------- submit ---------------- */
@@ -556,11 +683,20 @@ const Booking = () => {
     "border-secondary bg-secondary/10 ring-1 ring-secondary/40";
 
   const formatEuro = (val: string | number | null) =>
-    new Intl.NumberFormat(i18n.language, {
-      style: "currency",
-      currency: "EUR",
-      maximumFractionDigits: 0,
-    }).format(Number(val ?? 0) || 0);
+    (() => {
+      const n = Number(val ?? 0) || 0;
+      // For English, show amount then euro sign (e.g. "100€").
+      if (i18n.language?.startsWith("en")) {
+        return `${new Intl.NumberFormat(i18n.language, {
+          maximumFractionDigits: 0,
+        }).format(n)} €`;
+      }
+      return new Intl.NumberFormat(i18n.language, {
+        style: "currency",
+        currency: "EUR",
+        maximumFractionDigits: 0,
+      }).format(n);
+    })();
 
   const fmtHours = (minutes: number | null) => {
     const m = Math.max(0, Number(minutes ?? 0) || 0);
@@ -721,23 +857,19 @@ const Booking = () => {
                 <div className="font-semibold">
                   {t("booking.ui.protection.title", "Protection")}
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {t(
-                    "booking.ui.protection.pickOne",
-                    "Pick one: wax / sealant or ceramic coating.",
-                  )}
-                </div>
 
                 {/* Wax / Sealant (single pick) */}
                 {protectionRows.length > 0 && (
                   <div className="grid sm:grid-cols-2 gap-3">
-                    {protectionRows.map((a) => {
-                      const active = selectedProtectionSlug === a.slug;
+                      {protectionRows.map((a) => {
+                      const active = Boolean(a.id && selectedAddonIds.has(a.id));
                       const Icon =
                         a.slug === "liquidWax"
                           ? Droplets
                           : a.slug === "spraySealant"
                             ? Shield
+                            : a.slug === "exteriorTrimRestoration"
+                              ? Shield
                             : Sparkles;
 
                       return (
@@ -756,21 +888,27 @@ const Booking = () => {
                             <div>
                               <div className="flex items-center gap-2 font-semibold">
                                 <Icon className="h-4 w-4 text-secondary" />
-                                {a.name}
+                                {ADDON_DETAILS[a.slug ?? ""]?.name ?? a.name}
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
-                                {formatEuro(a.base_price)} ·{" "}
-                                {fmtHours(a.duration_min)}
+                                {formatEuro(a.base_price)} · {fmtHours(a.duration_min)}
                               </div>
+                              {ADDON_DETAILS[a.slug ?? ""]?.desc && (
+                                <div className="text-xs text-muted-foreground mt-1">
+                                  {ADDON_DETAILS[a.slug ?? ""]?.desc}
+                                </div>
+                              )}
+                              {/* Longevity badge (separate from description) */}
+                              {a.slug && PROTECTION_LONGEVITY[a.slug] && (
+                                <div className="text-xs text-secondary font-medium mt-2">
+                                  {t("booking.addons.longevity.title", "Longevity")}:{" "}
+                                  {PROTECTION_LONGEVITY[a.slug]}
+                                </div>
+                              )}
                             </div>
-                            <div className="pt-0.5 text-xs text-muted-foreground">
-                              {active
-                                ? t(
-                                    "booking.ui.protection.selected",
-                                    "Selected",
-                                  )
-                                : ""}
-                            </div>
+                                  <div className="pt-0.5">
+                                    <Checkbox checked={active} />
+                                  </div>
                           </div>
                         </button>
                       );
@@ -784,6 +922,40 @@ const Booking = () => {
                 <div className="font-semibold">
                   {t("booking.ui.extras.title", "Add-ons")}
                 </div>
+
+                {/* Full Protection Package (custom option) */}
+                {fullProtectionRow && (
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => toggleFullProtection()}
+                      className={cn(
+                        "w-full rounded-2xl border p-4 text-left transition hover:border-secondary-hover/40 mb-3",
+                        fullProtectionRow.id && selectedAddonIds.has(fullProtectionRow.id)
+                          ? "border-secondary bg-secondary/10 ring-1 ring-secondary/40"
+                          : "border-border",
+                      )}
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <div className="flex items-center gap-2 font-semibold">
+                            <Crown className="h-4 w-4 text-secondary" />
+                            {fullProtectionRow.name}
+                          </div>
+                          <div className="text-sm text-muted-foreground mt-1">
+                            {formatEuro(fullProtectionRow.base_price)} · {fmtHours(fullProtectionRow.duration_min)}
+                          </div>
+                          <div className="text-xs text-muted-foreground mt-1">
+                            {ADDON_DETAILS.fullProtection?.desc}
+                          </div>
+                        </div>
+                        <div className="pt-0.5">
+                          <Checkbox checked={fullProtectionRow.id ? selectedAddonIds.has(fullProtectionRow.id) : false} />
+                        </div>
+                      </div>
+                    </button>
+                  </div>
+                )}
 
                 {extraRows.length === 0 ? (
                   <div className="rounded-2xl border p-5 text-sm text-muted-foreground">
@@ -808,9 +980,15 @@ const Booking = () => {
                             setSelectedAddonIds((prev) => {
                               const next = new Set(prev);
                               if (next.has(a.id)) next.delete(a.id);
-                              else next.add(a.id);
+                              else {
+                                // Clear full protection when selecting any extra
+                                if (fullProtectionRow?.id) next.delete(fullProtectionRow.id);
+                                next.add(a.id);
+                              }
                               return next;
                             });
+                            setFullProtectionSelected(false);
+                            setFullProtectionMissing([]);
                             setFormData((p) => ({ ...p, time: "" }));
                           }}
                           className={cn(
@@ -824,12 +1002,16 @@ const Booking = () => {
                             <div>
                               <div className="flex items-center gap-2 font-semibold">
                                 <Icon className="h-4 w-4 text-secondary" />
-                                {a.name}
+                                {ADDON_DETAILS[a.slug ?? ""]?.name ?? a.name}
                               </div>
                               <div className="text-sm text-muted-foreground mt-1">
-                                {formatEuro(a.base_price)} ·{" "}
-                                {fmtHours(a.duration_min)}
+                                {formatEuro(a.base_price)} · {fmtHours(a.duration_min)}
                               </div>
+                              {ADDON_DETAILS[a.slug ?? ""]?.desc && (
+                                <div className="text-xs text-muted-foreground mt-1">
+                                  {ADDON_DETAILS[a.slug ?? ""]?.desc}
+                                </div>
+                              )}
                             </div>
                             <div className="pt-0.5">
                               <Checkbox checked={checked} />
@@ -1095,14 +1277,20 @@ const Booking = () => {
                       {t("booking.summary.addons")}
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      {selectedAddons.map((a) => (
-                        <span
-                          key={a.id}
-                          className="text-xs rounded-full border border-secondary/30 bg-secondary/5 px-2 py-1"
-                        >
-                          {a.name}
+                      {fullProtectionRow && selectedAddonIds.has(fullProtectionRow.id) ? (
+                        <span className="text-xs rounded-full border border-secondary/30 bg-secondary/5 px-2 py-1">
+                          {fullProtectionRow.name}
                         </span>
-                      ))}
+                      ) : (
+                        selectedAddons.map((a) => (
+                          <span
+                            key={a.id}
+                            className="text-xs rounded-full border border-secondary/30 bg-secondary/5 px-2 py-1"
+                          >
+                            {a.name}
+                          </span>
+                        ))
+                      )}
                     </div>
                   </div>
                 )}

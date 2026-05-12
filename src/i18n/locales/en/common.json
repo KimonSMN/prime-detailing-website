@@ -395,7 +395,37 @@
     "notEnoughRoom": "not enough room",
 
     "addons": {
-      "empty": "No extras available."
+      "empty": "No extras available.",
+      "spraySealant": {
+        "name": "Spray Sealant",
+        "desc": "Adds shine, hydrophobicity and protection to your car."
+      },
+      "trimCoating": {
+        "name": "Trim Ceramic Coating",
+        "desc": "Restores faded plastic trims and keeps them looking fresh."
+      },
+      "windowCoating": {
+        "name": "Window Ceramic Coating",
+        "desc": "Repels water from glass, making driving in the rain safer."
+      },
+      "exteriorTrimRestoration": {
+        "name": "Exterior Trim Restoration",
+        "desc": "Restore and protect faded exterior plastic trims and protects them from UV damage."
+      },
+      "fullProtection": {
+        "name": "Full Protection Package",
+        "desc": "Includes spray sealant, interior plastic protectant, leather conditioner, and exterior trim restoration."
+      },
+      "longevity": {
+        "title": "Longevity up to",
+        "items": {
+          "liquidWax": "1 month",
+          "spraySealant": "3 months",
+          "trimCoating": "36 months",
+          "windowCoating": "18 months",
+          "exteriorTrimRestoration": "3 months"
+        }
+      }
     },
 
     "ui": {
@@ -599,11 +629,14 @@
     }
   },
   "step1": {
-    "title": "Choose your treatment"
+    "title": "Choose package"
   },
   "step2": {
     "title": "Car Information",
-    "carModel": "Car Brand & Model (e.g. Porsche 911)",
+    "carVehicleInfo": "Car Brand, Model, Year (e.g. Porsche 911 2015)",
+    "carBrand": "Car Brand",
+    "carModel": "Car Model",
+    "carYear": "Year of Manufacture",
     "carColor": "Car Color"
   },
   "step3": {
@@ -615,6 +648,17 @@
   "servicesPaint": {
     "enhancement": "Paint Enhancement & Protection",
     "fullCorrection": "Full Paint Correction & Ceramic Coating"
+  },
+  "paintCorrection": {
+    "step1": {
+      "hint": "Pick the main service"
+    },
+    "step2": {
+      "hint": "Provide vehicle details"
+    },
+    "step3": {
+      "hint": "Your contact information"
+    }
   },
   "common": {
     "continue": "Continue",

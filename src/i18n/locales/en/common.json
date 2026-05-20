@@ -398,7 +398,7 @@
       "empty": "No extras available.",
       "spraySealant": {
         "name": "Spray Sealant",
-        "desc": "Adds shine, hydrophobicity and protection to your car."
+        "desc": "Adds shine, hydrophobicity and protection to the exterior of your car."
       },
       "trimCoating": {
         "name": "Trim Ceramic Coating",
@@ -410,7 +410,7 @@
       },
       "exteriorTrimRestoration": {
         "name": "Exterior Trim Restoration",
-        "desc": "Restore and protect faded exterior plastic trims and protects them from UV damage."
+        "desc": "Restore faded exterior plastic trims and protects them from UV damage."
       },
       "fullProtection": {
         "name": "Full Protection Package",
@@ -646,6 +646,8 @@
     "email": "Email Address"
   },
   "servicesPaint": {
+    "title": "Paint Correction Services",
+    "subtitle":"Professional paint correction and protection services", 
     "enhancement": "Paint Enhancement & Protection",
     "fullCorrection": "Full Paint Correction & Ceramic Coating"
   },

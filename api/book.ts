@@ -360,7 +360,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
                   <td style="padding:22px 22px 14px 22px;background:linear-gradient(135deg,#0ea5e9 0%,#2563eb 60%,#1d4ed8 100%);">
                     <div style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; color:#ffffff;">
                       <div style="font-size:18px;font-weight:800;letter-spacing:-0.2px;">
-                        Η κράτησή σας επιβεβαιώθηκε ✅
+                        Η κράτηση σας επιβεβαιώθηκε ✅
                       </div>
                       <div style="margin-top:6px;font-size:13px;opacity:0.92;">
                         Αν χρειαστείτε αλλαγή, απαντήστε σε αυτό το email ή καλέστε μας.

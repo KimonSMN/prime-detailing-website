@@ -142,9 +142,9 @@ const Services = () => {
         <div className="max-w-6xl mx-auto w-full">
 
           <div className="mb-12 text-center px-2">
-            <h2 className="text-3xl font-bold mb-3">Paint Correction Services</h2>
+            <h2 className="text-3xl font-bold mb-3">{t("servicesPaint.title")}</h2>
             <p className="text-zinc-400 max-w-xl mx-auto">
-              Professional paint restoration & protection services
+              {t("servicesPaint.subtitle")}
             </p>
           </div>
 

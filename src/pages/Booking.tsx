@@ -944,17 +944,18 @@ const Booking = () => {
 
   if (bookingCompleted) {
     return (
-      <section className="min-h-screen bg-secondary/20">
-        <div className="max-w-2xl mx-auto px-4 py-20">
-          <div className="rounded-2xl border bg-card p-8 text-center shadow-sm">
-            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-secondary/20 text-secondary">
-              <Check className="h-7 w-7" />
+      <section className="flex min-h-screen items-center justify-center bg-secondary/20 px-4 py-10">
+        <div className="w-full max-w-2xl">
+          <div className="rounded-2xl border bg-card p-8 md:p-10 text-center shadow-sm">
+            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/20 text-secondary">
+              <Check className="h-8 w-8" />
             </div>
 
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="text-3xl font-semibold tracking-tight">
               {t("booking.success.title", "Appointment booked")}
             </h1>
-            <p className="mt-2 text-muted-foreground">
+
+            <p className="mt-3 text-muted-foreground">
               {t(
                 "booking.success.subtitle",
                 "Your booking request has been submitted successfully.",
@@ -962,28 +963,41 @@ const Booking = () => {
             </p>
 
             {confirmedBooking && (
-              <div className="mt-6 rounded-xl border p-4 text-left text-sm">
-                <div className="flex items-center justify-between gap-3 py-1.5">
-                  <span className="text-muted-foreground">Name</span>
+              <div className="mt-8 rounded-xl border p-5 text-left">
+                <div className="flex items-center justify-between gap-4 border-b py-3">
+                  <span className="text-sm text-muted-foreground">
+                    {t("booking.success.fields.name", "Name")}
+                  </span>
                   <span className="font-medium">{confirmedBooking.name}</span>
                 </div>
-                <div className="flex items-center justify-between gap-3 py-1.5">
-                  <span className="text-muted-foreground">Service</span>
-                  <span className="font-medium">{confirmedBooking.serviceName || "—"}</span>
+
+                <div className="flex items-center justify-between gap-4 border-b py-3">
+                  <span className="text-sm text-muted-foreground">
+                    {t("booking.success.fields.service", "Service")}
+                  </span>
+                  <span className="font-medium">
+                    {confirmedBooking.serviceName || "—"}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between gap-3 py-1.5">
-                  <span className="text-muted-foreground">Date</span>
+
+                <div className="flex items-center justify-between gap-4 border-b py-3">
+                  <span className="text-sm text-muted-foreground">
+                    {t("booking.success.fields.date", "Date")}
+                  </span>
                   <span className="font-medium">{confirmedBooking.date}</span>
                 </div>
-                <div className="flex items-center justify-between gap-3 py-1.5">
-                  <span className="text-muted-foreground">Time</span>
+
+                <div className="flex items-center justify-between gap-4 py-3">
+                  <span className="text-sm text-muted-foreground">
+                    {t("booking.success.fields.time", "Time")}
+                  </span>
                   <span className="font-medium">{confirmedBooking.time}</span>
                 </div>
               </div>
             )}
 
             <Button
-              className="mt-6 w-full bg-secondary text-black hover:bg-secondary-hover"
+              className="mt-8 w-full bg-secondary text-black hover:bg-secondary-hover"
               onClick={() => {
                 setConfirmedBooking(null);
                 setBookingCompleted(false);

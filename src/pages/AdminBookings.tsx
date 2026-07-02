@@ -7,6 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
 import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -141,6 +146,7 @@ export default function AdminBookings() {
   const [blockedRows, setBlockedRows] = useState<AdminBlockRow[]>([]);
   const [blockedSelection, setBlockedSelection] = useState<Date[]>([]);
   const [blockLoading, setBlockLoading] = useState(false);
+  const [blockPanelOpen, setBlockPanelOpen] = useState(false);
 
   // Sorting: ascending/descending
   const [ascending, setAscending] = useState(true);
@@ -466,69 +472,78 @@ export default function AdminBookings() {
         </div>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Block dates</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid gap-4 lg:grid-cols-[auto_1fr] lg:items-start">
-            <div className="rounded-xl border bg-background p-2">
-              <DatePickerCalendar
-                mode="multiple"
-                selected={blockedSelection}
-                onSelect={(dates) => setBlockedSelection(dates ?? [])}
-                modifiers={{ booked: blockedDateObjects }}
-                modifiersClassNames={{
-                  booked:
-                    "!bg-red-600 !text-white !opacity-100 hover:!bg-red-600 hover:!text-white",
-                }}
-              />
-            </div>
+      <Collapsible open={blockPanelOpen} onOpenChange={setBlockPanelOpen}>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between gap-3">
+            <CardTitle>Block dates</CardTitle>
+            <CollapsibleTrigger asChild>
+              <Button variant="outline" size="sm">
+                {blockPanelOpen ? "Hide" : "Show"}
+              </Button>
+            </CollapsibleTrigger>
+          </CardHeader>
+          <CollapsibleContent>
+            <CardContent className="space-y-4 pt-0">
+              <div className="grid gap-4 lg:grid-cols-[auto_1fr] lg:items-start">
+                <div className="rounded-xl border bg-background p-2">
+                  <DatePickerCalendar
+                    mode="multiple"
+                    selected={blockedSelection}
+                    onSelect={(dates) => setBlockedSelection(dates ?? [])}
+                    modifiers={{ booked: blockedDateObjects }}
+                    modifiersClassNames={{
+                      booked:
+                        "!bg-red-600 !text-white !opacity-100 hover:!bg-red-600 hover:!text-white",
+                    }}
+                  />
+                </div>
 
-            <div className="space-y-4">
-              <div className="flex flex-wrap gap-2 text-xs">
-                <span className="rounded-full border bg-background px-2.5 py-1 text-muted-foreground">
-                  Select dates to block
-                </span>
-                <span className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-700">
-                  Booked / blocked dates show red
-                </span>
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                <Button onClick={blockSelectedDates} disabled={blockLoading}>
-                  {blockLoading ? "Saving..." : "Mark selected as booked"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={clearSelectedDates}
-                  disabled={blockLoading}
-                >
-                  Clear selected dates
-                </Button>
-              </div>
-
-              <div className="rounded-xl border bg-muted/30 p-4 text-sm">
-                <div className="font-medium mb-2">Current blocked dates</div>
-                {blockedDateLabels.length === 0 ? (
-                  <div className="text-muted-foreground">No dates are blocked.</div>
-                ) : (
-                  <div className="flex flex-wrap gap-2">
-                    {blockedDateLabels.map((label) => (
-                      <span
-                        key={label}
-                        className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-700"
-                      >
-                        {label}
-                      </span>
-                    ))}
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2 text-xs">
+                    <span className="rounded-full border bg-background px-2.5 py-1 text-muted-foreground">
+                      Select dates to block
+                    </span>
+                    <span className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-700">
+                      Booked / blocked dates show red
+                    </span>
                   </div>
-                )}
+
+                  <div className="flex flex-wrap gap-2">
+                    <Button onClick={blockSelectedDates} disabled={blockLoading}>
+                      {blockLoading ? "Saving..." : "Mark selected as booked"}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={clearSelectedDates}
+                      disabled={blockLoading}
+                    >
+                      Clear selected dates
+                    </Button>
+                  </div>
+
+                  <div className="rounded-xl border bg-muted/30 p-4 text-sm">
+                    <div className="font-medium mb-2">Current blocked dates</div>
+                    {blockedDateLabels.length === 0 ? (
+                      <div className="text-muted-foreground">No dates are blocked.</div>
+                    ) : (
+                      <div className="flex flex-wrap gap-2">
+                        {blockedDateLabels.map((label) => (
+                          <span
+                            key={label}
+                            className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-700"
+                          >
+                            {label}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
 
       {filtered.length === 0 ? (
         <Card>

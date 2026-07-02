@@ -426,18 +426,18 @@ const Booking = () => {
   }, []);
 
   const loadCalendarMonthStatus = useCallback(async (monthDate: Date) => {
-    const monthStart = new Date(
+    const previousMonthStart = new Date(
       monthDate.getFullYear(),
-      monthDate.getMonth(),
+      monthDate.getMonth() - 1,
       1,
       0,
       0,
       0,
       0,
     );
-    const nextMonthStart = new Date(
+    const nextNextMonthStart = new Date(
       monthDate.getFullYear(),
-      monthDate.getMonth() + 1,
+      monthDate.getMonth() + 2,
       1,
       0,
       0,
@@ -449,14 +449,14 @@ const Booking = () => {
       supabase
         .from("booking_availability")
         .select("preferred_at, status, total_minutes")
-        .gte("preferred_at", monthStart.toISOString())
-        .lt("preferred_at", nextMonthStart.toISOString())
+        .gte("preferred_at", previousMonthStart.toISOString())
+        .lt("preferred_at", nextNextMonthStart.toISOString())
         .returns<AvailabilityRow[]>(),
       supabase
         .from("admin_block")
         .select("start_at, minutes")
-        .gte("start_at", monthStart.toISOString())
-        .lt("start_at", nextMonthStart.toISOString())
+        .gte("start_at", previousMonthStart.toISOString())
+        .lt("start_at", nextNextMonthStart.toISOString())
         .order("start_at", { ascending: true })
         .returns<AdminBlockRow[]>(),
     ]);

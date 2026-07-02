@@ -117,6 +117,10 @@ function statusFromBlockedCount(blockedCount: number): DayStatus {
   return "normal";
 }
 
+function isSameMonth(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
+}
+
 /* ============================ Component ============================ */
 
 const Booking = () => {
@@ -1200,8 +1204,22 @@ const Booking = () => {
                             const status = dayStatusMap[dayKey(d)];
                             return d.getDay() !== 0 && d >= today && status !== "partial" && status !== "full";
                           },
-                          partiallyBooked: (d) => dayStatusMap[dayKey(d)] === "partial",
-                          fullyBooked: (d) => dayStatusMap[dayKey(d)] === "full",
+                          partiallyBooked: (d) => {
+                            const status = dayStatusMap[dayKey(d)];
+                            return status === "partial" && isSameMonth(d, calendarMonth);
+                          },
+                          partiallyBookedOutside: (d) => {
+                            const status = dayStatusMap[dayKey(d)];
+                            return status === "partial" && !isSameMonth(d, calendarMonth);
+                          },
+                          fullyBooked: (d) => {
+                            const status = dayStatusMap[dayKey(d)];
+                            return status === "full" && isSameMonth(d, calendarMonth);
+                          },
+                          fullyBookedOutside: (d) => {
+                            const status = dayStatusMap[dayKey(d)];
+                            return status === "full" && !isSameMonth(d, calendarMonth);
+                          },
                         }}
                         modifiersClassNames={{
                           pastDay:
@@ -1210,8 +1228,12 @@ const Booking = () => {
                             "!bg-green-600 !text-white hover:!bg-green-600 hover:!text-white",
                           partiallyBooked:
                             "!bg-amber-500 !text-white hover:!bg-amber-500 hover:!text-white",
+                          partiallyBookedOutside:
+                            "!bg-amber-500 !text-white !opacity-60 hover:!bg-amber-500 hover:!text-white",
                           fullyBooked:
                             "!bg-red-600 !text-white !opacity-100 hover:!bg-red-600 hover:!text-white",
+                          fullyBookedOutside:
+                            "!bg-red-600 !text-white !opacity-60 hover:!bg-red-600 hover:!text-white",
                         }}
                         initialFocus
                       />

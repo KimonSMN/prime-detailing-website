@@ -78,6 +78,8 @@ type AdminBlockRow = {
   minutes: number;
 };
 
+type DayStatus = "normal" | "partial" | "full";
+
 const TIMES = [
   "08:00",
   "09:00",
@@ -89,6 +91,31 @@ const TIMES = [
   "15:00",
   "16:00",
 ];
+
+function addBlockedRange(blocked: Set<string>, startISO: string, minutes: number) {
+  const s = new Date(startISO);
+  const e = new Date(s.getTime() + minutes * 60000);
+
+  const iter = new Date(s);
+  iter.setMinutes(0, 0, 0);
+  blocked.add(format(iter, "HH:mm"));
+
+  while (true) {
+    iter.setHours(iter.getHours() + 1);
+    if (iter < e) blocked.add(format(iter, "HH:mm"));
+    else break;
+  }
+}
+
+function dayKey(date: Date) {
+  return format(date, "yyyy-MM-dd");
+}
+
+function statusFromBlockedCount(blockedCount: number): DayStatus {
+  if (blockedCount >= TIMES.length) return "full";
+  if (blockedCount > TIMES.length / 2) return "partial";
+  return "normal";
+}
 
 /* ============================ Component ============================ */
 
@@ -314,6 +341,10 @@ const Booking = () => {
   const [unavailableTimes, setUnavailableTimes] = useState<Set<string>>(
     new Set(),
   );
+  const [calendarMonth, setCalendarMonth] = useState<Date>(() => new Date());
+  const [dayStatusMap, setDayStatusMap] = useState<Record<string, DayStatus>>(
+    {},
+  );
 
   // selected service
   const selectedService = useMemo(
@@ -393,6 +424,88 @@ const Booking = () => {
     d.setHours(0, 0, 0, 0);
     return d;
   }, []);
+
+  const loadCalendarMonthStatus = useCallback(async (monthDate: Date) => {
+    const monthStart = new Date(
+      monthDate.getFullYear(),
+      monthDate.getMonth(),
+      1,
+      0,
+      0,
+      0,
+      0,
+    );
+    const nextMonthStart = new Date(
+      monthDate.getFullYear(),
+      monthDate.getMonth() + 1,
+      1,
+      0,
+      0,
+      0,
+      0,
+    );
+
+    const [availResult, blocksResult] = await Promise.all([
+      supabase
+        .from("booking_availability")
+        .select("preferred_at, status, total_minutes")
+        .gte("preferred_at", monthStart.toISOString())
+        .lt("preferred_at", nextMonthStart.toISOString())
+        .returns<AvailabilityRow[]>(),
+      supabase
+        .from("admin_block")
+        .select("start_at, minutes")
+        .gte("start_at", monthStart.toISOString())
+        .lt("start_at", nextMonthStart.toISOString())
+        .order("start_at", { ascending: true })
+        .returns<AdminBlockRow[]>(),
+    ]);
+
+    if (availResult.error) {
+      console.warn("calendar availability load error:", availResult.error);
+    }
+    if (blocksResult.error) {
+      console.warn("calendar block load error:", blocksResult.error);
+    }
+
+    const blockedByDay = new Map<string, Set<string>>();
+
+    const ensureDay = (yyyyMmDd: string) => {
+      const existing = blockedByDay.get(yyyyMmDd);
+      if (existing) return existing;
+      const created = new Set<string>();
+      blockedByDay.set(yyyyMmDd, created);
+      return created;
+    };
+
+    const markRange = (startISO: string, minutes: number) => {
+      const start = new Date(startISO);
+      const day = ensureDay(dayKey(start));
+      addBlockedRange(day, startISO, Math.max(1, minutes));
+    };
+
+    for (const booking of availResult.data ?? []) {
+      markRange(
+        booking.preferred_at,
+        Math.max(1, Number(booking.total_minutes ?? 0)) || 180,
+      );
+    }
+
+    for (const block of blocksResult.data ?? []) {
+      markRange(block.start_at, Math.max(1, Number(block.minutes ?? 0)));
+    }
+
+    const nextStatusMap: Record<string, DayStatus> = {};
+    for (const [yyyyMmDd, blocked] of blockedByDay.entries()) {
+      nextStatusMap[yyyyMmDd] = statusFromBlockedCount(blocked.size);
+    }
+
+    setDayStatusMap(nextStatusMap);
+  }, []);
+
+  useEffect(() => {
+    void loadCalendarMonthStatus(calendarMonth);
+  }, [calendarMonth, loadCalendarMonthStatus]);
 
   /* ---------------- load services (WITH duration_min) ---------------- */
   useEffect(() => {
@@ -645,6 +758,9 @@ const Booking = () => {
       }
 
       await loadAvailabilityForDate(date);
+      if (dateObj) {
+        await loadCalendarMonthStatus(dateObj);
+      }
 
       toast({ title: t("booking.toast.ok.title") });
 
@@ -661,10 +777,11 @@ const Booking = () => {
         vehicleType: "",
       }));
       setSelectedAddonIds(new Set());
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : t("booking.toast.fail.desc");
       toast({
         title: t("booking.toast.fail.title"),
-        description: err?.message ?? t("booking.toast.fail.desc"),
+        description: message,
         variant: "destructive",
       });
       console.error(err);
@@ -1058,11 +1175,14 @@ const Booking = () => {
                       align="start"
                     >
                       <DatePicker
+                        month={calendarMonth}
+                        onMonthChange={(month) => setCalendarMonth(month)}
                         mode="single"
                         selected={dateObj}
                         onSelect={(d) => {
                           if (!d) return;
                           setDateObj(d);
+                          setCalendarMonth(d);
                           setFormData((p) => ({
                             ...p,
                             date: format(d, "yyyy-MM-dd"),
@@ -1070,7 +1190,29 @@ const Booking = () => {
                           }));
                           setIsCalOpen(false);
                         }}
-                        disabled={(d) => d.getDay() === 0 || d < today}
+                        disabled={(d) => {
+                          const status = dayStatusMap[dayKey(d)];
+                          return d.getDay() === 0 || d < today || status === "full";
+                        }}
+                        modifiers={{
+                          pastDay: (d) => d < today,
+                          availableDay: (d) => {
+                            const status = dayStatusMap[dayKey(d)];
+                            return d.getDay() !== 0 && d >= today && status !== "partial" && status !== "full";
+                          },
+                          partiallyBooked: (d) => dayStatusMap[dayKey(d)] === "partial",
+                          fullyBooked: (d) => dayStatusMap[dayKey(d)] === "full",
+                        }}
+                        modifiersClassNames={{
+                          pastDay:
+                            "!bg-transparent !text-muted-foreground/50 !opacity-50 hover:!bg-transparent hover:!text-muted-foreground/50",
+                          availableDay:
+                            "!bg-green-600 !text-white hover:!bg-green-600 hover:!text-white",
+                          partiallyBooked:
+                            "!bg-amber-500 !text-white hover:!bg-amber-500 hover:!text-white",
+                          fullyBooked:
+                            "!bg-red-600 !text-white !opacity-100 hover:!bg-red-600 hover:!text-white",
+                        }}
                         initialFocus
                       />
                     </PopoverContent>

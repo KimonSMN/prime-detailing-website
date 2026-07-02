@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState, useCallback, memo } from "react";
-import { parseISO } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Calendar as DatePickerCalendar } from "@/components/ui/calendar";
 import {
   Select,
   SelectContent,
@@ -118,6 +119,18 @@ type BookingRow = {
   }[];
 };
 
+type AdminBlockRow = {
+  start_at: string;
+  minutes: number;
+};
+
+function localDayRange(yyyyMmDd: string) {
+  const [y, m, d] = yyyyMmDd.split("-").map(Number);
+  const start = new Date(y, m - 1, d, 0, 0, 0, 0);
+  const end = new Date(y, m - 1, d + 1, 0, 0, 0, 0);
+  return { start, end };
+}
+
 export default function AdminBookings() {
   const { toast } = useToast();
   const [authed, setAuthed] = useState(false);
@@ -125,6 +138,9 @@ export default function AdminBookings() {
   const [statusFilter, setStatusFilter] = useState<BookingRow["status"] | "all">("pending");
   const [loading, setLoading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [blockedRows, setBlockedRows] = useState<AdminBlockRow[]>([]);
+  const [blockedSelection, setBlockedSelection] = useState<Date[]>([]);
+  const [blockLoading, setBlockLoading] = useState(false);
 
   // Sorting: ascending/descending
   const [ascending, setAscending] = useState(true);
@@ -181,13 +197,131 @@ export default function AdminBookings() {
         variant: "destructive",
       });
     } else {
-      setRows((data as any) || []);
+      setRows((data as BookingRow[]) ?? []);
     }
   }, [toast]);
 
+  const loadBlockedDates = useCallback(async () => {
+    const { data, error } = await supabase
+      .from("admin_block")
+      .select("start_at, minutes")
+      .order("start_at", { ascending: true })
+      .returns<AdminBlockRow[]>();
+
+    if (error) {
+      toast({
+        title: "Blocked dates failed",
+        description: error.message,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setBlockedRows(data ?? []);
+  }, [toast]);
+
   useEffect(() => {
-    if (authed) load();
-  }, [authed, load]);
+    if (authed) {
+      load();
+      loadBlockedDates();
+    }
+  }, [authed, load, loadBlockedDates]);
+
+  const blockedDateObjects = useMemo(
+    () => blockedRows.map((row) => parseISO(row.start_at)),
+    [blockedRows],
+  );
+
+  const blockedDateLabels = useMemo(
+    () =>
+      blockedRows.map((row) => format(parseISO(row.start_at), "yyyy-MM-dd")),
+    [blockedRows],
+  );
+
+  const blockSelectedDates = useCallback(async () => {
+    if (blockedSelection.length === 0) {
+      toast({ title: "Select one or more dates", variant: "destructive" });
+      return;
+    }
+
+    setBlockLoading(true);
+    try {
+      const uniqueDates = Array.from(
+        new Set(blockedSelection.map((date) => format(date, "yyyy-MM-dd"))),
+      );
+
+      for (const yyyyMmDd of uniqueDates) {
+        const { start, end } = localDayRange(yyyyMmDd);
+        const { error: deleteError } = await supabase
+          .from("admin_block")
+          .delete()
+          .gte("start_at", start.toISOString())
+          .lt("start_at", end.toISOString());
+
+        if (deleteError) throw deleteError;
+
+        const { error: insertError } = await supabase.from("admin_block").insert(
+          {
+            start_at: start.toISOString(),
+            minutes: 24 * 60,
+          },
+        );
+
+        if (insertError) throw insertError;
+      }
+
+      setBlockedSelection([]);
+      await loadBlockedDates();
+      toast({ title: "Selected dates marked as booked" });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Please try again.";
+      toast({
+        title: "Could not save blocked dates",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setBlockLoading(false);
+    }
+  }, [blockedSelection, loadBlockedDates, toast]);
+
+  const clearSelectedDates = useCallback(async () => {
+    if (blockedSelection.length === 0) {
+      toast({ title: "Select one or more dates", variant: "destructive" });
+      return;
+    }
+
+    setBlockLoading(true);
+    try {
+      const uniqueDates = Array.from(
+        new Set(blockedSelection.map((date) => format(date, "yyyy-MM-dd"))),
+      );
+
+      for (const yyyyMmDd of uniqueDates) {
+        const { start, end } = localDayRange(yyyyMmDd);
+        const { error } = await supabase
+          .from("admin_block")
+          .delete()
+          .gte("start_at", start.toISOString())
+          .lt("start_at", end.toISOString());
+
+        if (error) throw error;
+      }
+
+      setBlockedSelection([]);
+      await loadBlockedDates();
+      toast({ title: "Selected dates cleared" });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Please try again.";
+      toast({
+        title: "Could not clear blocked dates",
+        description: message,
+        variant: "destructive",
+      });
+    } finally {
+      setBlockLoading(false);
+    }
+  }, [blockedSelection, loadBlockedDates, toast]);
 
   const filtered = useMemo(() => {
     let data = statusFilter === "all" ? rows : rows.filter((r) => r.status === statusFilter);
@@ -226,10 +360,11 @@ export default function AdminBookings() {
         if (error) throw error;
         toast({ title: "Booking deleted" });
         await load();
-      } catch (err: any) {
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Please try again.";
         toast({
           title: "Delete failed",
-          description: err?.message ?? "Please try again.",
+          description: message,
           variant: "destructive",
         });
         console.error(err);
@@ -280,7 +415,10 @@ export default function AdminBookings() {
         <h1 className="text-2xl font-semibold">Bookings</h1>
 
         <div className="flex items-center gap-2">
-          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as any)}>
+          <Select
+            value={statusFilter}
+            onValueChange={(v) => setStatusFilter(v as BookingRow["status"] | "all")}
+          >
             <SelectTrigger className="w-40 sm:w-44">
               <SelectValue placeholder="Filter status" />
             </SelectTrigger>
@@ -327,6 +465,70 @@ export default function AdminBookings() {
           </div>
         </div>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Block dates</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-4 lg:grid-cols-[auto_1fr] lg:items-start">
+            <div className="rounded-xl border bg-background p-2">
+              <DatePickerCalendar
+                mode="multiple"
+                selected={blockedSelection}
+                onSelect={(dates) => setBlockedSelection(dates ?? [])}
+                modifiers={{ booked: blockedDateObjects }}
+                modifiersClassNames={{
+                  booked:
+                    "!bg-red-600 !text-white !opacity-100 hover:!bg-red-600 hover:!text-white",
+                }}
+              />
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="rounded-full border bg-background px-2.5 py-1 text-muted-foreground">
+                  Select dates to block
+                </span>
+                <span className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-700">
+                  Booked / blocked dates show red
+                </span>
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                <Button onClick={blockSelectedDates} disabled={blockLoading}>
+                  {blockLoading ? "Saving..." : "Mark selected as booked"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={clearSelectedDates}
+                  disabled={blockLoading}
+                >
+                  Clear selected dates
+                </Button>
+              </div>
+
+              <div className="rounded-xl border bg-muted/30 p-4 text-sm">
+                <div className="font-medium mb-2">Current blocked dates</div>
+                {blockedDateLabels.length === 0 ? (
+                  <div className="text-muted-foreground">No dates are blocked.</div>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {blockedDateLabels.map((label) => (
+                      <span
+                        key={label}
+                        className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-red-700"
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {filtered.length === 0 ? (
         <Card>

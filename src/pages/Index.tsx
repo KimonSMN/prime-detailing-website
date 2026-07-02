@@ -8,18 +8,19 @@ import { buildCanonical, localeFor, BASE_URL } from "@/lib/seo";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import BeforeAfterStrip from "@/components/BeforeAfterStrip";
+import { X, Calendar, Sun } from "lucide-react"; // Make sure to install lucide-react if you haven't
+import SummerClosurePopup from "@/components/SummerClosurePopup";
 
 type Importer<T> = () => Promise<{ default: React.ComponentType<T> }>;
 
 /**
  * Imports a component ONLY when it becomes visible.
- * This avoids early chunk fetches and fixes the "Network dependency tree" issue you're seeing.
  */
 function ImportWhenVisible<TProps extends object>({
   importer,
   props,
-  rootMargin = "0px 0px -15% 0px", // must scroll a bit before loading
-  minHeight = 320, // reserve space so it stays below-the-fold
+  rootMargin = "0px 0px -15% 0px",
+  minHeight = 320,
 }: {
   importer: Importer<TProps>;
   props: TProps;
@@ -39,12 +40,9 @@ function ImportWhenVisible<TProps extends object>({
 
         io.disconnect();
 
-        // Import only AFTER intersection (prevents early critical path chaining)
         importer()
           .then((m) => setComp(() => m.default))
-          .catch(() => {
-            // fail silently; keep placeholder
-          });
+          .catch(() => {});
       },
       { root: null, rootMargin, threshold: 0.01 },
     );
@@ -64,6 +62,25 @@ const Index = () => {
   const { t, i18n } = useTranslation();
   const canonical = buildCanonical();
   const locale = localeFor(i18n.resolvedLanguage);
+  
+  // State to handle the summer closure popup visibility
+  const [showPopup, setShowPopup] = useState(false);
+
+  useEffect(() => {
+    // Check if the user has already dismissed the popup recently
+    const isDismissed = localStorage.getItem("summer_closure_dismissed_2026");
+    if (!isDismissed) {
+      // Small timeout to give a nice entry feel after the page loads
+      const timer = setTimeout(() => setShowPopup(true), 1200);
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+    // Remember preference so it doesn't spam them on every refresh
+    localStorage.setItem("summer_closure_dismissed_2026", "true");
+  };
 
   const businessJsonLd = {
     "@context": "https://schema.org",
@@ -109,7 +126,7 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
       <Seo
         title={t("seo.home.title")}
         description={t("seo.home.description")}
@@ -118,8 +135,6 @@ const Index = () => {
         locale={locale}
         image={`${BASE_URL}/og-default.webp`}
         jsonLd={businessJsonLd}
-        // You can REMOVE this preload if you already added the hero preload in index.html.
-        // Keep it only if you haven't.
         links={[
           {
             rel: "preload",
@@ -134,9 +149,12 @@ const Index = () => {
 
       <Hreflang />
 
+      <SummerClosurePopup/>
+
+
       <Hero />
 
-      {/* Reviews carousel: import ONLY when user scrolls near it */}
+      {/* Reviews carousel */}
       <ImportWhenVisible
         importer={() => import("@/components/ReviewsCarousel")}
         props={{} as Record<string, never>}
@@ -144,7 +162,7 @@ const Index = () => {
         rootMargin="0px 0px -20% 0px"
       />
 
-      {/* Google reviews embed: also import only when near viewport */}
+      {/* Google reviews embed */}
       <ImportWhenVisible
         importer={() => import("@/components/GoogleReviewsEmbed")}
         props={{
@@ -157,7 +175,7 @@ const Index = () => {
         rootMargin="0px 0px -20% 0px"
       />
 
-      {/* Projects strip (loads images): make sure it doesn't fetch on initial load */}
+      {/* Projects strip */}
       <ImportWhenVisible
         importer={async () => ({ default: BeforeAfterStrip })}
         props={{
@@ -175,6 +193,78 @@ const Index = () => {
       />
 
       <Footer />
+
+      {/* --- SUMMER CLOSURE POPUP --- */}
+      {showPopup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
+          <div className="relative w-full max-w-md bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden shadow-2xl transform transition-all animate-scale-up">
+            
+            {/* Close Button */}
+            <button
+              onClick={handleClosePopup}
+              className="absolute top-3 right-3 z-10 p-2 bg-black/40 hover:bg-black/70 text-white rounded-full transition-colors group"
+              aria-label="Close popup"
+            >
+              <X className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            </button>
+
+            {/* Summer Banner Image with Text Overlay */}
+            <div className="relative h-48 bg-cover bg-center flex items-end justify-center" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80')" }}>
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/40 to-black/20" />
+              <div className="relative z-10 text-center pb-4 px-4">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider mb-2">
+                  <Sun className="w-3.5 h-3.5 animate-spin-slow" /> Summer Notice
+                </div>
+                <h3 className="text-2xl font-bold text-white tracking-tight">
+                  Summer Holidays Schedule
+                </h3>
+              </div>
+            </div>
+
+            {/* Content Body */}
+            <div className="p-6 text-center text-zinc-300">
+              <p className="text-sm leading-relaxed text-zinc-400 mb-6">
+                Our team is taking a short break to recharge our batteries and gear up for a shiny rest of the year! Please note our seasonal closing dates below:
+              </p>
+
+              {/* Dates Cards */}
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between p-3.5 bg-zinc-800/50 border border-zinc-800 rounded-xl hover:border-amber-500/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-500/10 text-amber-400 rounded-lg">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <span className="font-medium text-white text-sm sm:text-base">July Break</span>
+                  </div>
+                  <span className="text-amber-400 font-semibold tracking-wide bg-amber-500/5 px-3 py-1 rounded-md border border-amber-500/10 text-sm sm:text-base">
+                    12/07 – 18/07
+                  </span>
+                </div>
+
+                <div className="flex items-center justify-between p-3.5 bg-zinc-800/50 border border-zinc-800 rounded-xl hover:border-amber-500/30 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-amber-500/10 text-amber-400 rounded-lg">
+                      <Calendar className="w-5 h-5" />
+                    </div>
+                    <span className="font-medium text-white text-sm sm:text-base">August Break</span>
+                  </div>
+                  <span className="text-amber-400 font-semibold tracking-wide bg-amber-500/5 px-3 py-1 rounded-md border border-amber-500/10 text-sm sm:text-base">
+                    28/07 – 10/08
+                  </span>
+                </div>
+              </div>
+
+              {/* Action Button */}
+              <button
+                onClick={handleClosePopup}
+                className="w-full py-3 bg-white text-black hover:bg-zinc-200 font-semibold rounded-xl transition-all shadow-md active:scale-[0.98]"
+              >
+                Got it, thanks!
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

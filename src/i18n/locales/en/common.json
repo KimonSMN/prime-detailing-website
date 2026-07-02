@@ -675,5 +675,16 @@
   "error": {
     "title": "Error",
     "submitFailed": "Failed to submit quote request"
+  },
+  "afterBooking": {
+    "title": "Appointment booked",
+    "subtitle": "Your booking request has been submitted successfully.",
+    "bookAnother": "Book another appointment",
+    "fields": {
+      "name": "Name",
+      "service": "Service",
+      "date": "Date",
+      "time": "Time"
+    }
   }
 }

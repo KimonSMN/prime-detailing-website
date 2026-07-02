@@ -943,73 +943,73 @@ const Booking = () => {
   );
 
   if (bookingCompleted) {
-    return (
-      <section className="flex min-h-screen items-center justify-center bg-secondary/20 px-4 py-10">
-        <div className="w-full max-w-2xl">
-          <div className="rounded-2xl border bg-card p-8 md:p-10 text-center shadow-sm">
-            <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/20 text-secondary">
-              <Check className="h-8 w-8" />
-            </div>
-
-            <h1 className="text-3xl font-semibold tracking-tight">
-              {t("booking.success.title", "Appointment booked")}
-            </h1>
-
-            <p className="mt-3 text-muted-foreground">
-              {t(
-                "booking.success.subtitle",
-                "Your booking request has been submitted successfully.",
-              )}
-            </p>
-
-            {confirmedBooking && (
-              <div className="mt-8 rounded-xl border p-5 text-left">
-                <div className="flex items-center justify-between gap-4 border-b py-3">
-                  <span className="text-sm text-muted-foreground">
-                    {t("booking.success.fields.name", "Name")}
-                  </span>
-                  <span className="font-medium">{confirmedBooking.name}</span>
-                </div>
-
-                <div className="flex items-center justify-between gap-4 border-b py-3">
-                  <span className="text-sm text-muted-foreground">
-                    {t("booking.success.fields.service", "Service")}
-                  </span>
-                  <span className="font-medium">
-                    {confirmedBooking.serviceName || "—"}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between gap-4 border-b py-3">
-                  <span className="text-sm text-muted-foreground">
-                    {t("booking.success.fields.date", "Date")}
-                  </span>
-                  <span className="font-medium">{confirmedBooking.date}</span>
-                </div>
-
-                <div className="flex items-center justify-between gap-4 py-3">
-                  <span className="text-sm text-muted-foreground">
-                    {t("booking.success.fields.time", "Time")}
-                  </span>
-                  <span className="font-medium">{confirmedBooking.time}</span>
-                </div>
-              </div>
-            )}
-
-            <Button
-              className="mt-8 w-full bg-secondary text-black hover:bg-secondary-hover"
-              onClick={() => {
-                setConfirmedBooking(null);
-                setBookingCompleted(false);
-              }}
-            >
-              {t("booking.success.bookAnother", "Book another appointment")}
-            </Button>
+  return (
+    <section className="flex min-h-screen items-center justify-center bg-secondary/20 px-4 py-10">
+      <div className="w-full max-w-2xl">
+        <div className="rounded-2xl border bg-card p-8 md:p-10 text-center shadow-sm">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-secondary/20 text-secondary">
+            <Check className="h-8 w-8" />
           </div>
+
+          <h1 className="text-3xl font-semibold tracking-tight">
+            {t("afterBooking.title", "Appointment booked")}
+          </h1>
+
+          <p className="mt-3 text-muted-foreground">
+            {t(
+              "afterBooking.subtitle",
+              "Your booking request has been submitted successfully.",
+            )}
+          </p>
+
+          {confirmedBooking && (
+            <div className="mt-8 rounded-xl border p-5 text-left">
+              <div className="flex items-center justify-between gap-4 border-b py-3">
+                <span className="text-sm text-muted-foreground">
+                  {t("afterBooking.fields.name", "Name")}
+                </span>
+                <span className="font-medium">{confirmedBooking.name}</span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 border-b py-3">
+                <span className="text-sm text-muted-foreground">
+                  {t("afterBooking.fields.service", "Service")}
+                </span>
+                <span className="font-medium">
+                  {confirmedBooking.serviceName || "—"}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 border-b py-3">
+                <span className="text-sm text-muted-foreground">
+                  {t("afterBooking.fields.date", "Date")}
+                </span>
+                <span className="font-medium">{confirmedBooking.date}</span>
+              </div>
+
+              <div className="flex items-center justify-between gap-4 py-3">
+                <span className="text-sm text-muted-foreground">
+                  {t("afterBooking.fields.time", "Time")}
+                </span>
+                <span className="font-medium">{confirmedBooking.time}</span>
+              </div>
+            </div>
+          )}
+
+          <Button
+            className="mt-8 w-full bg-secondary text-black hover:bg-secondary-hover"
+            onClick={() => {
+              setConfirmedBooking(null);
+              setBookingCompleted(false);
+            }}
+          >
+            {t("afterBooking.bookAnother", "Book another appointment")}
+          </Button>
         </div>
-      </section>
-    );
-  }
+      </div>
+    </section>
+  );
+}
 
   return (
     <section className="min-h-screen bg-secondary/20">

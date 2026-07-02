@@ -1181,6 +1181,14 @@ const Booking = () => {
                       <DatePicker
                         month={calendarMonth}
                         onMonthChange={(month) => setCalendarMonth(month)}
+                        classNames={{
+                          cell:
+                            "h-9 w-9 text-center text-sm p-0 relative [&:has([aria-selected].day-range-end)]:rounded-r-md [&:has([aria-selected].day-outside)]:bg-transparent [&:has([aria-selected])]:bg-transparent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                          day_selected:
+                            "bg-transparent text-current hover:bg-transparent hover:text-current focus:bg-transparent focus:text-current",
+                          day_outside:
+                            "day-outside text-muted-foreground opacity-50 aria-selected:bg-transparent aria-selected:text-muted-foreground aria-selected:opacity-50",
+                        }}
                         mode="single"
                         selected={dateObj}
                         onSelect={(d) => {
@@ -1199,6 +1207,8 @@ const Booking = () => {
                           return d.getDay() === 0 || d < today || status === "full";
                         }}
                         modifiers={{
+                          selectedDay: (d) =>
+                            dateObj ? dayKey(d) === dayKey(dateObj) : false,
                           pastDay: (d) => d < today,
                           availableDay: (d) => {
                             const status = dayStatusMap[dayKey(d)];
@@ -1222,6 +1232,8 @@ const Booking = () => {
                           },
                         }}
                         modifiersClassNames={{
+                          selectedDay:
+                            "!border-2 !border-blue-400 !rounded-md",
                           pastDay:
                             "!bg-transparent !text-muted-foreground/50 !opacity-50 hover:!bg-transparent hover:!text-muted-foreground/50",
                           availableDay:

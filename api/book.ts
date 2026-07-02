@@ -99,6 +99,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       name,
       email,
       phone,
+      adminBooking,
       vehicleInfo,
       notes,
       preferred_at,
@@ -109,6 +110,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       name?: string;
       email?: string;
       phone?: string;
+      adminBooking?: boolean;
       vehicleInfo?: string | null;
       notes?: string | null;
       preferred_at?: string;
@@ -119,6 +121,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     if (!name || !email || !phone || !preferred_at) {
       return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const isAdminBooking = adminBooking === true || email === "admin";
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!isAdminBooking && !isValidEmail) {
+      return res.status(400).json({
+        error: "Invalid email",
+        details: "Provide a valid email address or use admin for admin bookings.",
+      });
     }
 
     // Normalize add-on selection to an array of { id, quantity }
@@ -282,46 +294,47 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // -----------------------------
     // 1) ADMIN email (keep your existing behavior)
     // -----------------------------
-    const { data: adminData, error: adminError } = await resend.emails.send({
-      from: FROM,
-      to: [ADMIN_TO],
-      subject: `New Booking: ${name} — ${preferredHuman}`,
-      html: `<h2>New Booking</h2>
-      <ul>
-        <li><b>Name:</b> ${escapeHtml(name)}</li>
-        <li><b>Email:</b> ${escapeHtml(email)}</li>
-        <li><b>Phone:</b> ${escapeHtml(phone)}</li>
-        <li><b>Date/Time:</b> ${escapeHtml(preferredHuman)}</li>
-        <li><b>Status:</b> pending</li>
-        <li><b>Service:</b> ${escapeHtml(serviceName ?? serviceId ?? "—")}</li>
-        <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
-        <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
-        <li><b>Booking ID:</b> ${escapeHtml(booking.id)}</li>
-      </ul>
-      <h3>Selected Add-ons</h3>
-      ${addonsHtml}
-      `,
-      ...(email ? { replyTo: email } : {}),
-    });
-
-    if (adminError) {
-      console.error("Resend ADMIN email error:", adminError);
-      // fail so you see it in logs and UI doesn't lie
-      return res.status(502).json({
-        error: "Failed to send admin email",
-        details: adminError,
+    if (!isAdminBooking) {
+      const { data: adminData, error: adminError } = await resend.emails.send({
+        from: FROM,
+        to: [ADMIN_TO],
+        subject: `New Booking: ${name} — ${preferredHuman}`,
+        html: `<h2>New Booking</h2>
+        <ul>
+          <li><b>Name:</b> ${escapeHtml(name)}</li>
+          <li><b>Email:</b> ${escapeHtml(email)}</li>
+          <li><b>Phone:</b> ${escapeHtml(phone)}</li>
+          <li><b>Date/Time:</b> ${escapeHtml(preferredHuman)}</li>
+          <li><b>Status:</b> pending</li>
+          <li><b>Service:</b> ${escapeHtml(serviceName ?? serviceId ?? "—")}</li>
+          <li><b>Vehicle:</b> ${escapeHtml(vehicleInfo ?? "—")}</li>
+          <li><b>Notes:</b> ${escapeHtml(notes ?? "—")}</li>
+          <li><b>Booking ID:</b> ${escapeHtml(booking.id)}</li>
+        </ul>
+        <h3>Selected Add-ons</h3>
+        ${addonsHtml}
+        `,
+        ...(email ? { replyTo: email } : {}),
       });
-    }
-    console.log("Resend ADMIN email sent:", adminData);
 
-    // -----------------------------
-    // 2) CLIENT confirmation email
-    // -----------------------------
-    const { data: clientData, error: clientError } = await resend.emails.send({
-      from: FROM,
-      to: [email],
-      subject: "Booking Confirmed ✅ — Prime Detailing Cholargos",
-      html: `
+      if (adminError) {
+        console.error("Resend ADMIN email error:", adminError);
+        // fail so you see it in logs and UI doesn't lie
+        return res.status(502).json({
+          error: "Failed to send admin email",
+          details: adminError,
+        });
+      }
+      console.log("Resend ADMIN email sent:", adminData);
+
+      // -----------------------------
+      // 2) CLIENT confirmation email
+      // -----------------------------
+      const { data: clientData, error: clientError } = await resend.emails.send({
+        from: FROM,
+        to: [email],
+        subject: "Booking Confirmed ✅ — Prime Detailing Cholargos",
+        html: `
  <div style="margin:0;padding:0;background:#f6f7fb;">
   <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
     Η κράτηση σας επιβεβαιώθηκε — Prime Detailing Cholargos
@@ -480,17 +493,18 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   </table>
 </div>
       `,
-      replyTo: ADMIN_TO,
-    });
-
-    if (clientError) {
-      console.error("Resend CLIENT email error:", clientError);
-      return res.status(502).json({
-        error: "Failed to send client email",
-        details: clientError,
+        replyTo: ADMIN_TO,
       });
+
+      if (clientError) {
+        console.error("Resend CLIENT email error:", clientError);
+        return res.status(502).json({
+          error: "Failed to send client email",
+          details: clientError,
+        });
+      }
+      console.log("Resend CLIENT email sent:", clientData);
     }
-    console.log("Resend CLIENT email sent:", clientData);
 
     return res.status(200).json({ ok: true, booking_id: booking.id });
   } catch (err: any) {

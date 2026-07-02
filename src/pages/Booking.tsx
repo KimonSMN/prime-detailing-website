@@ -121,12 +121,23 @@ function isSameMonth(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth();
 }
 
+function isValidEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
 /* ============================ Component ============================ */
 
 const Booking = () => {
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [bookingCompleted, setBookingCompleted] = useState(false);
+  const [confirmedBooking, setConfirmedBooking] = useState<{
+    name: string;
+    date: string;
+    time: string;
+    serviceName: string;
+  } | null>(null);
 
   const [services, setServices] = useState<ServiceRow[]>([]);
   const [addons, setAddons] = useState<AddonRow[]>([]);
@@ -695,11 +706,25 @@ const Booking = () => {
     e?.preventDefault?.();
 
     const { name, email, phone, serviceId, date, time } = formData;
+    const isAdminBooking = email === "admin";
+    const hasValidEmail = isAdminBooking || isValidEmail(email);
 
     if (!name || !email || !phone || !serviceId || !date || !time) {
       toast({
         title: t("booking.toast.missing.title"),
         description: t("booking.toast.missing.desc"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!hasValidEmail) {
+      toast({
+        title: t("booking.toast.emailInvalid.title", "Invalid email"),
+        description: t(
+          "booking.toast.emailInvalid.desc",
+          "Enter a valid email address, or type admin if you are booking as the admin.",
+        ),
         variant: "destructive",
       });
       return;
@@ -744,6 +769,7 @@ const Booking = () => {
           name,
           email,
           phone,
+          adminBooking: isAdminBooking,
           vehicleInfo:
             formData.vehicleInfo ||
             formData.vehicleName ||
@@ -765,6 +791,14 @@ const Booking = () => {
       if (dateObj) {
         await loadCalendarMonthStatus(dateObj);
       }
+
+      setConfirmedBooking({
+        name,
+        date,
+        time,
+        serviceName: selectedService?.name ?? "",
+      });
+      setBookingCompleted(true);
 
       toast({ title: t("booking.toast.ok.title") });
 
@@ -859,6 +893,7 @@ const Booking = () => {
   const canSubmit =
     !!formData.name &&
     !!formData.email &&
+    (formData.email === "admin" || isValidEmail(formData.email)) &&
     !!formData.phone &&
     !!formData.serviceId &&
     !!formData.date &&
@@ -906,6 +941,61 @@ const Booking = () => {
       ? "Τιμή κατόπιν συνεννοήσεως"
       : "Price upon arrangement",
   );
+
+  if (bookingCompleted) {
+    return (
+      <section className="min-h-screen bg-secondary/20">
+        <div className="max-w-2xl mx-auto px-4 py-20">
+          <div className="rounded-2xl border bg-card p-8 text-center shadow-sm">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-secondary/20 text-secondary">
+              <Check className="h-7 w-7" />
+            </div>
+
+            <h1 className="text-2xl font-semibold tracking-tight">
+              {t("booking.success.title", "Appointment booked")}
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              {t(
+                "booking.success.subtitle",
+                "Your booking request has been submitted successfully.",
+              )}
+            </p>
+
+            {confirmedBooking && (
+              <div className="mt-6 rounded-xl border p-4 text-left text-sm">
+                <div className="flex items-center justify-between gap-3 py-1.5">
+                  <span className="text-muted-foreground">Name</span>
+                  <span className="font-medium">{confirmedBooking.name}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 py-1.5">
+                  <span className="text-muted-foreground">Service</span>
+                  <span className="font-medium">{confirmedBooking.serviceName || "—"}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 py-1.5">
+                  <span className="text-muted-foreground">Date</span>
+                  <span className="font-medium">{confirmedBooking.date}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 py-1.5">
+                  <span className="text-muted-foreground">Time</span>
+                  <span className="font-medium">{confirmedBooking.time}</span>
+                </div>
+              </div>
+            )}
+
+            <Button
+              className="mt-6 w-full bg-secondary text-black hover:bg-secondary-hover"
+              onClick={() => {
+                setConfirmedBooking(null);
+                setBookingCompleted(false);
+              }}
+            >
+              {t("booking.success.bookAnother", "Book another appointment")}
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="min-h-screen bg-secondary/20">

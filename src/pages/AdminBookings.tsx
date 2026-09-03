@@ -208,11 +208,14 @@ export default function AdminBookings() {
 
       setLoading(true);
 
+      console.log("Admin bookings: starting booking table probe...");
       const { data: baseRows, error: baseErr } = await supabase
         .from("booking")
         .select("id, created_at, preferred_at, status, vehicle_info, notes, customer_id")
         .order("preferred_at", { ascending: true })
         .limit(200);
+
+      console.log("Admin bookings: booking probe result", { baseRows, error: baseErr });
 
       if (baseErr) throw baseErr;
 

@@ -136,6 +136,14 @@ function localDayRange(yyyyMmDd: string) {
   return { start, end };
 }
 
+function formatCustomerEmail(email: string | null) {
+  if (!email) return "—";
+  if (email.endsWith("@internal.invalid") || email.startsWith("admin-booking-")) {
+    return "Admin booking";
+  }
+  return email;
+}
+
 export default function AdminBookings() {
   const { toast } = useToast();
   const [authed, setAuthed] = useState(false);
@@ -796,7 +804,7 @@ const BookingCard = memo(function BookingCard({
       </CardHeader>
       <CardContent className="space-y-2">
         <div className="text-sm">
-          Email: {row.customer?.email ?? "—"} · Phone: {row.customer?.phone ?? "—"}
+          Email: {formatCustomerEmail(row.customer?.email ?? null)} · Phone: {row.customer?.phone ?? "—"}
         </div>
         <div className="text-sm">Vehicle: {row.vehicle_info ?? "—"}</div>
         <div className="text-sm">Notes: {row.notes ?? "—"}</div>

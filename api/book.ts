@@ -79,6 +79,10 @@ function formatDuration(mins: number) {
   return `${h} ώρες ${r} λεπτά`;
 }
 
+function buildAdminCustomerEmail() {
+  return `admin-booking-${Date.now()}-${Math.random().toString(36).slice(2, 10)}@internal.invalid`;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
@@ -149,19 +153,43 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             .map((id) => ({ id, quantity: 1 }))
         : [];
 
-    // Upsert customer by unique email
-    const { data: customer, error: upsertErr } = await supabase
-      .from("customer")
-      .upsert({ full_name: name, email, phone }, { onConflict: "email" })
-      .select("id")
-      .single();
-    if (upsertErr) throw upsertErr;
+    let customerId: string;
+
+    if (isAdminBooking) {
+      const adminCustomerEmail = buildAdminCustomerEmail();
+      const { data: customer, error: createErr } = await supabase
+        .from("customer")
+        .insert({ full_name: name, email: adminCustomerEmail, phone })
+        .select("id")
+        .single();
+      if (createErr) throw createErr;
+      customerId = customer.id;
+    } else {
+      const { data: existingCustomer, error: lookupErr } = await supabase
+        .from("customer")
+        .select("id")
+        .eq("email", email)
+        .maybeSingle();
+      if (lookupErr) throw lookupErr;
+
+      if (existingCustomer?.id) {
+        customerId = existingCustomer.id;
+      } else {
+        const { data: customer, error: createErr } = await supabase
+          .from("customer")
+          .insert({ full_name: name, email, phone })
+          .select("id")
+          .single();
+        if (createErr) throw createErr;
+        customerId = customer.id;
+      }
+    }
 
     // Create booking
     const { data: booking, error: bookErr } = await supabase
       .from("booking")
       .insert({
-        customer_id: customer.id,
+        customer_id: customerId,
         preferred_at,
         status: "pending",
         vehicle_info: vehicleInfo ?? null,

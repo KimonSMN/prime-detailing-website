@@ -368,10 +368,26 @@ export default function AdminBookings() {
   }, [ensureActiveSession, toast]);
 
   useEffect(() => {
-    if (authed) {
-      load();
-      loadBlockedDates();
-    }
+    if (!authed) return;
+
+    void load();
+    void loadBlockedDates();
+
+    const interval = window.setInterval(() => {
+      void load();
+    }, 15000);
+
+    const onFocus = () => {
+      void load();
+      void loadBlockedDates();
+    };
+
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      window.clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
   }, [authed, load, loadBlockedDates]);
 
   const blockedDateObjects = useMemo(

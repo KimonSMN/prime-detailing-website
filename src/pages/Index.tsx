@@ -129,7 +129,7 @@ const Index = () => {
 
       <Hreflang />
 
-      <SummerClosurePopup/>
+      {/* <SummerClosurePopup/> */}
 
 
       <Hero />

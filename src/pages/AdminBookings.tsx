@@ -164,67 +164,117 @@ export default function AdminBookings() {
     return d;
   }, []);
 
+  const ensureActiveSession = useCallback(async () => {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      throw sessionError;
+    }
+
+    if (!sessionData.session) {
+      setAuthed(false);
+      return false;
+    }
+
+    const { data: refreshedData, error: refreshError } = await supabase.auth.refreshSession();
+    if (refreshError) {
+      console.warn("Admin session refresh failed:", refreshError);
+      await supabase.auth.signOut();
+      setAuthed(false);
+      return false;
+    }
+
+    const hasValidSession = !!(refreshedData.session ?? sessionData.session);
+    setAuthed(hasValidSession);
+    return hasValidSession;
+  }, []);
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) =>
-      setAuthed(!!s),
-    );
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      setAuthed(!!session);
+    });
+
+    void supabase.auth.getSession().then(({ data }) => setAuthed(!!data.session));
+
     return () => sub.subscription.unsubscribe();
   }, []);
 
   const load = useCallback(async () => {
-    setLoading(true);
-    const query = supabase
-      .from("booking")
-      .select(
-        `
-      id, created_at, preferred_at, status, vehicle_info, notes,
-      customer:customer_id ( full_name, email, phone ),
-      booking_service (
-        quantity,
-        price_at_booking,
-        service:service_id ( name, base_price, min_minutes )
-      ),
-      booking_addon (
-        quantity,
-        addon:addon_id ( name, base_price, duration_min )
-      )
-    `,
-      )
-      .order("preferred_at", { ascending: true })
-      .limit(200);
+    try {
+      const hasValidSession = await ensureActiveSession();
+      if (!hasValidSession) {
+        setRows([]);
+        return;
+      }
 
-    const { data, error } = await query;
-    setLoading(false);
-    if (error) {
+      setLoading(true);
+      const query = supabase
+        .from("booking")
+        .select(
+          `
+        id, created_at, preferred_at, status, vehicle_info, notes,
+        customer:customer_id ( full_name, email, phone ),
+        booking_service (
+          quantity,
+          price_at_booking,
+          service:service_id ( name, base_price, min_minutes )
+        ),
+        booking_addon (
+          quantity,
+          addon:addon_id ( name, base_price, duration_min )
+        )
+      `,
+        )
+        .order("preferred_at", { ascending: true })
+        .limit(200);
+
+      const { data, error } = await query;
+      if (error) {
+        throw error;
+      }
+
+      setRows((data as BookingRow[]) ?? []);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Please try again.";
       toast({
         title: "Load failed",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
-    } else {
-      setRows((data as BookingRow[]) ?? []);
+      setRows([]);
+    } finally {
+      setLoading(false);
     }
-  }, [toast]);
+  }, [ensureActiveSession, toast]);
 
   const loadBlockedDates = useCallback(async () => {
-    const { data, error } = await supabase
-      .from("admin_block")
-      .select("start_at, minutes")
-      .order("start_at", { ascending: true })
-      .returns<AdminBlockRow[]>();
+    try {
+      const hasValidSession = await ensureActiveSession();
+      if (!hasValidSession) {
+        setBlockedRows([]);
+        return;
+      }
 
-    if (error) {
+      const { data, error } = await supabase
+        .from("admin_block")
+        .select("start_at, minutes")
+        .order("start_at", { ascending: true })
+        .returns<AdminBlockRow[]>();
+
+      if (error) {
+        throw error;
+      }
+
+      setBlockedRows(data ?? []);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Please try again.";
       toast({
         title: "Blocked dates failed",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
-      return;
+      setBlockedRows([]);
     }
-
-    setBlockedRows(data ?? []);
-  }, [toast]);
+  }, [ensureActiveSession, toast]);
 
   useEffect(() => {
     if (authed) {

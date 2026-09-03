@@ -208,122 +208,101 @@ export default function AdminBookings() {
 
       setLoading(true);
 
-      const primaryQuery = supabase
+      const { data: baseRows, error: baseErr } = await supabase
         .from("booking")
-        .select(
-          `
-        id, created_at, preferred_at, status, vehicle_info, notes,
-        customer:customer_id ( full_name, email, phone ),
-        booking_service (
-          quantity,
-          price_at_booking,
-          service:service_id ( name, base_price, min_minutes )
-        ),
-        booking_addon (
-          quantity,
-          addon:addon_id ( name, base_price, duration_min )
-        )
-      `,
-        )
+        .select("id, created_at, preferred_at, status, vehicle_info, notes, customer_id")
         .order("preferred_at", { ascending: true })
         .limit(200);
 
-      let { data, error } = await primaryQuery;
+      if (baseErr) throw baseErr;
 
-      if (error) {
-        const fallbackBase = await supabase
-          .from("booking")
-          .select("id, created_at, preferred_at, status, vehicle_info, notes, customer_id")
-          .order("preferred_at", { ascending: true })
-          .limit(200);
+      const rowsData = (baseRows ?? []) as Array<{
+        id: string;
+        created_at: string;
+        preferred_at: string;
+        status: BookingRow["status"];
+        vehicle_info: string | null;
+        notes: string | null;
+        customer_id: string | null;
+      }>;
 
-        if (fallbackBase.error) throw fallbackBase.error;
+      const bookingIds = rowsData.map((row) => row.id);
+      const customerIds = Array.from(
+        new Set(rowsData.map((row) => row.customer_id).filter(Boolean) as string[]),
+      );
 
-        const baseRows = (fallbackBase.data ?? []) as Array<{
-          id: string;
-          created_at: string;
-          preferred_at: string;
-          status: BookingRow["status"];
-          vehicle_info: string | null;
-          notes: string | null;
-          customer_id: string | null;
-        }>;
+      const [customerResult, serviceResult, addonResult] = await Promise.all([
+        customerIds.length
+          ? supabase.from("customer").select("id, full_name, email, phone").in("id", customerIds)
+          : Promise.resolve({ data: [], error: null }),
+        bookingIds.length
+          ? supabase.from("booking_service").select("booking_id, quantity, price_at_booking, service_id").in("booking_id", bookingIds)
+          : Promise.resolve({ data: [], error: null }),
+        bookingIds.length
+          ? supabase.from("booking_addon").select("booking_id, quantity, addon_id").in("booking_id", bookingIds)
+          : Promise.resolve({ data: [], error: null }),
+      ]);
 
-        const bookingIds = baseRows.map((row) => row.id);
-        const customerIds = Array.from(new Set(baseRows.map((row) => row.customer_id).filter(Boolean) as string[]));
+      if (customerResult.error) throw customerResult.error;
+      if (serviceResult.error) throw serviceResult.error;
+      if (addonResult.error) throw addonResult.error;
 
-        const [customerResult, serviceResult, addonResult] = await Promise.all([
-          customerIds.length
-            ? supabase.from("customer").select("id, full_name, email, phone").in("id", customerIds)
-            : Promise.resolve({ data: [], error: null }),
-          bookingIds.length
-            ? supabase.from("booking_service").select("booking_id, quantity, price_at_booking, service_id").in("booking_id", bookingIds)
-            : Promise.resolve({ data: [], error: null }),
-          bookingIds.length
-            ? supabase.from("booking_addon").select("booking_id, quantity, addon_id").in("booking_id", bookingIds)
-            : Promise.resolve({ data: [], error: null }),
-        ]);
+      const serviceIds = Array.from(
+        new Set((serviceResult.data ?? []).map((row: any) => row.service_id).filter(Boolean)),
+      );
+      const addonIds = Array.from(
+        new Set((addonResult.data ?? []).map((row: any) => row.addon_id).filter(Boolean)),
+      );
 
-        if (customerResult.error) throw customerResult.error;
-        if (serviceResult.error) throw serviceResult.error;
-        if (addonResult.error) throw addonResult.error;
+      const [serviceMetaResult, addonMetaResult] = await Promise.all([
+        serviceIds.length
+          ? supabase.from("service").select("id, name, base_price, duration_min, min_minutes").in("id", serviceIds)
+          : Promise.resolve({ data: [], error: null }),
+        addonIds.length
+          ? supabase.from("addon").select("id, name, base_price, duration_min").in("id", addonIds)
+          : Promise.resolve({ data: [], error: null }),
+      ]);
 
-        const serviceIds = Array.from(
-          new Set((serviceResult.data ?? []).map((row: any) => row.service_id).filter(Boolean)),
-        );
-        const addonIds = Array.from(
-          new Set((addonResult.data ?? []).map((row: any) => row.addon_id).filter(Boolean)),
-        );
+      if (serviceMetaResult.error) throw serviceMetaResult.error;
+      if (addonMetaResult.error) throw addonMetaResult.error;
 
-        const [serviceMetaResult, addonMetaResult] = await Promise.all([
-          serviceIds.length
-            ? supabase.from("service").select("id, name, base_price, duration_min").in("id", serviceIds)
-            : Promise.resolve({ data: [], error: null }),
-          addonIds.length
-            ? supabase.from("addon").select("id, name, base_price, duration_min").in("id", addonIds)
-            : Promise.resolve({ data: [], error: null }),
-        ]);
+      const customerById = new Map((customerResult.data ?? []).map((row: any) => [row.id, row]));
+      const serviceById = new Map((serviceMetaResult.data ?? []).map((row: any) => [row.id, row]));
+      const addonById = new Map((addonMetaResult.data ?? []).map((row: any) => [row.id, row]));
 
-        if (serviceMetaResult.error) throw serviceMetaResult.error;
-        if (addonMetaResult.error) throw addonMetaResult.error;
+      const hydratedRows = rowsData.map((row) => {
+        const customer = customerById.get(row.customer_id ?? "") ?? null;
 
-        const customerById = new Map((customerResult.data ?? []).map((row: any) => [row.id, row]));
-        const serviceById = new Map((serviceMetaResult.data ?? []).map((row: any) => [row.id, row]));
-        const addonById = new Map((addonMetaResult.data ?? []).map((row: any) => [row.id, row]));
-
-        const hydratedRows = baseRows.map((row) => {
-          const customer = customerById.get(row.customer_id ?? "") ?? null;
-
-          const bookingServices = (serviceResult.data ?? []).filter((svc: any) => svc.booking_id === row.id).map((svc: any) => ({
+        const bookingServices = (serviceResult.data ?? [])
+          .filter((svc: any) => svc.booking_id === row.id)
+          .map((svc: any) => ({
             quantity: svc.quantity,
             price_at_booking: svc.price_at_booking,
             service: serviceById.get(svc.service_id) ?? null,
           }));
 
-          const bookingAddons = (addonResult.data ?? []).filter((ba: any) => ba.booking_id === row.id).map((ba: any) => ({
+        const bookingAddons = (addonResult.data ?? [])
+          .filter((ba: any) => ba.booking_id === row.id)
+          .map((ba: any) => ({
             quantity: ba.quantity,
             addon: addonById.get(ba.addon_id) ?? null,
           }));
 
-          return {
-            ...row,
-            customer: customer
-              ? {
-                  full_name: customer.full_name,
-                  email: customer.email,
-                  phone: customer.phone,
-                }
-              : { full_name: "Unknown", email: null, phone: null },
-            booking_service: bookingServices,
-            booking_addon: bookingAddons,
-          } as BookingRow;
-        });
+        return {
+          ...row,
+          customer: customer
+            ? {
+                full_name: customer.full_name,
+                email: customer.email,
+                phone: customer.phone,
+              }
+            : { full_name: "Unknown", email: null, phone: null },
+          booking_service: bookingServices,
+          booking_addon: bookingAddons,
+        } as BookingRow;
+      });
 
-        setRows(hydratedRows);
-        return;
-      }
-
-      setRows((data as BookingRow[]) ?? []);
+      setRows(hydratedRows);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Please try again.";
       toast({

@@ -545,11 +545,50 @@ const Booking = () => {
 
     const nextStatusMap: Record<string, DayStatus> = {};
     for (const [yyyyMmDd, blocked] of blockedByDay.entries()) {
-      nextStatusMap[yyyyMmDd] = statusFromBlockedCount(blocked.size);
+      if (totalSelectedMinutes <= 0) {
+        nextStatusMap[yyyyMmDd] = statusFromBlockedCount(blocked.size);
+        continue;
+      }
+
+      let candidateCount = 0;
+      let blockedCandidateCount = 0;
+      for (const time of availableTimes) {
+        const start = localDateTime(yyyyMmDd, time);
+        const end = addWorkingDuration(start, totalSelectedMinutes);
+        if (
+          end.getDate() !== start.getDate() ||
+          end.getHours() > 20 ||
+          (end.getHours() === 20 && end.getMinutes() > 0)
+        ) {
+          continue;
+        }
+
+        candidateCount += 1;
+
+        const iter = new Date(start);
+        iter.setMinutes(0, 0, 0);
+        let overlaps = false;
+        while (iter < end) {
+          if (blocked.has(format(iter, "HH:mm"))) {
+            overlaps = true;
+            break;
+          }
+          iter.setHours(iter.getHours() + 1);
+        }
+        if (overlaps) blockedCandidateCount += 1;
+      }
+
+      if (candidateCount === 0 || blockedCandidateCount >= candidateCount) {
+        nextStatusMap[yyyyMmDd] = "full";
+      } else if (blockedCandidateCount === 0) {
+        nextStatusMap[yyyyMmDd] = "normal";
+      } else {
+        nextStatusMap[yyyyMmDd] = "partial";
+      }
     }
 
     setDayStatusMap(nextStatusMap);
-  }, []);
+  }, [availableTimes, totalSelectedMinutes]);
 
   useEffect(() => {
     void loadCalendarMonthStatus(calendarMonth);
@@ -692,7 +731,7 @@ const Booking = () => {
     if (total <= 0) return false;
 
     const start = localDateTime(formData.date, startTimeHHmm);
-    const end = new Date(start.getTime() + total * 60000);
+    const end = addWorkingDuration(start, total);
 
     const iter = new Date(start);
     iter.setMinutes(0, 0, 0);

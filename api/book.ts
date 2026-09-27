@@ -83,6 +83,39 @@ function buildAdminCustomerEmail() {
   return `admin-booking-${Date.now()}-${Math.random().toString(36).slice(2, 10)}@internal.invalid`;
 }
 
+function getAthensStartMinutes(iso: string) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Athens",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(date);
+  const hour = Number(parts.find((part) => part.type === "hour")?.value);
+  const minute = Number(parts.find((part) => part.type === "minute")?.value);
+  return Number.isFinite(hour) && Number.isFinite(minute)
+    ? hour * 60 + minute
+    : null;
+}
+
+function addWorkingDurationMinutes(startMinutes: number, durationMinutes: number) {
+  let endMinutes = startMinutes;
+  let remaining = Math.max(0, durationMinutes);
+
+  if (endMinutes < 15 * 60) {
+    const minutesUntilQuietHours = 15 * 60 - endMinutes;
+    if (remaining <= minutesUntilQuietHours) return endMinutes + remaining;
+    remaining -= minutesUntilQuietHours;
+    endMinutes = 17 * 60;
+  } else if (endMinutes < 17 * 60) {
+    endMinutes = 17 * 60;
+  }
+
+  return endMinutes + remaining;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
@@ -152,6 +185,55 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             .filter((id): id is string => typeof id === "string")
             .map((id) => ({ id, quantity: 1 }))
         : [];
+
+    // Validate the hard closing time from database durations before creating rows.
+    let requestedServiceDuration = 0;
+    if (serviceId) {
+      const { data: serviceForValidation, error: serviceValidationError } =
+        await supabase
+          .from("service")
+          .select("duration_min")
+          .eq("id", serviceId)
+          .maybeSingle();
+      if (serviceValidationError) throw serviceValidationError;
+      if (!serviceForValidation) {
+        return res.status(400).json({ error: "Invalid service" });
+      }
+      requestedServiceDuration = Number(serviceForValidation.duration_min ?? 0) || 0;
+    }
+
+    let requestedAddonDuration = 0;
+    if (normalizedAddons.length > 0) {
+      const { data: addonsForValidation, error: addonValidationError } =
+        await supabase
+          .from("addon")
+          .select("id, duration_min")
+          .in("id", normalizedAddons.map((addon) => addon.id));
+      if (addonValidationError) throw addonValidationError;
+
+      const missingAddon = normalizedAddons.some(
+        (selected) => !addonsForValidation?.some((addon) => addon.id === selected.id),
+      );
+      if (missingAddon) {
+        return res.status(400).json({ error: "Invalid add-on" });
+      }
+
+      requestedAddonDuration = normalizedAddons.reduce((total, selected) => {
+        const addon = addonsForValidation?.find((row) => row.id === selected.id);
+        return total + (Number(addon?.duration_min ?? 0) || 0) * selected.quantity;
+      }, 0);
+    }
+
+    const startMinutes = getAthensStartMinutes(preferred_at);
+    const totalRequestedDuration = requestedServiceDuration + requestedAddonDuration;
+    if (
+      startMinutes === null ||
+      addWorkingDurationMinutes(startMinutes, totalRequestedDuration) > 20 * 60
+    ) {
+      return res.status(400).json({
+        error: "Appointment must finish by 20:00",
+      });
+    }
 
     let customerId: string;
 

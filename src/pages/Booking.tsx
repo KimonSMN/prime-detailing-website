@@ -50,6 +50,26 @@ function localDateTime(yyyyMmDd: string, hhmm: string) {
   return new Date(y, m - 1, d, hh, mm, 0, 0); // local hh:mm
 }
 
+function addWorkingDuration(start: Date, durationMinutes: number) {
+  const end = new Date(start);
+  let remaining = Math.max(0, durationMinutes);
+
+  if (end.getHours() < 15) {
+    const minutesUntilQuietHours = 15 * 60 - (end.getHours() * 60 + end.getMinutes());
+    if (remaining <= minutesUntilQuietHours) {
+      end.setMinutes(end.getMinutes() + remaining);
+      return end;
+    }
+    remaining -= minutesUntilQuietHours;
+    end.setHours(17, 0, 0, 0);
+  } else if (end.getHours() < 17) {
+    end.setHours(17, 0, 0, 0);
+  }
+
+  end.setMinutes(end.getMinutes() + remaining);
+  return end;
+}
+
 /* ---------------- types & constants ---------------- */
 
 type ServiceRow = {
@@ -80,21 +100,25 @@ type AdminBlockRow = {
 
 type DayStatus = "normal" | "partial" | "full";
 
-const TIMES = [
-  "08:00",
-  "09:00",
-  "10:00",
-  "11:00",
-  "12:00",
-  "13:00",
-  "14:00",
-  "15:00",
-  "16:00",
+const BUSINESS_OPEN_MINUTES = 8 * 60;
+const BUSINESS_CLOSE_MINUTES = 20 * 60;
+const STANDARD_BOOKABLE_TIMES = Array.from({ length: 7 }, (_, index) => {
+  const hour = String(8 + index).padStart(2, "0");
+  return `${hour}:00`;
+});
+const MAINTENANCE_EXTRA_TIMES = ["17:00"];
+const BOOKABLE_TIMES = [
+  ...STANDARD_BOOKABLE_TIMES,
+  ...MAINTENANCE_EXTRA_TIMES,
 ];
+
+function isMaintenanceService(serviceName?: string) {
+  return serviceName?.toLowerCase().includes("maintenance") ?? false;
+}
 
 function addBlockedRange(blocked: Set<string>, startISO: string, minutes: number) {
   const s = new Date(startISO);
-  const e = new Date(s.getTime() + minutes * 60000);
+  const e = addWorkingDuration(s, minutes);
 
   const iter = new Date(s);
   iter.setMinutes(0, 0, 0);
@@ -112,8 +136,8 @@ function dayKey(date: Date) {
 }
 
 function statusFromBlockedCount(blockedCount: number): DayStatus {
-  if (blockedCount >= TIMES.length) return "full";
-  if (blockedCount > TIMES.length / 2) return "partial";
+  if (blockedCount >= BOOKABLE_TIMES.length) return "full";
+  if (blockedCount > BOOKABLE_TIMES.length / 2) return "partial";
   return "normal";
 }
 
@@ -367,6 +391,15 @@ const Booking = () => {
     [services, formData.serviceId],
   );
 
+  const isMaintenanceSelected = useMemo(
+    () => isMaintenanceService(selectedService?.name),
+    [selectedService?.name],
+  );
+
+  const availableTimes = isMaintenanceSelected
+    ? BOOKABLE_TIMES
+    : STANDARD_BOOKABLE_TIMES;
+
   // selected add-ons resolved to objects
   const selectedAddons = useMemo(
     () => addons.filter((a) => selectedAddonIds.has(a.id)),
@@ -611,7 +644,7 @@ const Booking = () => {
 
       function blockRange(startISO: string, minutes: number) {
         const s = new Date(startISO);
-        const e = new Date(s.getTime() + minutes * 60000);
+        const e = addWorkingDuration(s, minutes);
 
         const iter = new Date(s);
         iter.setMinutes(0, 0, 0);
@@ -671,6 +704,36 @@ const Booking = () => {
     }
     return false;
   };
+
+  const isSelectableTime = useCallback(
+    (startTimeHHmm: string) => {
+      if (!formData.date) return false;
+      if (!availableTimes.includes(startTimeHHmm)) return false;
+
+      const start = localDateTime(formData.date, startTimeHHmm);
+      const end = addWorkingDuration(start, totalSelectedMinutes);
+      const startMinutes = start.getHours() * 60 + start.getMinutes();
+      const endMinutes = end.getHours() * 60 + end.getMinutes();
+
+      return (
+        startMinutes >= BUSINESS_OPEN_MINUTES &&
+        endMinutes <= BUSINESS_CLOSE_MINUTES &&
+        end.getDate() === start.getDate()
+      );
+    },
+    [availableTimes, formData.date, totalSelectedMinutes],
+  );
+
+  const estimatedCompletionTime = useMemo(() => {
+    if (!formData.date || !formData.time || totalSelectedMinutes <= 0) return "";
+    return format(
+        addWorkingDuration(
+          localDateTime(formData.date, formData.time),
+          totalSelectedMinutes,
+        ),
+      "HH:mm",
+    );
+  }, [formData.date, formData.time, totalSelectedMinutes]);
 
   const onPickProtection = useCallback(
     (slug: string) => {
@@ -744,6 +807,17 @@ const Booking = () => {
       toast({
         title: t("booking.toast.past.title"),
         description: t("booking.toast.past.desc"),
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!isSelectableTime(time)) {
+      toast({
+        title: t("booking.toast.unavailable.title"),
+        description: t(
+          "booking.toast.unavailable.descFull",
+          "The selected start time is outside the booking hours for this service.",
+        ),
         variant: "destructive",
       });
       return;
@@ -1261,6 +1335,22 @@ const Booking = () => {
               />
 
               <div className="grid md:grid-cols-2 gap-4">
+                <div className="md:col-span-2 rounded-2xl border border-secondary/30 bg-secondary/5 p-4 text-sm">
+                  <div className="font-semibold text-secondary">
+                    {t("booking.hours.title", "Working Hours")}
+                  </div>
+                  <div className="mt-1 font-medium">08:00–20:00</div>
+                  <div className="mt-2 text-muted-foreground">
+                    <span className="font-medium text-foreground">
+                      {t("booking.hours.quietTitle", "Quiet Hours")} 15:00–17:00.
+                    </span>{" "}
+                    {t(
+                      "booking.hours.quietDescription",
+                      "Noisy detailing equipment is not operated during quiet hours. Your vehicle may remain with us and work will continue afterwards.",
+                    )}
+                  </div>
+                </div>
+
                 {/* Date */}
                 <div className="space-y-2">
                   <Popover open={isCalOpen} onOpenChange={setIsCalOpen}>
@@ -1369,7 +1459,7 @@ const Booking = () => {
                   <Select
                     value={formData.time}
                     onValueChange={(v) => {
-                      if (wouldOverlap(v)) {
+                      if (!isSelectableTime(v) || wouldOverlap(v)) {
                         toast({
                           title: t("booking.toast.unavailable.title"),
                           description: t(
@@ -1394,10 +1484,11 @@ const Booking = () => {
                       />
                     </SelectTrigger>
                     <SelectContent className="bg-background border-border">
-                      {TIMES.map((tm) => {
+                      {availableTimes.map((tm) => {
                         const takenByStart = unavailableTimes.has(tm);
-                        const overlap = !takenByStart && wouldOverlap(tm);
-                        const disabled = takenByStart || overlap;
+                        const allowed = isSelectableTime(tm);
+                        const overlap = allowed && !takenByStart && wouldOverlap(tm);
+                        const disabled = takenByStart || !allowed || overlap;
                         return (
                           <SelectItem
                             key={tm}
@@ -1419,6 +1510,14 @@ const Booking = () => {
                       })}
                     </SelectContent>
                   </Select>
+                  {estimatedCompletionTime && (
+                    <div className="text-sm text-muted-foreground">
+                      {t("booking.meta.estimatedCompletion", "Estimated completion:")} {" "}
+                      <span className="font-medium text-secondary">
+                        {estimatedCompletionTime}
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

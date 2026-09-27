@@ -111,6 +111,7 @@ type BookingRow = {
     service: {
       name: string;
       base_price: string | null;
+      duration_min: number | null;
       min_minutes: number | null;
     };
   }[];
@@ -134,6 +135,26 @@ function localDayRange(yyyyMmDd: string) {
   const start = new Date(y, m - 1, d, 0, 0, 0, 0);
   const end = new Date(y, m - 1, d + 1, 0, 0, 0, 0);
   return { start, end };
+}
+
+function addWorkingDuration(start: Date, durationMinutes: number) {
+  const end = new Date(start);
+  let remaining = Math.max(0, durationMinutes);
+
+  if (end.getHours() < 15) {
+    const minutesUntilQuietHours = 15 * 60 - (end.getHours() * 60 + end.getMinutes());
+    if (remaining <= minutesUntilQuietHours) {
+      end.setMinutes(end.getMinutes() + remaining);
+      return end;
+    }
+    remaining -= minutesUntilQuietHours;
+    end.setHours(17, 0, 0, 0);
+  } else if (end.getHours() < 17) {
+    end.setHours(17, 0, 0, 0);
+  }
+
+  end.setMinutes(end.getMinutes() + remaining);
+  return end;
 }
 
 function formatCustomerEmail(email: string | null) {
@@ -545,6 +566,35 @@ export default function AdminBookings() {
     const [h, m] = resTime.split(":").map(Number);
     const newStart = new Date(resDate);
     newStart.setHours(h, m, 0, 0);
+
+    const serviceMinutes = resBooking.booking_service.reduce(
+      (total, item) =>
+        total + (Number(item.service.duration_min ?? 0) || 0) * item.quantity,
+      0,
+    );
+    const addonMinutes = resBooking.booking_addon.reduce(
+      (total, item) =>
+        total +
+        (Number(item.addon?.duration_min ?? 0) || 0) * (item.quantity ?? 1),
+      0,
+    );
+    const completion = addWorkingDuration(
+      newStart,
+      serviceMinutes + addonMinutes,
+    );
+    if (
+      serviceMinutes + addonMinutes > 0 &&
+      (completion.getDate() !== newStart.getDate() ||
+        completion.getHours() > 20 ||
+        (completion.getHours() === 20 && completion.getMinutes() > 0))
+    ) {
+      toast({
+        title: "Invalid reschedule time",
+        description: "The appointment must finish by 20:00.",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setResBusy(true);
     const { error } = await supabase.from("booking").update({ preferred_at: newStart.toISOString() }).eq("id", resBooking.id);

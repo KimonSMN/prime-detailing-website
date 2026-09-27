@@ -336,6 +336,11 @@
         "hint": "We’ll use these to confirm the booking."
       }
     },
+    "hours": {
+      "title": "Working Hours",
+      "quietTitle": "Quiet Hours",
+      "quietDescription": "Noisy detailing equipment is not operated during quiet hours. Your vehicle may remain with us and work will continue afterwards."
+    },
     "vehicleTypes": {
       "hatchback": "Hatchback",
       "sedan": "Sedan",
@@ -351,6 +356,7 @@
       "approx": "~",
       "minutes": "min",
       "estimatedDuration": "Estimated duration:",
+      "estimatedCompletion": "Estimated completion:",
       "available": "Available",
       "overlaps": "Overlaps {{slot}}"
     },
@@ -379,6 +385,11 @@
       "overlap": {
         "title": "Time overlaps another booking",
         "desc": "This booking would overlap the {{slot}} slot. Please choose another time."
+      },
+      "hours": {
+        "title": "Booking Hours",
+        "quietTitle": "Quiet Hours",
+        "quietDescription": "Noisy detailing equipment is not operated during quiet hours. Your vehicle may remain with us and work will continue afterwards."
       },
       "ok": {
         "title": "Appointment booked!",

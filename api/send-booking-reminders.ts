@@ -188,7 +188,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
               <table role="presentation" width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td style="padding:24px 22px;background:#1677e8;background-image:linear-gradient(135deg,#0ea5e9 0%,#2563eb 60%,#1d4ed8 100%);font-family:Arial,sans-serif;color:#ffffff;">
-                    <div style="font-size:21px;font-weight:800;line-height:1.4;">Το ραντεβού σας είναι αύριο!</div>
+                    <div style="font-size:21px;font-weight:800;line-height:1.4;">Το ραντεβού σας πλησιάζει!</div>
                     <div style="margin-top:8px;font-size:14px;line-height:1.7;">Ανυπομονούμε να σας υποδεχτούμε στην Prime Detailing.</div>
                   </td>
                 </tr>

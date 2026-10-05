@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
+import { formatInTimeZone, zonedTimeToUtc } from "date-fns-tz";
 import { Resend } from "resend";
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
@@ -8,6 +9,7 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM;
 const REMINDERS_START_AT = process.env.BOOKING_REMINDERS_START_AT;
 const CRON_SECRET = process.env.CRON_SECRET;
+const ATHENS_TIME_ZONE = "Europe/Athens";
 
 function escapeHtml(value: unknown) {
   return String(value ?? "")
@@ -35,6 +37,33 @@ function getDateTimeStrings(iso: string) {
       hour: "2-digit",
       minute: "2-digit",
     }).format(date),
+  };
+}
+
+function getTomorrowInAthens() {
+  const today = formatInTimeZone(new Date(), ATHENS_TIME_ZONE, "yyyy-MM-dd");
+  const todayUtc = new Date(`${today}T00:00:00Z`);
+  const tomorrowUtc = new Date(todayUtc.getTime() + 24 * 60 * 60 * 1000);
+  const dayAfterTomorrowUtc = new Date(
+    tomorrowUtc.getTime() + 24 * 60 * 60 * 1000,
+  );
+  const tomorrow = formatInTimeZone(
+    tomorrowUtc,
+    "UTC",
+    "yyyy-MM-dd",
+  );
+  const dayAfterTomorrow = formatInTimeZone(
+    dayAfterTomorrowUtc,
+    "UTC",
+    "yyyy-MM-dd",
+  );
+
+  return {
+    start: zonedTimeToUtc(`${tomorrow} 00:00:00`, ATHENS_TIME_ZONE).toISOString(),
+    end: zonedTimeToUtc(
+      `${dayAfterTomorrow} 00:00:00`,
+      ATHENS_TIME_ZONE,
+    ).toISOString(),
   };
 }
 
@@ -69,16 +98,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     auth: { persistSession: false },
   });
   const resend = new Resend(RESEND_API_KEY);
-  const now = Date.now();
-  const windowStart = new Date(now + 23 * 60 * 60 * 1000).toISOString();
-  const windowEnd = new Date(now + 25 * 60 * 60 * 1000).toISOString();
+  const { start: tomorrowStart, end: tomorrowEnd } = getTomorrowInAthens();
 
   const { data: bookings, error: bookingError } = await supabase
     .from("booking")
     .select("id, customer_id, preferred_at")
     .gte("created_at", reminderStart.toISOString())
-    .gte("preferred_at", windowStart)
-    .lt("preferred_at", windowEnd)
+    .gte("preferred_at", tomorrowStart)
+    .lt("preferred_at", tomorrowEnd)
     .is("reminder_sent_at", null)
     .in("status", ["pending", "confirmed"])
     .order("preferred_at", { ascending: true })
